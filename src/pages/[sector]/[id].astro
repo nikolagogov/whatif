@@ -1,0 +1,102 @@
+---
+import { getCollection, render } from 'astro:content';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+  const historyPosts = await getCollection('history');
+  const sciencePosts = await getCollection('science');
+  const spacePosts = await getCollection('space');
+  const societyPosts = await getCollection('society');
+
+  const historyPaths = historyPosts.map(post => ({
+    params: { sector: 'history', id: post.id },
+    props: { post, sector: 'history' },
+  }));
+
+  const sciencePaths = sciencePosts.map(post => ({
+    params: { sector: 'science', id: post.id },
+    props: { post, sector: 'science' },
+  }));
+
+  const spacePaths = spacePosts.map(post => ({
+    params: { sector: 'space', id: post.id },
+    props: { post, sector: 'space' },
+  }));
+
+  const societyPaths = societyPosts.map(post => ({
+    params: { sector: 'society', id: post.id },
+    props: { post, sector: 'society' },
+  }));
+
+  return [...historyPaths, ...sciencePaths, ...spacePaths, ...societyPaths];
+}
+
+const { post, sector } = Astro.props;
+const { Content } = await render(post);
+
+const sectorTitles: Record<string, string> = {
+  history: '🏛️ Alternate History',
+  science: '🧪 Speculative Science',
+  space: '🌌 Cosmic Shifts',
+  society: '🌍 Society & Geopolitics',
+};
+
+const sectorTitle = sectorTitles[sector] || 'Article';
+
+const navLinks = [
+  { href: '/history', label: '🏛️ History', key: 'history' },
+  { href: '/science', label: '🧪 Science', key: 'science' },
+  { href: '/space', label: '🌌 Space', key: 'space' },
+  { href: '/society', label: '🌍 Society', key: 'society' },
+];
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{post.data.title} | The What-If Portal</title>
+		<meta name="description" content={post.data.description} />
+	</head>
+	<body>
+		<nav>
+			<a href="/" class="logo">What If <span>Hub</span></a>
+			<ul class="nav-links">
+				{navLinks.map(link => (
+					<li>
+						<a href={link.href} class={link.key === sector ? 'active' : ''}>{link.label}</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+
+		<div class="page-frame">
+			<article class="article-page">
+				<a href={`/${sector}`} class="sector-tag">{sectorTitle}</a>
+				<h1>{post.data.title}</h1>
+
+				<div class="hero-image" style={`background-image: url('${post.data.image}');`}></div>
+
+				<div class="article-body">
+					<Content />
+				</div>
+
+				<a href={`/${sector}`} class="back-link">← Back to {sectorTitle}</a>
+			</article>
+
+			<footer class="site-footer">
+				<div class="footer-logo">What If <span>Hub</span></div>
+				<ul class="footer-links">
+					<li><a href="/">Home</a></li>
+					<li><a href="/history">History</a></li>
+					<li><a href="/science">Science</a></li>
+					<li><a href="/space">Space</a></li>
+					<li><a href="/society">Society</a></li>
+				</ul>
+				<p class="footer-copy">© 2026 The What-If Portal. All rights reserved.</p>
+			</footer>
+		</div>
+	</body>
+</html>
