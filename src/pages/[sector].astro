@@ -63,18 +63,18 @@ const navLinks = [
 		<meta name="description" content={info.description} />
 	</head>
 	<body>
-		<div class="page-frame">
-			<nav>
-				<a href="/" class="logo">What If <span>Hub</span></a>
-				<ul class="nav-links">
-					{navLinks.map(link => (
-						<li>
-							<a href={link.href} class={link.key === sector ? 'active' : ''}>{link.label}</a>
-						</li>
-					))}
-				</ul>
-			</nav>
+		<nav>
+			<a href="/" class="logo">What If <span>Hub</span></a>
+			<ul class="nav-links">
+				{navLinks.map(link => (
+					<li>
+						<a href={link.href} class={link.key === sector ? 'active' : ''}>{link.label}</a>
+					</li>
+				))}
+			</ul>
+		</nav>
 
+		<div class="page-frame">
 			<div class="sector-header">
 				<div class="sector-header-img" style={`background-image: url('${info.image}');`}></div>
 				<div class="sector-header-body">
@@ -100,6 +100,18 @@ const navLinks = [
 					))
 				)}
 			</div>
+
+			<footer class="site-footer">
+				<div class="footer-logo">What If <span>Hub</span></div>
+				<ul class="footer-links">
+					<li><a href="/">Home</a></li>
+					<li><a href="/history">History</a></li>
+					<li><a href="/science">Science</a></li>
+					<li><a href="/space">Space</a></li>
+					<li><a href="/society">Society</a></li>
+				</ul>
+				<p class="footer-copy">© 2026 The What-If Portal. All rights reserved.</p>
+			</footer>
 		</div>
 	</body>
 </html>

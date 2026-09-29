@@ -61,6 +61,8 @@ const navLinks = [
 		<meta name="description" content={post.data.description} />
 	</head>
 	<body>
+		<div class="reading-progress" id="readingProgress"></div>
+
 		<nav>
 			<a href="/" class="logo">What If <span>Hub</span></a>
 			<ul class="nav-links">
@@ -75,9 +77,14 @@ const navLinks = [
 		<div class="page-frame">
 			<article class="article-page">
 				<a href={`/${sector}`} class="sector-tag">{sectorTitle}</a>
-				<h1>{post.data.title}</h1>
 
-				<div class="hero-image" style={`background-image: url('${post.data.image}');`}></div>
+				<div class="article-hero">
+					<div class="hero-image" style={`background-image: url('${post.data.image}');`}></div>
+					<div class="hero-text">
+						<h1>{post.data.title}</h1>
+						<p class="hero-description">{post.data.description}</p>
+					</div>
+				</div>
 
 				<div class="article-body">
 					<Content />
@@ -98,5 +105,17 @@ const navLinks = [
 				<p class="footer-copy">© 2026 The What-If Portal. All rights reserved.</p>
 			</footer>
 		</div>
+
+		<script>
+			const progressBar = document.getElementById('readingProgress') as HTMLElement | null;
+			if (progressBar) {
+				window.addEventListener('scroll', () => {
+					const scrollTop = window.scrollY;
+					const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+					const progress = (scrollTop / docHeight) * 100;
+					progressBar.style.width = progress + '%';
+				});
+			}
+		</script>
 	</body>
 </html>
