@@ -855,7 +855,6 @@ nav {
     background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
 }
 
-/* Махнато правилото, което скриваше първия разделител */
 .article-body h3 {
     font-size: 1.35rem;
     font-weight: 700;
@@ -992,17 +991,6 @@ nav {
 
 .article-body p:has(img) {
     margin: 20px 0 0 0;
-}
-
-.article-body p em {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-style: italic;
-    text-align: center;
-    margin: 8px 0 25px 0;
-    font-weight: 500;
-    line-height: 1.4;
 }
 
 /* FOOTER */
@@ -1152,10 +1140,6 @@ nav {
         float: none;
         margin: 25px auto 0;
         display: block;
-    }
-    .article-body p em {
-        text-align: center;
-        margin: 8px 0 25px 0;
     }
     .site-footer { border-radius: 0 0 16px 16px; }
 }

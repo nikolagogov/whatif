@@ -1,12 +1,12 @@
 ---
 title: "What If the Library of Alexandria Was Never Destroyed?"
 description: "What if ancient knowledge had survived, launching the industrial revolution a thousand years early and changing the course of civilization?"
-image: "/images/alexandria-harbour.jpg"
+image: "/images/articles/history/alexandria/alexandria.jpg"
 pubDate: 2026-01-15
 featured: true
 ---
 
-In 48 BC, during Julius Caesar's civil war, a fire swept through the harbour district of Alexandria. In our timeline, the fate of the Library remains shrouded in uncertainty. But imagine this: the fire never reached it. The Library survived — not as a ruin, but as a living institution for centuries.
+In 48 BC, during Julius Caesar's civil war, a fire swept through the harbour district of Alexandria. In our timeline, the fate of the Library remains shrouded in uncertainty. But imagine that the fire never reached it — and that the Library survived as a living institution for centuries.
 
 > What would the world look like if humanity never lost 700,000 scrolls of knowledge?
 
@@ -19,7 +19,7 @@ The world we know today could have been born somewhere else, and much earlier.
 The Library of Alexandria was not simply a collection of books. Founded around 283 BC under the Ptolemaic dynasty, it was part of the Mouseion — an institution dedicated to scholarship, research, and intellectual exchange.
 
 <figure class="article-figure float-right">
-  <img src="/images/alexandria-scholars.jpg" alt="Scholars studying ancient scrolls" />
+  <img src="/images/articles/history/alexandria/alexandria-scholars.jpg" alt="Scholars studying ancient scrolls" />
   <figcaption>Scholars at the Library of Alexandria — a meeting place of ancient minds.</figcaption>
 </figure>
 
@@ -38,7 +38,7 @@ The Ptolemaic dynasty eventually falls, and Egypt becomes a Roman province. Yet 
 Roman engineers bring practical experience in construction, roads, aqueducts, and machinery. Greek scholars contribute mathematics and theoretical knowledge. Together, they begin to solve problems that neither tradition could easily overcome alone.
 
 <figure class="article-figure float-right">
-  <img src="/images/alexandria-roman.jpg" alt="Roman aqueducts and engineering" />
+  <img src="/images/articles/history/alexandria/alexandria-roman.jpg" alt="Roman aqueducts and engineering" />
   <figcaption>Roman aqueducts — practical engineering meets ancient theory.</figcaption>
 </figure>
 
@@ -53,7 +53,7 @@ In our timeline, the collapse of the Western Roman Empire in the fifth century t
 The library has already outlasted dynasties, civil wars, and religious conflicts. Its scholars have learned to protect their collections through multiple copies, affiliated libraries, and networks of schools.
 
 <figure class="article-figure float-right">
-  <img src="/images/alexandria-preservation.jpg" alt="Preserving ancient knowledge" />
+  <img src="/images/articles/history/alexandria/alexandria-preservation.jpg" alt="Preserving ancient knowledge" />
   <figcaption>Preserving the past — medieval monks copying ancient manuscripts.</figcaption>
 </figure>
 
@@ -70,7 +70,7 @@ By the tenth century, Alexandria has accumulated more than a thousand years of e
 Its scholars understand geometry, mechanics, hydraulics, and the basic principles of steam power. Its workshops employ skilled metalworkers, machinists, and instrument makers. Its merchants connect Egypt with the Mediterranean, India, and the wider world.
 
 <figure class="article-figure float-right">
-  <img src="/images/alexandria-engineering.jpg" alt="Roman-era engineering and machinery" />
+  <img src="/images/articles/history/alexandria/alexandria-engineering.jpg" alt="Roman-era engineering and machinery" />
   <figcaption>Roman-era engineering: water-powered machinery in the ancient world.</figcaption>
 </figure>
 
@@ -101,7 +101,7 @@ An industrialized Egypt would transform the balance of power in the Mediterranea
 The Byzantine Empire might gain access to advanced machinery and scientific expertise. Alternatively, it could find itself competing with an increasingly wealthy and technologically advanced Egypt. The rise of the Ottoman Empire might follow a very different course.
 
 <figure class="article-figure float-right">
-  <img src="/images/alexandria-ships.jpg" alt="Steamships and Mediterranean trade" />
+  <img src="/images/articles/history/alexandria/alexandria-ships.jpg" alt="Steamships and Mediterranean trade" />
   <figcaption>Steam-powered ships — the Mediterranean of an alternate timeline.</figcaption>
 </figure>
 
