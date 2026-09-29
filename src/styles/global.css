@@ -147,7 +147,7 @@ nav {
     margin: 0 0 12px 0;
     text-transform: uppercase;
     letter-spacing: -1px;
-    line-height: 1.1;
+    line-height: 1.15;
     background: linear-gradient(90deg, var(--neon-blue), var(--accent-pink));
     -webkit-background-clip: text;
     background-clip: text;
@@ -196,7 +196,7 @@ nav {
     background: var(--card-bg);
     border: 2px solid var(--border);
     border-radius: 20px;
-    padding: 18px;
+    padding: 20px;
     margin-bottom: 22px;
     text-decoration: none;
     color: inherit;
@@ -253,18 +253,18 @@ nav {
 }
 
 .article-card-body h2 {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: 800;
-    margin: 0 0 8px 0;
-    line-height: 1.3;
+    margin: 0 0 10px 0;
+    line-height: 1.35;
     color: var(--text-main);
 }
 
 .article-card-body p {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .no-articles {
@@ -368,9 +368,9 @@ nav {
 }
 
 .recent-title {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.35;
     margin-top: 3px;
     transition: color 0.2s;
 }
@@ -454,20 +454,20 @@ nav {
 .sector-hero-body { flex: 1; min-width: 0; }
 
 .sector-hero-body h2 {
-    font-size: 1.55rem;
+    font-size: 1.6rem;
     font-weight: 900;
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     text-transform: uppercase;
     letter-spacing: -0.5px;
-    line-height: 1.1;
+    line-height: 1.15;
     color: var(--text-main);
 }
 
 .sector-hero-body p {
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
     margin: 0 0 14px 0;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .sector-hero-actions {
@@ -515,8 +515,8 @@ nav {
 
 .subcard {
     display: flex;
-    gap: 10px;
-    padding: 10px;
+    gap: 12px;
+    padding: 12px;
     background: rgba(255, 255, 255, 0.7);
     border: 1.5px solid var(--border);
     border-radius: 12px;
@@ -552,7 +552,7 @@ nav {
     letter-spacing: 1.2px;
     text-transform: uppercase;
     display: inline-block;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     padding: 2px 6px;
     border-radius: 4px;
 }
@@ -561,9 +561,9 @@ nav {
 .subcard-label.latest { color: white; background: var(--neon-blue); }
 
 .subcard-title {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.35;
     color: var(--text-main);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -598,6 +598,7 @@ nav {
     font-size: 1.15rem;
     color: var(--text-muted);
     margin: 12px 0 0;
+    line-height: 1.6;
 }
 
 .search-box {
@@ -668,7 +669,7 @@ nav {
 }
 
 .search-result-item h4 { margin: 4px 0; font-size: 0.95rem; font-weight: 700; }
-.search-result-item p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+.search-result-item p { margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
 
 .search-empty {
     padding: 18px;
@@ -692,7 +693,7 @@ nav {
     font-weight: 700;
     font-style: italic;
     margin: 0 0 8px 0;
-    line-height: 1.4;
+    line-height: 1.45;
 }
 
 .banner-inner .banner-author {
@@ -763,7 +764,7 @@ nav {
 }
 
 .hero-description {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: var(--text-muted);
     line-height: 1.6;
     margin: 0;
@@ -799,11 +800,7 @@ nav {
     clear: both;
 }
 
-/* ПЪРВИ АБЗАЦ */
-.article-body > p:first-of-type {
-    font-size: 1.25rem;
-    line-height: 1.9;
-}
+/* ВСИЧКИ АБЗАЦИ - еднакъв размер (1.15rem) */
 
 /* DROP CAP с цветен фон */
 .article-body > p:first-of-type::first-letter {
@@ -863,7 +860,7 @@ nav {
     color: var(--neon-blue);
 }
 
-.article-body p { margin: 0 0 20px 0; }
+.article-body p { margin: 0 0 22px 0; }
 
 .article-body a {
     color: var(--neon-blue);
@@ -876,7 +873,7 @@ nav {
 .article-body a:hover { color: var(--accent-pink); }
 
 .article-body ul, .article-body ol {
-    margin: 0 0 20px 0;
+    margin: 0 0 22px 0;
     padding-left: 25px;
 }
 
@@ -949,7 +946,7 @@ nav {
     text-align: center;
     margin-top: 12px;
     font-weight: 500;
-    line-height: 1.4;
+    line-height: 1.45;
     box-sizing: border-box;
 }
 
@@ -975,6 +972,7 @@ nav {
     box-sizing: border-box;
     overflow-wrap: break-word;
     word-wrap: break-word;
+    line-height: 1.4;
 }
 
 /* IMAGES IN ARTICLE (стара поддръжка) */
@@ -1100,9 +1098,6 @@ nav {
         hyphens: none;
         -webkit-hyphens: none;
         word-spacing: normal;
-    }
-    .article-body > p:first-of-type {
-        font-size: 1.05rem;
     }
     .article-body > p:first-of-type::first-letter {
         font-size: 2.2rem;
