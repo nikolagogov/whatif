@@ -800,8 +800,6 @@ nav {
     clear: both;
 }
 
-/* ВСИЧКИ АБЗАЦИ - еднакъв размер (1.15rem) */
-
 /* DROP CAP с цветен фон */
 .article-body > p:first-of-type::first-letter {
     font-size: 2.8rem;
@@ -991,6 +989,83 @@ nav {
     margin: 20px 0 0 0;
 }
 
+/* RELATED ARTICLES */
+.related-articles {
+    margin-top: 60px;
+    margin-bottom: 40px;
+    padding-top: 40px;
+    border-top: 2px solid var(--border);
+}
+
+.related-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-main);
+    margin: 0 0 20px 0;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.related-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s ease;
+}
+
+.related-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 12px 30px rgba(0, 129, 167, 0.12);
+}
+
+.related-img {
+    width: 100%;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+}
+
+.related-body {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.related-sector {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-pink);
+    margin-bottom: 6px;
+}
+
+.related-body h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.35;
+    color: var(--text-main);
+    overflow: hidden;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
 /* FOOTER */
 .site-footer {
     background: var(--nav-bg);
@@ -1135,6 +1210,9 @@ nav {
         float: none;
         margin: 25px auto 0;
         display: block;
+    }
+    .related-grid {
+        grid-template-columns: 1fr;
     }
     .site-footer { border-radius: 0 0 16px 16px; }
 }

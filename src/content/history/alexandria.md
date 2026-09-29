@@ -4,6 +4,7 @@ description: "What if ancient knowledge had survived, launching the industrial r
 image: "/images/articles/history/alexandria/alexandria.jpg"
 pubDate: 2026-01-15
 featured: true
+tags: ["rome", "ancient", "library", "knowledge", "mediterranean"]
 ---
 
 In 48 BC, during Julius Caesar's civil war, a fire swept through the harbour district of Alexandria. In our timeline, the fate of the Library remains shrouded in uncertainty. But imagine that the fire never reached it — and that the Library survived as a living institution for centuries.

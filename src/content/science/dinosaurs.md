@@ -4,6 +4,7 @@ description: "What if the dinosaurs had never gone extinct? Explore an alternate
 image: "/images/articles/science/dinosaurs/dinosaurs.jpg"
 pubDate: 2026-01-20
 featured: true
+tags: ["dinosaurs", "evolution", "extinction", "asteroid", "prehistoric"]
 ---
 
 Sixty-six million years ago, a rock the size of a mountain slammed into the ocean near the Yucatán Peninsula. The impact triggered wildfires, tsunamis, and a global winter that wiped out three-quarters of all species on Earth — including the dinosaurs.

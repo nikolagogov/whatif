@@ -49,6 +49,52 @@ const navLinks = [
   { href: '/space', label: '🌌 Space', key: 'space' },
   { href: '/society', label: '🌍 Society', key: 'society' },
 ];
+
+// СВЪРЗАНИ СТАТИИ
+const historyAll = await getCollection('history');
+const scienceAll = await getCollection('science');
+const spaceAll = await getCollection('space');
+const societyAll = await getCollection('society');
+
+const allPostsCombined = [
+  ...historyAll.map(p => ({ ...p, sector: 'history' })),
+  ...scienceAll.map(p => ({ ...p, sector: 'science' })),
+  ...spaceAll.map(p => ({ ...p, sector: 'space' })),
+  ...societyAll.map(p => ({ ...p, sector: 'society' })),
+];
+
+const otherPosts = allPostsCombined.filter(p => 
+  !(p.sector === sector && p.id === post.id)
+);
+
+const currentTags = post.data.tags || [];
+
+// Статии с общи тагове
+const relatedByTags = otherPosts.filter(p => 
+  p.data.tags && p.data.tags.length > 0 && 
+  p.data.tags.some(tag => currentTags.includes(tag))
+);
+
+// Fallback 1: статии от същата секция
+const sectorPosts = otherPosts.filter(p => 
+  p.sector === sector && 
+  !relatedByTags.some(r => r.sector === p.sector && r.id === p.id)
+);
+
+// Fallback 2: статии от всички други секции (ако в тази секция няма достатъчно)
+const otherSectorPosts = otherPosts.filter(p => 
+  p.sector !== sector && 
+  !relatedByTags.some(r => r.sector === p.sector && r.id === p.id)
+);
+
+// Разбъркай
+const shuffledRelated = [...relatedByTags].sort(() => Math.random() - 0.5);
+const shuffledSector = [...sectorPosts].sort(() => Math.random() - 0.5);
+const shuffledOther = [...otherSectorPosts].sort(() => Math.random() - 0.5);
+
+// Комбинирай: тагове → същата секция → други секции
+const combined = [...shuffledRelated, ...shuffledSector, ...shuffledOther];
+const relatedPosts = combined.slice(0, 3);
 ---
 
 <html lang="en">
@@ -89,6 +135,23 @@ const navLinks = [
 				<div class="article-body">
 					<Content />
 				</div>
+
+				{relatedPosts.length > 0 && (
+					<div class="related-articles">
+						<h3 class="related-title">📖 Read next</h3>
+						<div class="related-grid">
+							{relatedPosts.map(related => (
+								<a href={`/${related.sector}/${related.id}`} class="related-card">
+									<div class="related-img" style={`background-image: url('${related.data.image}');`}></div>
+									<div class="related-body">
+										<span class="related-sector">{related.sector}</span>
+										<h4>{related.data.title}</h4>
+									</div>
+								</a>
+							))}
+						</div>
+					</div>
+				)}
 
 				<a href={`/${sector}`} class="back-link">← Back to {sectorTitle}</a>
 			</article>

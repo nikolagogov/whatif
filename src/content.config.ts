@@ -7,6 +7,7 @@ const articleSchema = z.object({
   image: z.string(),
   pubDate: z.coerce.date(),
   featured: z.boolean().optional().default(false),
+  tags: z.array(z.string()).optional().default([]),
 });
 
 const history = defineCollection({

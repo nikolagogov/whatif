@@ -4,6 +4,7 @@ description: "What if our closest planetary neighbor stayed blue and lush? Explo
 image: "/images/articles/space/mars/mars.jpg"
 pubDate: 2026-01-25
 featured: true
+tags: ["mars", "space", "life", "colonization", "solar-system"]
 ---
 
 Today, Mars is a cold, dry desert. Its atmosphere is thin, its surface is bombarded by radiation, and its water exists mostly as ice buried beneath the surface. But billions of years ago, that was not the case.

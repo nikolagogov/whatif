@@ -4,6 +4,7 @@ description: "What if the Web had never existed? Explore a world without instant
 image: "/images/articles/society/internet/internet.jpg"
 pubDate: 2026-01-30
 featured: true
+tags: ["internet", "technology", "society", "communication", "modern"]
 ---
 
 In 1989, Tim Berners-Lee proposed a system for sharing information between computers. Within a few years, that system — the World Wide Web — had transformed almost every aspect of modern life.
