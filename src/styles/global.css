@@ -815,7 +815,7 @@ nav {
     box-shadow: 0 6px 18px rgba(210, 20, 58, 0.3);
 }
 
-/* H2 WITH COLORED BORDER + разделител - еднакви разстояния */
+/* H2 WITH COLORED BORDER + разделител */
 .article-body h2 {
     font-size: 1.8rem;
     font-weight: 800;
@@ -952,7 +952,9 @@ nav {
 .article-figure.float-right {
     float: right;
     width: 40%;
+    max-width: 380px;
     margin: 10px 0 25px 35px;
+    clear: none;
 }
 
 .article-figure.float-right img {
@@ -971,22 +973,6 @@ nav {
     overflow-wrap: break-word;
     word-wrap: break-word;
     line-height: 1.4;
-}
-
-/* IMAGES IN ARTICLE (стара поддръжка) */
-.article-body img {
-    max-width: 55%;
-    height: auto;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    border: 2px solid var(--border);
-    margin: 5px 0 0 25px;
-    float: right;
-    clear: right;
-}
-
-.article-body p:has(img) {
-    margin: 20px 0 0 0;
 }
 
 /* RELATED ARTICLES */
@@ -1203,16 +1189,48 @@ nav {
         right: 12px;
         top: 3px;
     }
-    .article-body img,
     .article-figure.float-right {
-        max-width: 100%;
-        width: 100%;
         float: none;
+        width: 100%;
+        max-width: 100%;
         margin: 25px auto 0;
-        display: block;
+    }
+    .article-figure.float-right img {
+        width: 100%;
     }
     .related-grid {
         grid-template-columns: 1fr;
     }
     .site-footer { border-radius: 0 0 16px 16px; }
+}
+
+/* ============================================
+   FORCE FIX — article figures
+   Поставя се последно, за да презапише всичко
+   ============================================ */
+
+.article-body .article-figure img {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  float: none !important;
+  clear: none !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+.article-body .article-figure.float-right {
+  float: right !important;
+  width: 40% !important;
+  max-width: 380px !important;
+  margin: 10px 0 25px 35px !important;
+  clear: none !important;
+}
+
+.article-body .article-figure:not(.float-right) {
+  float: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 35px 0 !important;
+  clear: both !important;
 }
