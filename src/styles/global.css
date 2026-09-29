@@ -1234,3 +1234,50 @@ nav {
   margin: 35px 0 !important;
   clear: both !important;
 }
+
+/* ============================================
+   FLOAT FIGURE — ограничаване на височината
+   ============================================ */
+
+.article-body .article-figure.float-right img {
+  max-height: 180px;
+  height: auto;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* ============================================
+   FINAL FIX — без .article-body wrapper
+   Заобикаля проблема с Astro <Content /> wrapper-а
+   ============================================ */
+
+.article-figure.float-right {
+  float: right !important;
+  width: 40% !important;
+  max-width: 380px !important;
+  margin: 10px 0 25px 35px !important;
+  clear: none !important;
+}
+
+.article-figure.float-right img {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 180px !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.article-figure:not(.float-right) {
+  float: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 35px 0 !important;
+  clear: both !important;
+}
+
+.article-figure img {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+}
