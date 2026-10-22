@@ -3,6 +3,6 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://haditgone.com',
+  site: 'https://whatif-portal.netlify.app',
   integrations: [sitemap()],
 });

@@ -13,7 +13,7 @@ const {
   title,
   description = 'Had It Gone explores alternate history, speculative science, and cosmic scenarios — what if the world had taken another path?',
   image = '/og-image.png',
-  url = 'https://haditgone.com',
+  url,
   type = 'website',
 } = Astro.props;
 
@@ -26,9 +26,11 @@ const navLinks = [
 
 const currentSector = Astro.url.pathname.split('/')[1] || '';
 
-const siteUrl = Astro.site ?? new URL('https://haditgone.com');
+const siteUrl = Astro.site ?? new URL('https://whatif-portal.netlify.app');
 const absoluteImage = new URL(image, siteUrl).href;
-const absoluteUrl = url.startsWith('http') ? url : new URL(url, siteUrl).href;
+const absoluteUrl = url
+  ? new URL(url, siteUrl).href
+  : new URL(Astro.url.pathname, siteUrl).href;
 ---
 
 <!DOCTYPE html>
@@ -47,6 +49,8 @@ const absoluteUrl = url.startsWith('http') ? url : new URL(url, siteUrl).href;
 
 		<title>{title}</title>
 		<meta name="description" content={description} />
+
+		<link rel="canonical" href={absoluteUrl} />
 
 		<link rel="alternate" type="application/rss+xml" title="Had It Gone" href="/rss.xml" />
 
