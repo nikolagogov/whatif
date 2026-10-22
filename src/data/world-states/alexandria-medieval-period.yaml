@@ -1,0 +1,22 @@
+schemaVersion: 1
+id: world-state-alexandria-medieval-period
+name: Knowledge Networks Transform the Mediterranean
+worldId: world-alexandria-survives
+divergenceId: divergence-alexandria-library-survives
+time:
+  label: "Medieval period"
+  year: 1000
+  precision: period
+status: SIMULATED
+description: >-
+  Mechanization may develop earlier, while knowledge networks connect
+  the Mediterranean with the wider world.
+variables:
+  - key: technology_level
+    value:
+      mechanization: "Potentially develops earlier"
+      knowledge_networks: "Connect the Mediterranean and wider world"
+    status: SIMULATED
+causedBy:
+  - alexandria-timeline-5
+evidence: []

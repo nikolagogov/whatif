@@ -1,0 +1,18 @@
+id: world-state-waterloo-1815-1820
+name: Napoleonic France Dominates Continental Europe
+schemaVersion: 1
+worldId: world-napoleonic-europe
+divergenceId: divergence-waterloo-1815
+status: SIMULATED
+time:
+  label: "Europe in 1820"
+  year: 1820
+  precision: year
+description: >-
+  France is the dominant continental power under the Napoleonic Empire.
+  Britain remains its principal rival. The European order is French-dominated,
+  but contested.
+variables: []
+causedBy:
+  - event-european-order
+evidence: []

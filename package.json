@@ -1,5 +1,5 @@
 {
-  "name": "whatif-portal",
+  "name": "haditgone",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -9,12 +9,27 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "qa": "node scripts/qa-relationships.mjs && node scripts/qa-images.mjs",
+    "graph:build": "node scripts/build-content-graph.mjs",
+    "world:validate": "node scripts/validate-world-states.mjs",
+    "causality:validate": "node scripts/validate-causality.mjs",
+    "world:transitions:validate": "node scripts/validate-world-transitions.mjs",
+    "world:transition:apply": "node scripts/apply-world-transition.mjs",
+    "migration:inventory": "node scripts/migration-inventory.mjs",
+    "links:check": "node scripts/check-internal-links.mjs"
   },
   "dependencies": {
-    "astro": "^7.3.5"
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.0",
+    "typescript": "^6.0.3"
   },
   "allowScripts": {
     "esbuild": true
+  },
+  "devDependencies": {
+    "yaml": "^2.9.1"
   }
 }

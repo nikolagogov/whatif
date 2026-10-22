@@ -1,0 +1,1990 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-21T06:52:04.667Z",
+  "source": "src/data/entities.yaml",
+  "policy": {
+    "modifiesSource": false,
+    "integratesWithGraph": false,
+    "relationMeaning": "INSTANCE_OF links an entity to a broad normalized type or a conservative name-derived category.",
+    "doesNotClaimHistoricalInteraction": true,
+    "doesNotClaimCausality": true
+  },
+  "statistics": {
+    "inputEntities": 59,
+    "normalizedEntities": 59,
+    "recognizedTypes": 59,
+    "unrecognizedTypes": 0,
+    "categories": 23,
+    "generatedRelations": 75,
+    "hierarchyRelations": 8,
+    "hierarchyCycles": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "categories": [
+    {
+      "id": "category-caliphate",
+      "code": "CALIPHATE",
+      "name": "Caliphate",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-civilization",
+      "code": "CIVILIZATION",
+      "name": "Civilization",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-clade",
+      "code": "CLADE",
+      "name": "Clade",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-concept",
+      "code": "CONCEPT",
+      "name": "Concept",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-duchy",
+      "code": "DUCHY",
+      "name": "Duchy",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-empire",
+      "code": "EMPIRE",
+      "name": "Empire",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-environment",
+      "code": "ENVIRONMENT",
+      "name": "Environment",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-event",
+      "code": "EVENT",
+      "name": "Event",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-group",
+      "code": "GROUP",
+      "name": "Group",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-institution",
+      "code": "INSTITUTION",
+      "name": "Institution",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-khanate",
+      "code": "KHANATE",
+      "name": "Khanate",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-kingdom",
+      "code": "KINGDOM",
+      "name": "Kingdom",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-person",
+      "code": "PERSON",
+      "name": "Person",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-place",
+      "code": "PLACE",
+      "name": "Place",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-planet",
+      "code": "PLANET",
+      "name": "Planet",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-political_entity",
+      "code": "POLITICAL_ENTITY",
+      "name": "Political Entity",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-principality",
+      "code": "PRINCIPALITY",
+      "name": "Principality",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-region",
+      "code": "REGION",
+      "name": "Region",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-religion",
+      "code": "RELIGION",
+      "name": "Religion",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-republic",
+      "code": "REPUBLIC",
+      "name": "Republic",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-species",
+      "code": "SPECIES",
+      "name": "Species",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-sultanate",
+      "code": "SULTANATE",
+      "name": "Sultanate",
+      "nodeType": "CATEGORY"
+    },
+    {
+      "id": "category-technology",
+      "code": "TECHNOLOGY",
+      "name": "Technology",
+      "nodeType": "CATEGORY"
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity-alexander",
+      "name": "Alexander the Great",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-alexandrian-scholars",
+      "name": "Alexandrian scholars",
+      "originalType": "GROUP",
+      "normalizedType": "GROUP",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-group",
+          "code": "GROUP",
+          "source": "normalized_type",
+          "evidence": "GROUP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-battle-of-tours",
+      "name": "Battle of Tours",
+      "originalType": "EVENT",
+      "normalizedType": "EVENT",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-event",
+          "code": "EVENT",
+          "source": "normalized_type",
+          "evidence": "EVENT"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-brazil",
+      "name": "Brazil",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-c-rdoba",
+      "name": "Córdoba",
+      "originalType": "CITY",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "CITY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-carthage",
+      "name": "Carthage",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-charles-martel",
+      "name": "Charles Martel",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-christianity",
+      "name": "Christianity",
+      "originalType": "RELIGION",
+      "normalizedType": "RELIGION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-religion",
+          "code": "RELIGION",
+          "source": "normalized_type",
+          "evidence": "RELIGION"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-cuba",
+      "name": "Cuba",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-duke-parma",
+      "name": "Duke of Parma",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-elizabeth-i",
+      "name": "Elizabeth I",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-england",
+      "name": "England",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-habsburg-monarchy",
+      "name": "Habsburg Monarchy",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-islam",
+      "name": "Islam",
+      "originalType": "RELIGION",
+      "normalizedType": "RELIGION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-religion",
+          "code": "RELIGION",
+          "source": "normalized_type",
+          "evidence": "RELIGION"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-islamic-golden-age",
+      "name": "Islamic Golden Age",
+      "originalType": "CONCEPT",
+      "normalizedType": "CONCEPT",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-concept",
+          "code": "CONCEPT",
+          "source": "normalized_type",
+          "evidence": "CONCEPT"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-islamic-scholarly-world",
+      "name": "Scholars of the Islamic world",
+      "originalType": "GROUP",
+      "normalizedType": "GROUP",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-group",
+          "code": "GROUP",
+          "source": "normalized_type",
+          "evidence": "GROUP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-kara-mustafa",
+      "name": "Kara Mustafa Pasha",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-library-alexandria",
+      "name": "Library of Alexandria",
+      "originalType": "INSTITUTION",
+      "normalizedType": "INSTITUTION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-institution",
+          "code": "INSTITUTION",
+          "source": "normalized_type",
+          "evidence": "INSTITUTION"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-macedon",
+      "name": "Macedonian Empire",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        },
+        {
+          "id": "category-empire",
+          "code": "EMPIRE",
+          "source": "name_rule",
+          "evidence": "Macedonian Empire"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-nigeria",
+      "name": "Nigeria",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-philip-ii",
+      "name": "Philip II of Spain",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-ravenna",
+      "name": "Ravenna",
+      "originalType": "PLACE",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "PLACE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-roman-empire",
+      "name": "Roman Empire",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        },
+        {
+          "id": "category-empire",
+          "code": "EMPIRE",
+          "source": "name_rule",
+          "evidence": "Roman Empire"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-south-africa",
+      "name": "South Africa",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-spanish-empire",
+      "name": "Spanish Empire",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        },
+        {
+          "id": "category-empire",
+          "code": "EMPIRE",
+          "source": "name_rule",
+          "evidence": "Spanish Empire"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-umayyad-caliphate",
+      "name": "Umayyad Caliphate",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        },
+        {
+          "id": "category-caliphate",
+          "code": "CALIPHATE",
+          "source": "name_rule",
+          "evidence": "Umayyad Caliphate"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-vienna",
+      "name": "Vienna",
+      "originalType": "PLACE",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "PLACE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "entity-western-roman-empire",
+      "name": "Western Roman Empire",
+      "originalType": "STATE",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "STATE"
+        },
+        {
+          "id": "category-empire",
+          "code": "EMPIRE",
+          "source": "name_rule",
+          "evidence": "Western Roman Empire"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "feature-ancient-oceans",
+      "name": "Ancient oceans",
+      "originalType": "ENVIRONMENT",
+      "normalizedType": "ENVIRONMENT",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-environment",
+          "code": "ENVIRONMENT",
+          "source": "normalized_type",
+          "evidence": "ENVIRONMENT"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "group-digital-communities-and-independent-publishers",
+      "name": "Digital communities and independent publishers",
+      "originalType": "GROUP",
+      "normalizedType": "GROUP",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-group",
+          "code": "GROUP",
+          "source": "normalized_type",
+          "evidence": "GROUP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "group-dinosaurs",
+      "name": "Dinosaurs",
+      "originalType": "CLADE",
+      "normalizedType": "CLADE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-clade",
+          "code": "CLADE",
+          "source": "normalized_type",
+          "evidence": "CLADE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "group-humanity",
+      "name": "Humanity",
+      "originalType": "SPECIES",
+      "normalizedType": "SPECIES",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-species",
+          "code": "SPECIES",
+          "source": "normalized_type",
+          "evidence": "SPECIES"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "group-mammals",
+      "name": "Mammals",
+      "originalType": "CLADE",
+      "normalizedType": "CLADE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-clade",
+          "code": "CLADE",
+          "source": "normalized_type",
+          "evidence": "CLADE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "group-primates",
+      "name": "Primates",
+      "originalType": "CLADE",
+      "normalizedType": "CLADE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-clade",
+          "code": "CLADE",
+          "source": "normalized_type",
+          "evidence": "CLADE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "institution-universities-and-research-institutions",
+      "name": "Universities and research institutions",
+      "originalType": "INSTITUTION",
+      "normalizedType": "INSTITUTION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-institution",
+          "code": "INSTITUTION",
+          "source": "normalized_type",
+          "evidence": "INSTITUTION"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "person-duke-of-wellington",
+      "name": "Duke of Wellington",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "person-hern-n-cort-s",
+      "name": "Hernán Cortés",
+      "originalType": "historical-figure",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "historical-figure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "person-napoleon-bonaparte",
+      "name": "Napoleon Bonaparte",
+      "originalType": "PERSON",
+      "normalizedType": "PERSON",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-person",
+          "code": "PERSON",
+          "source": "normalized_type",
+          "evidence": "PERSON"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "place-egypt",
+      "name": "Egypt",
+      "originalType": "PLACE",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "PLACE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "place-greek-mediterranean",
+      "name": "Greek Mediterranean",
+      "originalType": "REGION",
+      "normalizedType": "REGION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-region",
+          "code": "REGION",
+          "source": "normalized_type",
+          "evidence": "REGION"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "place-levant",
+      "name": "The Levant",
+      "originalType": "PLACE",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "PLACE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "place-rome",
+      "name": "Rome",
+      "originalType": "PLACE",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "PLACE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "place-tenochtitlan",
+      "name": "Tenochtitlan",
+      "originalType": "place",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "place"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "place-waterloo",
+      "name": "Waterloo",
+      "originalType": "PLACE",
+      "normalizedType": "PLACE",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-place",
+          "code": "PLACE",
+          "source": "normalized_type",
+          "evidence": "PLACE"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "planet-earth",
+      "name": "Earth",
+      "originalType": "PLANET",
+      "normalizedType": "PLANET",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-planet",
+          "code": "PLANET",
+          "source": "normalized_type",
+          "evidence": "PLANET"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "planet-mars",
+      "name": "Mars",
+      "originalType": "PLANET",
+      "normalizedType": "PLANET",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-planet",
+          "code": "PLANET",
+          "source": "normalized_type",
+          "evidence": "PLANET"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "polity-aztec-empire",
+      "name": "Aztec Empire",
+      "originalType": "civilization",
+      "normalizedType": "CIVILIZATION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-civilization",
+          "code": "CIVILIZATION",
+          "source": "normalized_type",
+          "evidence": "civilization"
+        },
+        {
+          "id": "category-empire",
+          "code": "EMPIRE",
+          "source": "name_rule",
+          "evidence": "Aztec Empire"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "polity-britain",
+      "name": "Britain",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "polity-france",
+      "name": "France",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "polity-ottoman-empire",
+      "name": "Ottoman Empire",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        },
+        {
+          "id": "category-empire",
+          "code": "EMPIRE",
+          "source": "name_rule",
+          "evidence": "Ottoman Empire"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "polity-portugal",
+      "name": "Portugal",
+      "originalType": "country",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "country"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "polity-prussia",
+      "name": "Prussia",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "polity-roman-republic",
+      "name": "Roman Republic",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        },
+        {
+          "id": "category-republic",
+          "code": "REPUBLIC",
+          "source": "name_rule",
+          "evidence": "Roman Republic"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "region-northern-hemisphere",
+      "name": "Northern Hemisphere",
+      "originalType": "REGION",
+      "normalizedType": "REGION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-region",
+          "code": "REGION",
+          "source": "normalized_type",
+          "evidence": "REGION"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "region-southern-hemisphere",
+      "name": "Southern Hemisphere",
+      "originalType": "REGION",
+      "normalizedType": "REGION",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-region",
+          "code": "REGION",
+          "source": "normalized_type",
+          "evidence": "REGION"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "state-soviet-union",
+      "name": "Soviet Union",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "state-united-states",
+      "name": "United States",
+      "originalType": "POLITY",
+      "normalizedType": "POLITICAL_ENTITY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-political_entity",
+          "code": "POLITICAL_ENTITY",
+          "source": "normalized_type",
+          "evidence": "POLITY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "technology-commercial-online-networks",
+      "name": "Commercial online networks",
+      "originalType": "TECHNOLOGY",
+      "normalizedType": "TECHNOLOGY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-technology",
+          "code": "TECHNOLOGY",
+          "source": "normalized_type",
+          "evidence": "TECHNOLOGY"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "technology-world-wide-web",
+      "name": "World Wide Web",
+      "originalType": "TECHNOLOGY",
+      "normalizedType": "TECHNOLOGY",
+      "typeRecognized": true,
+      "categories": [
+        {
+          "id": "category-technology",
+          "code": "TECHNOLOGY",
+          "source": "normalized_type",
+          "evidence": "TECHNOLOGY"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "relations": [
+    {
+      "id": "entity-alexander--INSTANCE_OF--category-person",
+      "from": "entity-alexander",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "entity-alexandrian-scholars--INSTANCE_OF--category-group",
+      "from": "entity-alexandrian-scholars",
+      "to": "category-group",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "GROUP"
+      }
+    },
+    {
+      "id": "entity-battle-of-tours--INSTANCE_OF--category-event",
+      "from": "entity-battle-of-tours",
+      "to": "category-event",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "EVENT"
+      }
+    },
+    {
+      "id": "entity-brazil--INSTANCE_OF--category-political_entity",
+      "from": "entity-brazil",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-c-rdoba--INSTANCE_OF--category-place",
+      "from": "entity-c-rdoba",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "CITY"
+      }
+    },
+    {
+      "id": "entity-carthage--INSTANCE_OF--category-political_entity",
+      "from": "entity-carthage",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "entity-charles-martel--INSTANCE_OF--category-person",
+      "from": "entity-charles-martel",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "entity-christianity--INSTANCE_OF--category-religion",
+      "from": "entity-christianity",
+      "to": "category-religion",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "RELIGION"
+      }
+    },
+    {
+      "id": "entity-cuba--INSTANCE_OF--category-political_entity",
+      "from": "entity-cuba",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-duke-parma--INSTANCE_OF--category-person",
+      "from": "entity-duke-parma",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "entity-elizabeth-i--INSTANCE_OF--category-person",
+      "from": "entity-elizabeth-i",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "entity-england--INSTANCE_OF--category-political_entity",
+      "from": "entity-england",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-habsburg-monarchy--INSTANCE_OF--category-political_entity",
+      "from": "entity-habsburg-monarchy",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-islam--INSTANCE_OF--category-religion",
+      "from": "entity-islam",
+      "to": "category-religion",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "RELIGION"
+      }
+    },
+    {
+      "id": "entity-islamic-golden-age--INSTANCE_OF--category-concept",
+      "from": "entity-islamic-golden-age",
+      "to": "category-concept",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "CONCEPT"
+      }
+    },
+    {
+      "id": "entity-islamic-scholarly-world--INSTANCE_OF--category-group",
+      "from": "entity-islamic-scholarly-world",
+      "to": "category-group",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "GROUP"
+      }
+    },
+    {
+      "id": "entity-kara-mustafa--INSTANCE_OF--category-person",
+      "from": "entity-kara-mustafa",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "entity-library-alexandria--INSTANCE_OF--category-institution",
+      "from": "entity-library-alexandria",
+      "to": "category-institution",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "INSTITUTION"
+      }
+    },
+    {
+      "id": "entity-macedon--INSTANCE_OF--category-political_entity",
+      "from": "entity-macedon",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-macedon--INSTANCE_OF--category-empire",
+      "from": "entity-macedon",
+      "to": "category-empire",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Macedonian Empire"
+      }
+    },
+    {
+      "id": "entity-nigeria--INSTANCE_OF--category-political_entity",
+      "from": "entity-nigeria",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-philip-ii--INSTANCE_OF--category-person",
+      "from": "entity-philip-ii",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "entity-ravenna--INSTANCE_OF--category-place",
+      "from": "entity-ravenna",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLACE"
+      }
+    },
+    {
+      "id": "entity-roman-empire--INSTANCE_OF--category-political_entity",
+      "from": "entity-roman-empire",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-roman-empire--INSTANCE_OF--category-empire",
+      "from": "entity-roman-empire",
+      "to": "category-empire",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Roman Empire"
+      }
+    },
+    {
+      "id": "entity-south-africa--INSTANCE_OF--category-political_entity",
+      "from": "entity-south-africa",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-spanish-empire--INSTANCE_OF--category-political_entity",
+      "from": "entity-spanish-empire",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-spanish-empire--INSTANCE_OF--category-empire",
+      "from": "entity-spanish-empire",
+      "to": "category-empire",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Spanish Empire"
+      }
+    },
+    {
+      "id": "entity-umayyad-caliphate--INSTANCE_OF--category-political_entity",
+      "from": "entity-umayyad-caliphate",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-umayyad-caliphate--INSTANCE_OF--category-caliphate",
+      "from": "entity-umayyad-caliphate",
+      "to": "category-caliphate",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Umayyad Caliphate"
+      }
+    },
+    {
+      "id": "entity-vienna--INSTANCE_OF--category-place",
+      "from": "entity-vienna",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLACE"
+      }
+    },
+    {
+      "id": "entity-western-roman-empire--INSTANCE_OF--category-political_entity",
+      "from": "entity-western-roman-empire",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "STATE"
+      }
+    },
+    {
+      "id": "entity-western-roman-empire--INSTANCE_OF--category-empire",
+      "from": "entity-western-roman-empire",
+      "to": "category-empire",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Western Roman Empire"
+      }
+    },
+    {
+      "id": "feature-ancient-oceans--INSTANCE_OF--category-environment",
+      "from": "feature-ancient-oceans",
+      "to": "category-environment",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "ENVIRONMENT"
+      }
+    },
+    {
+      "id": "group-digital-communities-and-independent-publishers--INSTANCE_OF--category-group",
+      "from": "group-digital-communities-and-independent-publishers",
+      "to": "category-group",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "GROUP"
+      }
+    },
+    {
+      "id": "group-dinosaurs--INSTANCE_OF--category-clade",
+      "from": "group-dinosaurs",
+      "to": "category-clade",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "CLADE"
+      }
+    },
+    {
+      "id": "group-humanity--INSTANCE_OF--category-species",
+      "from": "group-humanity",
+      "to": "category-species",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "SPECIES"
+      }
+    },
+    {
+      "id": "group-mammals--INSTANCE_OF--category-clade",
+      "from": "group-mammals",
+      "to": "category-clade",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "CLADE"
+      }
+    },
+    {
+      "id": "group-primates--INSTANCE_OF--category-clade",
+      "from": "group-primates",
+      "to": "category-clade",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "CLADE"
+      }
+    },
+    {
+      "id": "institution-universities-and-research-institutions--INSTANCE_OF--category-institution",
+      "from": "institution-universities-and-research-institutions",
+      "to": "category-institution",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "INSTITUTION"
+      }
+    },
+    {
+      "id": "person-duke-of-wellington--INSTANCE_OF--category-person",
+      "from": "person-duke-of-wellington",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "person-hern-n-cort-s--INSTANCE_OF--category-person",
+      "from": "person-hern-n-cort-s",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "historical-figure"
+      }
+    },
+    {
+      "id": "person-napoleon-bonaparte--INSTANCE_OF--category-person",
+      "from": "person-napoleon-bonaparte",
+      "to": "category-person",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PERSON"
+      }
+    },
+    {
+      "id": "place-egypt--INSTANCE_OF--category-place",
+      "from": "place-egypt",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLACE"
+      }
+    },
+    {
+      "id": "place-greek-mediterranean--INSTANCE_OF--category-region",
+      "from": "place-greek-mediterranean",
+      "to": "category-region",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "REGION"
+      }
+    },
+    {
+      "id": "place-levant--INSTANCE_OF--category-place",
+      "from": "place-levant",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLACE"
+      }
+    },
+    {
+      "id": "place-rome--INSTANCE_OF--category-place",
+      "from": "place-rome",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLACE"
+      }
+    },
+    {
+      "id": "place-tenochtitlan--INSTANCE_OF--category-place",
+      "from": "place-tenochtitlan",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "place"
+      }
+    },
+    {
+      "id": "place-waterloo--INSTANCE_OF--category-place",
+      "from": "place-waterloo",
+      "to": "category-place",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLACE"
+      }
+    },
+    {
+      "id": "planet-earth--INSTANCE_OF--category-planet",
+      "from": "planet-earth",
+      "to": "category-planet",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLANET"
+      }
+    },
+    {
+      "id": "planet-mars--INSTANCE_OF--category-planet",
+      "from": "planet-mars",
+      "to": "category-planet",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "PLANET"
+      }
+    },
+    {
+      "id": "polity-aztec-empire--INSTANCE_OF--category-civilization",
+      "from": "polity-aztec-empire",
+      "to": "category-civilization",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "civilization"
+      }
+    },
+    {
+      "id": "polity-aztec-empire--INSTANCE_OF--category-empire",
+      "from": "polity-aztec-empire",
+      "to": "category-empire",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Aztec Empire"
+      }
+    },
+    {
+      "id": "polity-britain--INSTANCE_OF--category-political_entity",
+      "from": "polity-britain",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "polity-france--INSTANCE_OF--category-political_entity",
+      "from": "polity-france",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "polity-ottoman-empire--INSTANCE_OF--category-political_entity",
+      "from": "polity-ottoman-empire",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "polity-ottoman-empire--INSTANCE_OF--category-empire",
+      "from": "polity-ottoman-empire",
+      "to": "category-empire",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Ottoman Empire"
+      }
+    },
+    {
+      "id": "polity-portugal--INSTANCE_OF--category-political_entity",
+      "from": "polity-portugal",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "country"
+      }
+    },
+    {
+      "id": "polity-prussia--INSTANCE_OF--category-political_entity",
+      "from": "polity-prussia",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "polity-roman-republic--INSTANCE_OF--category-political_entity",
+      "from": "polity-roman-republic",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "polity-roman-republic--INSTANCE_OF--category-republic",
+      "from": "polity-roman-republic",
+      "to": "category-republic",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "name_rule",
+        "value": "Roman Republic"
+      }
+    },
+    {
+      "id": "region-northern-hemisphere--INSTANCE_OF--category-region",
+      "from": "region-northern-hemisphere",
+      "to": "category-region",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "REGION"
+      }
+    },
+    {
+      "id": "region-southern-hemisphere--INSTANCE_OF--category-region",
+      "from": "region-southern-hemisphere",
+      "to": "category-region",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "REGION"
+      }
+    },
+    {
+      "id": "state-soviet-union--INSTANCE_OF--category-political_entity",
+      "from": "state-soviet-union",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "state-united-states--INSTANCE_OF--category-political_entity",
+      "from": "state-united-states",
+      "to": "category-political_entity",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "POLITY"
+      }
+    },
+    {
+      "id": "technology-commercial-online-networks--INSTANCE_OF--category-technology",
+      "from": "technology-commercial-online-networks",
+      "to": "category-technology",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "TECHNOLOGY"
+      }
+    },
+    {
+      "id": "technology-world-wide-web--INSTANCE_OF--category-technology",
+      "from": "technology-world-wide-web",
+      "to": "category-technology",
+      "type": "INSTANCE_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "normalized_type",
+        "value": "TECHNOLOGY"
+      }
+    },
+    {
+      "id": "category-empire--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-empire",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "EMPIRE is a subcategory of POLITICAL_ENTITY"
+      }
+    },
+    {
+      "id": "category-republic--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-republic",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "REPUBLIC is a subcategory of POLITICAL_ENTITY"
+      }
+    },
+    {
+      "id": "category-kingdom--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-kingdom",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "KINGDOM is a subcategory of POLITICAL_ENTITY"
+      }
+    },
+    {
+      "id": "category-principality--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-principality",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "PRINCIPALITY is a subcategory of POLITICAL_ENTITY"
+      }
+    },
+    {
+      "id": "category-duchy--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-duchy",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "DUCHY is a subcategory of POLITICAL_ENTITY"
+      }
+    },
+    {
+      "id": "category-sultanate--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-sultanate",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "SULTANATE is a subcategory of POLITICAL_ENTITY"
+      }
+    },
+    {
+      "id": "category-caliphate--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-caliphate",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "CALIPHATE is a subcategory of POLITICAL_ENTITY"
+      }
+    },
+    {
+      "id": "category-khanate--SUBCATEGORY_OF--category-political_entity",
+      "from": "category-khanate",
+      "to": "category-political_entity",
+      "type": "SUBCATEGORY_OF",
+      "status": "GENERATED",
+      "evidence": {
+        "source": "CATEGORY_HIERARCHY",
+        "rule": "KHANATE is a subcategory of POLITICAL_ENTITY"
+      }
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  }
+}

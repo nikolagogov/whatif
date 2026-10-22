@@ -1,0 +1,18 @@
+id: world-state-napoleon-egypt-1810
+name: France Builds an Eastern Sphere of Power
+schemaVersion: 1
+worldId: world-napoleonic-europe
+divergenceId: divergence-egypt-1798
+status: SIMULATED
+time:
+  label: The Eastern French sphere
+  year: 1810
+  precision: year
+description: >-
+  France maintains a permanent sphere in Egypt and the Levant.
+  The Ottoman Empire is its principal rival, while the Napoleonic
+  Empire uses the region as a strategic gateway to India and the East.
+variables: []
+causedBy:
+  - event-eastern-empire
+evidence: []

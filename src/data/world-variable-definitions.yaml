@@ -1,0 +1,85 @@
+schemaVersion: 1
+
+variables:
+  - id: political_stability
+    label: Political Stability
+    domain: politics
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of political stability within a world."
+
+  - id: territorial_control
+    label: Territorial Control
+    domain: politics
+    valueType: object
+    description: "Describes control over a defined territory by an entity."
+
+  - id: military_capacity
+    label: Military Capacity
+    domain: military
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of military capacity within a defined comparison context."
+
+  - id: economic_capacity
+    label: Economic Capacity
+    domain: economy
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of economic capacity within a defined comparison context."
+
+  - id: population
+    label: Population
+    domain: society
+    valueType: number
+    unit: persons
+    min: 0
+    description: "Estimated population at the time represented by the world state."
+
+  - id: technology_level
+    label: Technology Level
+    domain: technology
+    valueType: object
+    description: "Technology maturity across explicitly defined technological fields."
+
+  - id: diplomatic_influence
+    label: Diplomatic Influence
+    domain: diplomacy
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of diplomatic influence within a defined comparison context."
+
+  - id: institutional_continuity
+    label: Institutional Continuity
+    domain: institutions
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of continuity in political and administrative institutions."
+
+  - id: urbanization
+    label: Urbanization
+    domain: society
+    valueType: number
+    unit: percentage
+    min: 0
+    max: 100
+    description: "Share of the population living in urban settlements, where evidence permits estimation."
+
+  - id: trade_connectivity
+    label: Trade Connectivity
+    domain: economy
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of a world's trade-network connectivity."

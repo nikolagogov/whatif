@@ -1,0 +1,16 @@
+id: world-state-mars-ancient-environment
+name: Mars Retains Its Ancient Oceans
+schemaVersion: 1
+worldId: world-living-mars
+divergenceId: divergence-mars-keeps-oceans
+status: SIMULATED
+time:
+  label: Ancient Mars
+  precision: period
+description: >-
+  Oceans persist for much longer, and the Martian climate remains
+  more suitable for liquid water.
+variables: []
+causedBy:
+  - event-mars-retains-habitability
+evidence: []

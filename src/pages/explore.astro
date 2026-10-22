@@ -1,0 +1,1639 @@
+---
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+import contentGraph from '../data/content-graph.json';
+
+
+
+const nodes = contentGraph.nodes;
+
+const edges = contentGraph.edges;
+
+
+
+const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+
+
+
+const articleNodes = nodes.filter((node) => node.kind === 'article');
+
+
+
+const worlds = nodes
+
+  .filter((node) => node.kind === 'world')
+
+  .map((world) => {
+
+    const worldEdges = edges.filter(
+
+      (edge) => edge.type === 'HAS_WORLD' && edge.to === world.id
+
+    );
+
+
+
+    const articles = worldEdges
+
+      .map((edge) => nodeMap.get(edge.from))
+
+      .filter((article) => article !== undefined);
+
+
+
+    const articleIds = new Set(articles.map((article) => article.id));
+
+
+
+    const divergences = edges
+
+      .filter((edge) => edge.type === 'HAS_DIVERGENCE' && articleIds.has(edge.from))
+
+      .map((edge) => nodeMap.get(edge.to))
+
+      .filter((item): item is NonNullable<typeof item> => item !== undefined);
+
+
+
+    const timeline = edges
+
+      .filter((edge) => edge.type === 'HAS_TIMELINE_EVENT' && articleIds.has(edge.from))
+
+      .map((edge) => nodeMap.get(edge.to))
+
+      .filter((item) => item !== undefined);
+
+
+
+    return {
+
+      ...world,
+
+      articles,
+
+      divergences,
+
+      timeline,
+
+      articleUrl: articles[0]?.sector && articles[0]?.articleId
+
+        ? `/${articles[0].sector}/${articles[0].articleId}/`
+
+        : null,
+
+    };
+
+  })
+
+  .sort((a, b) => a.label.localeCompare(b.label));
+
+
+
+const totalEvents = worlds.reduce(
+
+  (total, world) => total + world.timeline.length,
+
+  0
+
+);
+
+---
+
+
+
+<BaseLayout
+
+  title="Explore Alternate Worlds | HAD IT GONE"
+
+  description="Explore alternative worlds, follow their timelines and discover how history could have unfolded differently."
+
+>
+
+  <main class="explore-page">
+
+    <section class="explore-hero">
+
+      <div class="hero-copy">
+
+        <p class="eyebrow">HAD IT GONE · ALTERNATE HISTORY</p>
+
+        <h1>History could have been <span>different.</span></h1>
+
+        <p class="hero-intro">
+
+          Every turning point opens another path. Explore alternative worlds,
+
+          follow the events that shape them, and discover a different version
+
+          of our past and future.
+
+        </p>
+
+      </div>
+
+
+
+      <div class="hero-stats" aria-label="Explore statistics">
+
+        <div>
+
+          <strong>{worlds.length}</strong>
+
+          <span>ALTERNATE WORLDS</span>
+
+        </div>
+
+        <div>
+
+          <strong>{totalEvents}</strong>
+
+          <span>TIMELINE EVENTS</span>
+
+        </div>
+
+        <div>
+
+          <strong>{articleNodes.length}</strong>
+
+          <span>WHAT IF STORIES</span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <section class="worlds-section" aria-labelledby="worlds-heading">
+
+      <div class="section-heading">
+
+        <div>
+
+          <p class="eyebrow">CHOOSE YOUR PATH</p>
+
+          <h2 id="worlds-heading">Explore alternative worlds</h2>
+
+          <p>Start with a different outcome. Follow its consequences.</p>
+
+        </div>
+
+
+
+        <label class="world-search">
+
+          <span aria-hidden="true">⌕</span>
+
+          <input
+
+            id="world-search"
+
+            type="search"
+
+            placeholder="Search worlds..."
+
+            autocomplete="off"
+
+          />
+
+        </label>
+
+      </div>
+
+
+
+      <div class="world-grid" id="world-grid">
+
+        {worlds.map((world, index) => (
+
+          <article
+
+            class="world-card"
+
+            data-world-card
+
+            data-search={`${world.label} ${world.divergences.map((item) => item.label).join(' ')} ${world.articles.map((item) => item.label).join(' ')}`.toLowerCase()}
+
+          >
+
+            <div class="world-art" aria-hidden="true">
+
+              <span class="art-index">{String(index + 1).padStart(2, '0')}</span>
+
+              <span class="art-symbol">
+
+                {world.label.toLowerCase().includes('rome') ? 'ROMA' :
+
+                 world.label.toLowerCase().includes('egypt') ? 'AEGYPTUS' :
+
+                 world.label.toLowerCase().includes('mars') ? 'MARS' :
+
+                 'WHAT IF'}
+
+              </span>
+
+              <span class="art-orbit orbit-one"></span>
+
+              <span class="art-orbit orbit-two"></span>
+
+            </div>
+
+
+
+            <div class="world-card-body">
+
+              <p class="card-kicker">ALTERNATE WORLD</p>
+
+              <h3>{world.label}</h3>
+
+
+
+              {world.divergences[0] && (
+
+                <p class="world-divergence">
+
+                  <span class="divergence-mark">↳</span>
+
+                  {world.divergences[0].label}
+
+                </p>
+
+              )}
+
+
+
+              <div class="world-meta">
+
+                <span>{world.timeline.length} timeline events</span>
+
+                <span>{world.articles.length} {world.articles.length === 1 ? 'story' : 'stories'}</span>
+
+              </div>
+
+
+
+              <button
+
+                class="explore-world"
+
+                type="button"
+
+                data-open-world={world.id}
+
+              >
+
+                Explore this world <span aria-hidden="true">→</span>
+
+              </button>
+
+            </div>
+
+          </article>
+
+        ))}
+
+      </div>
+
+
+
+      <p class="no-worlds" id="no-worlds" hidden>
+
+        No worlds match your search. Try another term.
+
+      </p>
+
+    </section>
+
+
+
+    <section class="timeline-section" id="world-timeline" hidden>
+
+      <div class="timeline-heading">
+
+        <div>
+
+          <p class="eyebrow">A DIFFERENT COURSE OF HISTORY</p>
+
+          <h2 id="timeline-title">World timeline</h2>
+
+          <p id="timeline-description"></p>
+
+        </div>
+
+        <button id="close-timeline" class="back-button" type="button">
+
+          ← All worlds
+
+        </button>
+
+      </div>
+
+
+
+      <div class="timeline-content">
+
+        <div class="timeline-list" id="timeline-list"></div>
+
+        <aside class="timeline-aside" id="timeline-aside"></aside>
+
+      </div>
+
+    </section>
+
+
+
+    <section class="graph-note">
+
+      <span class="graph-note-icon" aria-hidden="true">◎</span>
+
+      <div>
+
+        <h2>Follow the connections</h2>
+
+        <p>
+
+          Alternate worlds are connected to their points of divergence,
+
+          timeline events and related stories. The knowledge graph will
+
+          provide another way to explore those relationships.
+
+        </p>
+
+      </div>
+
+      <span class="graph-note-count">{contentGraph.stats.edges} connections</span>
+
+    </section>
+
+  </main>
+
+
+
+  <script is:inline define:vars={{ worlds, graphEdges: edges, graphNodes: nodes }}>
+
+    (() => {
+
+      const search = document.getElementById('world-search');
+
+      const cards = [...document.querySelectorAll('[data-world-card]')];
+
+      const noWorlds = document.getElementById('no-worlds');
+
+      const timelineSection = document.getElementById('world-timeline');
+
+      const timelineTitle = document.getElementById('timeline-title');
+
+      const timelineDescription = document.getElementById('timeline-description');
+
+      const timelineList = document.getElementById('timeline-list');
+
+      const timelineAside = document.getElementById('timeline-aside');
+
+      const closeTimeline = document.getElementById('close-timeline');
+
+
+
+      if (
+
+        !search || !noWorlds || !timelineSection || !timelineTitle ||
+
+        !timelineDescription || !timelineList || !timelineAside ||
+
+        !closeTimeline
+
+      ) return;
+
+
+
+      const escapeHtml = (value) =>
+
+        String(value ?? '').replace(/[&<>"']/g, (char) => ({
+
+          '&': '&amp;',
+
+          '<': '&lt;',
+
+          '>': '&gt;',
+
+          '"': '&quot;',
+
+          "'": '&#39;'
+
+        })[char]);
+
+
+
+      search.addEventListener('input', () => {
+
+        const query = search.value.trim().toLowerCase();
+
+        let visible = 0;
+
+
+
+        cards.forEach((card) => {
+
+          const match = (card.dataset.search || '').includes(query);
+
+          card.hidden = !match;
+
+          if (match) visible++;
+
+        });
+
+
+
+        noWorlds.hidden = visible !== 0;
+
+      });
+
+
+
+      function openWorld(worldId) {
+
+        const world = worlds.find((item) => item.id === worldId);
+
+        if (!world) return;
+
+
+
+        timelineTitle.textContent = world.label;
+
+        timelineDescription.textContent =
+
+          world.divergences?.[0]?.label ||
+
+          'Explore the events recorded in this alternative world.';
+
+
+
+        const events = [...(world.timeline || [])];
+
+
+
+        const yearOf = (event) => {
+
+          const date = String(event.date || '');
+
+          const match = date.match(/\d{3,4}/);
+
+          return match ? Number(match[0]) : Number.MAX_SAFE_INTEGER;
+
+        };
+
+
+
+        events.sort((a, b) => yearOf(a) - yearOf(b));
+
+
+
+        timelineList.innerHTML = events.length
+          ? events.map((event, index) => `
+              <article class="timeline-event" data-event-id="${escapeHtml(event.id)}" tabindex="0" role="button" aria-pressed="false">
+                <div class="timeline-marker">${String(index + 1).padStart(2, '0')}</div>
+                <div class="timeline-event-copy">
+                  <p class="timeline-date">${escapeHtml(event.date || 'Date unspecified')}</p>
+                  <h3>${escapeHtml(event.label)}</h3>
+                  <p class="event-type">SELECT TO INSPECT <span aria-hidden="true">↗</span></p>
+                </div>
+              </article>
+            `).join('')
+          : '<p class="timeline-empty">No timeline events have been linked to this world yet.</p>';
+
+        const divergence = world.divergences?.[0];
+        const renderWorldOverview = () => `
+          <p class="eyebrow">THE POINT OF DIVERGENCE</p>
+          <h3>${escapeHtml(divergence?.label || 'Not specified')}</h3>
+          ${divergence?.date ? `<p class="aside-date">${escapeHtml(divergence.date)}</p>` : ''}
+          <p class="aside-hint">Select any event on the timeline to inspect its connections and place in this world.</p>
+          <div class="aside-divider"></div>
+          <p class="eyebrow">EXPLORE THE STORY</p>
+          ${(world.articles || []).map((article) => {
+            const url = article.sector && article.articleId
+              ? `/${encodeURIComponent(article.sector)}/${encodeURIComponent(article.articleId)}/`
+              : null;
+            return url
+              ? `<a class="story-link" href="${url}">${escapeHtml(article.label)} <span>↗</span></a>`
+              : `<p>${escapeHtml(article.label)}</p>`;
+          }).join('') || '<p>No linked stories are available yet.</p>'}
+        `;
+        timelineAside.innerHTML = renderWorldOverview();
+
+        const inspectEvent = (eventId) => {
+          const event = events.find((item) => String(item.id) === String(eventId));
+          if (!event) return;
+          timelineList.querySelectorAll('[data-event-id]').forEach((item) => {
+            const selected = item.dataset.eventId === String(eventId);
+            item.classList.toggle('is-selected', selected);
+            item.setAttribute('aria-pressed', String(selected));
+          });
+          const causalEdges = graphEdges.filter((edge) =>
+            (String(edge.from) === String(eventId) || String(edge.to) === String(eventId)) &&
+            /(CAUSE|LEAD|RESULT|FOLLOW|PRECEDE|TRIGGER|CONSEQUENCE|DERIVE|TRANSITION)/i.test(String(edge.type || ''))
+          );
+          const connections = causalEdges.map((edge) => {
+            const outgoing = String(edge.from) === String(eventId);
+            const otherId = outgoing ? edge.to : edge.from;
+            const other = graphNodes.find((node) => String(node.id) === String(otherId));
+            if (!other) return '';
+            return `<li><span class="connection-direction">${outgoing ? 'LEADS TO' : 'CAUSED BY'}</span><strong>${escapeHtml(other.label || other.title || other.id)}</strong></li>`;
+          }).filter(Boolean);
+          const description = event.description || event.summary || event.content || '';
+          timelineAside.innerHTML = `
+            <button class="aside-back" type="button" id="event-back">← World overview</button>
+            <p class="eyebrow">EVENT INSPECTOR</p>
+            <p class="aside-date">${escapeHtml(event.date || 'Date unspecified')}</p>
+            <h3>${escapeHtml(event.label)}</h3>
+            ${description ? `<p class="event-description">${escapeHtml(description)}</p>` : '<p class="aside-hint">This event is part of the recorded timeline. Explore its connected events below.</p>'}
+            <div class="aside-divider"></div>
+            <p class="eyebrow">CAUSAL CONNECTIONS</p>
+            ${connections.length ? `<ul class="causal-connections">${connections.join('')}</ul>` : '<p class="aside-hint">No explicit causal links are recorded for this event yet.</p>'}
+            <div class="aside-divider"></div>
+            <p class="eyebrow">RELATED STORIES</p>
+            ${(world.articles || []).map((article) => {
+              const url = article.sector && article.articleId
+                ? `/${encodeURIComponent(article.sector)}/${encodeURIComponent(article.articleId)}/`
+                : null;
+              return url ? `<a class="story-link" href="${url}">${escapeHtml(article.label)} <span>↗</span></a>` : '';
+            }).join('') || '<p>No linked stories are available yet.</p>'}
+          `;
+          document.getElementById('event-back')?.addEventListener('click', () => {
+            timelineList.querySelectorAll('[data-event-id]').forEach((item) => {
+              item.classList.remove('is-selected');
+              item.setAttribute('aria-pressed', 'false');
+            });
+            timelineAside.innerHTML = renderWorldOverview();
+          });
+        };
+
+        timelineList.querySelectorAll('[data-event-id]').forEach((item) => {
+          item.addEventListener('click', () => inspectEvent(item.dataset.eventId));
+          item.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              inspectEvent(item.dataset.eventId);
+            }
+          });
+        });
+
+        timelineSection.hidden = false;
+
+        timelineSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      }
+
+
+
+      document.querySelectorAll('[data-open-world]').forEach((button) => {
+
+        button.addEventListener('click', () => {
+
+          openWorld(button.dataset.openWorld);
+
+        });
+
+      });
+
+
+
+      closeTimeline.addEventListener('click', () => {
+
+        timelineSection.hidden = true;
+
+        document.getElementById('worlds-heading')?.scrollIntoView({
+
+          behavior: 'smooth',
+
+          block: 'start'
+
+        });
+
+      });
+
+    })();
+
+  </script>
+
+
+
+  <style is:global>
+
+    [hidden] { display: none !important; }
+
+
+
+    .explore-page {
+
+      max-width: 1500px;
+
+      margin: 0 auto;
+
+      padding: 48px 32px 64px;
+
+      color: #e8edf5;
+
+    }
+
+
+
+    .explore-hero {
+
+      display: flex;
+
+      align-items: end;
+
+      justify-content: space-between;
+
+      gap: 36px;
+
+      padding: 12px 0 42px;
+
+      border-bottom: 1px solid rgba(157, 173, 198, .16);
+
+    }
+
+
+
+    .eyebrow {
+
+      margin: 0 0 12px;
+
+      color: #dba65c;
+
+      font-size: 10px;
+
+      font-weight: 800;
+
+      letter-spacing: .17em;
+
+      text-transform: uppercase;
+
+    }
+
+
+
+    .hero-copy { max-width: 740px; }
+
+
+
+    .explore-hero h1 {
+
+      margin: 0;
+
+      font-size: clamp(34px, 4.5vw, 62px);
+
+      font-weight: 800;
+
+      line-height: 1.04;
+
+      letter-spacing: -.045em;
+
+    }
+
+
+
+    .explore-hero h1 span { color: #dba65c; }
+
+
+
+    .hero-intro {
+
+      max-width: 640px;
+
+      margin: 20px 0 0;
+
+      color: #a3afc0;
+
+      font-size: 15px;
+
+      line-height: 1.8;
+
+    }
+
+
+
+    .hero-stats {
+
+      display: flex;
+
+      flex-shrink: 0;
+
+      gap: 28px;
+
+      padding-bottom: 4px;
+
+    }
+
+
+
+    .hero-stats div { display: grid; gap: 7px; }
+
+
+
+    .hero-stats strong {
+
+      font-size: 27px;
+
+      line-height: 1;
+
+      font-weight: 750;
+
+    }
+
+
+
+    .hero-stats span {
+
+      color: #8996a9;
+
+      font-size: 9px;
+
+      letter-spacing: .09em;
+
+      white-space: nowrap;
+
+    }
+
+
+
+    .worlds-section { padding-top: 38px; }
+
+
+
+    .section-heading,
+
+    .timeline-heading {
+
+      display: flex;
+
+      align-items: end;
+
+      justify-content: space-between;
+
+      gap: 24px;
+
+      margin-bottom: 24px;
+
+    }
+
+
+
+    .section-heading .eyebrow,
+
+    .timeline-heading .eyebrow { margin-bottom: 8px; }
+
+
+
+    .section-heading h2,
+
+    .timeline-heading h2 {
+
+      margin: 0;
+
+      font-size: clamp(24px, 3vw, 34px);
+
+      letter-spacing: -.035em;
+
+    }
+
+
+
+    .section-heading > div > p:last-child,
+
+    .timeline-heading > div > p:last-child {
+
+      margin: 8px 0 0;
+
+      color: #929fb1;
+
+      font-size: 13px;
+
+      line-height: 1.6;
+
+    }
+
+
+
+    .world-search {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      width: min(300px, 100%);
+
+      padding: 0 13px;
+
+      border: 1px solid #303b4c;
+
+      border-radius: 8px;
+
+      background: #111925;
+
+      color: #9aa7ba;
+
+    }
+
+
+
+    .world-search input {
+
+      width: 100%;
+
+      min-width: 0;
+
+      padding: 12px 0;
+
+      border: 0;
+
+      outline: 0;
+
+      background: transparent;
+
+      color: #edf2fa;
+
+      font: inherit;
+
+      font-size: 12px;
+
+    }
+
+
+
+    .world-grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      gap: 20px;
+
+    }
+
+
+
+    .world-card {
+
+      min-width: 0;
+
+      overflow: hidden;
+
+      border: 1px solid rgba(140, 155, 180, .19);
+
+      border-radius: 12px;
+
+      background: #111925;
+
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+
+    }
+
+
+
+    .world-card:hover {
+
+      transform: translateY(-3px);
+
+      border-color: rgba(219, 166, 92, .65);
+
+      box-shadow: 0 18px 44px rgba(0, 0, 0, .2);
+
+    }
+
+
+
+    .world-art {
+
+      position: relative;
+
+      display: flex;
+
+      min-height: 175px;
+
+      align-items: center;
+
+      justify-content: center;
+
+      overflow: hidden;
+
+      background:
+
+        radial-gradient(ellipse at 50% 65%, rgba(175, 112, 48, .24), transparent 50%),
+
+        linear-gradient(140deg, #263346, #111925 65%, #1e2634);
+
+    }
+
+
+
+    .world-card:nth-child(3n + 2) .world-art {
+
+      background:
+
+        radial-gradient(ellipse at 50% 60%, rgba(89, 119, 180, .3), transparent 52%),
+
+        linear-gradient(140deg, #1e3041, #101721 70%, #20273b);
+
+    }
+
+
+
+    .world-card:nth-child(3n) .world-art {
+
+      background:
+
+        radial-gradient(ellipse at 50% 60%, rgba(65, 148, 133, .23), transparent 52%),
+
+        linear-gradient(140deg, #203735, #101820 70%, #222d36);
+
+    }
+
+
+
+    .art-index {
+
+      position: absolute;
+
+      top: 15px;
+
+      left: 17px;
+
+      color: #9aa7ba;
+
+      font-size: 10px;
+
+      letter-spacing: .12em;
+
+    }
+
+
+
+    .art-symbol {
+
+      position: relative;
+
+      z-index: 1;
+
+      color: rgba(230, 190, 126, .88);
+
+      font-family: Georgia, serif;
+
+      font-size: clamp(19px, 2vw, 30px);
+
+      letter-spacing: .17em;
+
+      text-shadow: 0 4px 35px rgba(0, 0, 0, .5);
+
+    }
+
+
+
+    .art-orbit {
+
+      position: absolute;
+
+      width: 220px;
+
+      height: 220px;
+
+      border: 1px solid rgba(219, 166, 92, .15);
+
+      border-radius: 50%;
+
+    }
+
+
+
+    .orbit-two {
+
+      width: 155px;
+
+      height: 155px;
+
+      border-color: rgba(219, 166, 92, .11);
+
+    }
+
+
+
+    .world-card-body { padding: 21px; }
+
+
+
+    .card-kicker {
+
+      margin: 0 0 9px;
+
+      color: #dba65c;
+
+      font-size: 9px;
+
+      font-weight: 800;
+
+      letter-spacing: .13em;
+
+    }
+
+
+
+    .world-card h3 {
+
+      margin: 0;
+
+      font-size: 21px;
+
+      line-height: 1.25;
+
+      letter-spacing: -.025em;
+
+    }
+
+
+
+    .world-divergence {
+
+      display: flex;
+
+      gap: 8px;
+
+      min-height: 48px;
+
+      margin: 15px 0;
+
+      color: #aab5c5;
+
+      font-size: 12px;
+
+      line-height: 1.65;
+
+    }
+
+
+
+    .divergence-mark { color: #dba65c; }
+
+
+
+    .world-meta {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 8px 16px;
+
+      padding: 14px 0;
+
+      border-top: 1px solid rgba(140, 155, 180, .15);
+
+      color: #8795a9;
+
+      font-size: 10px;
+
+    }
+
+
+
+    .explore-world {
+
+      display: flex;
+
+      width: 100%;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      margin-top: 4px;
+
+      padding: 12px 0 0;
+
+      border: 0;
+
+      background: transparent;
+
+      color: #e3b36e;
+
+      font: inherit;
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+      text-align: left;
+
+      cursor: pointer;
+
+    }
+
+
+
+    .explore-world span {
+
+      font-size: 19px;
+
+      transition: transform .2s;
+
+    }
+
+
+
+    .explore-world:hover span { transform: translateX(4px); }
+
+
+
+    .no-worlds {
+
+      padding: 35px 0;
+
+      color: #a3afc0;
+
+      text-align: center;
+
+    }
+
+
+
+    .timeline-section {
+
+      margin-top: 64px;
+
+      padding-top: 38px;
+
+      border-top: 1px solid rgba(157, 173, 198, .2);
+
+      scroll-margin-top: 30px;
+
+    }
+
+
+
+    .back-button {
+
+      padding: 10px 14px;
+
+      border: 1px solid #354153;
+
+      border-radius: 7px;
+
+      background: #151e2b;
+
+      color: #e8edf5;
+
+      font: inherit;
+
+      font-size: 11px;
+
+      cursor: pointer;
+
+    }
+
+
+
+    .back-button:hover { border-color: #dba65c; }
+
+
+
+    .timeline-content {
+
+      display: grid;
+
+      grid-template-columns: minmax(0, 1.5fr) minmax(230px, .7fr);
+
+      gap: 42px;
+
+    }
+
+
+
+    .timeline-list {
+
+      position: relative;
+
+      display: grid;
+
+      gap: 0;
+
+    }
+
+
+
+    .timeline-list::before {
+
+      position: absolute;
+
+      top: 22px;
+
+      bottom: 22px;
+
+      left: 20px;
+
+      width: 1px;
+
+      background: linear-gradient(#dba65c, rgba(219, 166, 92, .1));
+
+      content: "";
+
+    }
+
+
+
+    .timeline-event {
+
+      position: relative;
+
+      display: grid;
+
+      grid-template-columns: 42px minmax(0, 1fr);
+
+      gap: 18px;
+
+      padding: 0 0 30px;
+
+    }
+
+
+
+    .timeline-marker {
+
+      position: relative;
+
+      z-index: 1;
+
+      display: grid;
+
+      width: 41px;
+
+      height: 41px;
+
+      place-items: center;
+
+      border: 1px solid rgba(219, 166, 92, .65);
+
+      border-radius: 50%;
+
+      background: #111925;
+
+      color: #e6b46b;
+
+      font-size: 10px;
+
+    }
+
+
+
+    .timeline-event {
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 10px 12px 28px 0;
+      margin-left: -6px;
+      transition: background .2s ease, transform .2s ease;
+      outline: none;
+    }
+
+    .timeline-event:hover,
+    .timeline-event:focus-visible {
+      background: rgba(255, 255, 255, .035);
+      transform: translateX(3px);
+    }
+
+    .timeline-event.is-selected {
+      background: linear-gradient(90deg, rgba(219, 166, 92, .12), rgba(219, 166, 92, .015));
+      box-shadow: inset 2px 0 #dba65c;
+    }
+
+    .timeline-event.is-selected .timeline-marker {
+      background: #dba65c;
+      color: #101722;
+      box-shadow: 0 0 0 5px rgba(219, 166, 92, .1);
+    }
+
+    .event-type span { color: #dba65c; }
+    .aside-hint, .event-description { color: #a9b4c4; font-size: 13px; line-height: 1.7; }
+    .aside-back { margin: 0 0 24px; padding: 8px 11px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: rgba(255,255,255,.035); color: #e8edf5; cursor: pointer; font: inherit; font-size: 12px; }
+    .aside-back:hover { border-color: #dba65c; }
+    .causal-connections { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .causal-connections li { display: grid; gap: 5px; padding: 12px; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; background: rgba(255,255,255,.025); }
+    .causal-connections strong { font-size: 13px; line-height: 1.45; }
+    .connection-direction { color: #dba65c; font-size: 9px; font-weight: 700; letter-spacing: .1em; }
+
+    .timeline-date {
+
+      margin: 2px 0 7px;
+
+      color: #dba65c;
+
+      font-size: 10px;
+
+      font-weight: 700;
+
+      letter-spacing: .08em;
+
+      text-transform: uppercase;
+
+    }
+
+
+
+    .timeline-event h3 {
+
+      margin: 0;
+
+      font-size: 20px;
+
+      line-height: 1.35;
+
+    }
+
+
+
+    .event-type {
+
+      margin: 8px 0 0;
+
+      color: #7f8ca0;
+
+      font-size: 9px;
+
+      letter-spacing: .1em;
+
+    }
+
+
+
+    .timeline-aside {
+
+      align-self: start;
+
+      padding: 23px;
+
+      border: 1px solid rgba(140, 155, 180, .2);
+
+      border-radius: 10px;
+
+      background: #111925;
+
+    }
+
+
+
+    .timeline-aside h3 {
+
+      margin: 0;
+
+      font-size: 19px;
+
+      line-height: 1.45;
+
+    }
+
+
+
+    .aside-date {
+
+      color: #a3afc0;
+
+      font-size: 12px;
+
+    }
+
+
+
+    .aside-divider {
+
+      height: 1px;
+
+      margin: 22px 0;
+
+      background: rgba(140, 155, 180, .2);
+
+    }
+
+
+
+    .story-link {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 12px;
+
+      padding: 12px 0;
+
+      color: #e5b56f;
+
+      font-size: 12px;
+
+      line-height: 1.6;
+
+      text-decoration: none;
+
+    }
+
+
+
+    .story-link:hover { color: #ffcf8b; }
+
+
+
+    .timeline-empty {
+
+      color: #a3afc0;
+
+      font-size: 13px;
+
+      line-height: 1.7;
+
+    }
+
+
+
+    .graph-note {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 18px;
+
+      margin-top: 55px;
+
+      padding: 22px 24px;
+
+      border: 1px solid rgba(140, 155, 180, .16);
+
+      border-radius: 10px;
+
+      background: linear-gradient(135deg, #151f2e 0%, #101722 100%);
+      border-color: rgba(219, 166, 92, .22);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, .14);
+
+    }
+
+
+
+    .graph-note-icon {
+
+      color: #dba65c;
+
+      font-size: 30px;
+
+    }
+
+
+
+    .graph-note h2 {
+
+      margin: 0 0 6px;
+
+      font-size: 15px;
+
+    }
+
+
+
+    .graph-note p {
+
+      max-width: 720px;
+
+      margin: 0;
+
+      color: #929fb1;
+
+      font-size: 12px;
+
+      line-height: 1.7;
+
+    }
+
+
+
+    .graph-note-count {
+
+      margin-left: auto;
+
+      color: #8996a9;
+
+      font-size: 10px;
+
+      white-space: nowrap;
+
+    }
+
+
+
+
+    .world-search:focus-within {
+      border-color: rgba(219, 166, 92, .75);
+      box-shadow: 0 0 0 3px rgba(219, 166, 92, .1);
+    }
+
+    .explore-world:focus-visible,
+    .back-button:focus-visible,
+    .story-link:focus-visible,
+    .world-search input:focus-visible {
+      outline: 2px solid #dba65c;
+      outline-offset: 4px;
+    }
+
+    .timeline-aside {
+      background: linear-gradient(155deg, #151f2e 0%, #101722 100%);
+      border-color: rgba(219, 166, 92, .22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+    }
+
+    .timeline-empty {
+      padding: 20px;
+      border: 1px dashed rgba(140, 155, 180, .25);
+      border-radius: 10px;
+      background: rgba(17, 25, 37, .55);
+    }
+
+    .graph-note h2 { color: #f0f3f8; }
+
+    .graph-note-count {
+      padding: 8px 11px;
+      border: 1px solid rgba(219, 166, 92, .2);
+      border-radius: 999px;
+      background: rgba(219, 166, 92, .07);
+      color: #dba65c;
+    }
+
+    @media (max-width: 1050px) {
+      .explore-page { width: min(100% - 48px, 900px); }
+      .timeline-content { gap: 24px; }
+    }
+
+    @media (max-width: 1050px) {
+
+      .explore-hero { align-items: flex-start; flex-direction: column; }
+
+      .world-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+      .hero-stats { width: 100%; }
+
+    }
+
+
+
+    @media (max-width: 650px) {
+
+      .explore-page { width: calc(100% - 32px); padding: 28px 0 44px; }
+      .explore-hero { gap: 28px; padding-bottom: 30px; }
+      .hero-intro { font-size: 14px; }
+      .hero-stats { justify-content: space-between; gap: 12px; }
+      .worlds-section { padding-top: 30px; }
+      .world-card-body { padding: 19px; }
+      .graph-note { gap: 12px; }
+
+      .hero-stats { gap: 15px; }
+
+      .hero-stats strong { font-size: 22px; }
+
+      .hero-stats span { font-size: 8px; white-space: normal; }
+
+      .section-heading, .timeline-heading {
+
+        align-items: stretch;
+
+        flex-direction: column;
+
+      }
+
+      .world-search { width: auto; }
+
+      .world-grid { grid-template-columns: minmax(0, 1fr); }
+
+      .world-art { min-height: 155px; }
+
+      .timeline-content { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+
+      .graph-note { align-items: flex-start; flex-wrap: wrap; padding: 18px; }
+
+      .graph-note-count { width: 100%; margin-left: 48px; }
+
+    }
+
+
+
+    @media (max-width: 390px) {
+      .hero-stats strong { font-size: 19px; }
+      .hero-stats span { letter-spacing: .04em; }
+      .graph-note-icon { font-size: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .world-card, .explore-world span { transition: none; }
+
+    }
+
+  </style>
+
+</BaseLayout>

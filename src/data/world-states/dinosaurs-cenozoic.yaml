@@ -1,0 +1,17 @@
+id: world-state-dinosaurs-cenozoic
+name: Dinosaurs Continue to Dominate the Cenozoic
+schemaVersion: 1
+worldId: world-dinosaurs-survive
+divergenceId: divergence-asteroid-misses-earth
+status: SIMULATED
+time:
+  label: Cenozoic era
+  year: -50000000
+  precision: period
+description: >-
+  Non-avian dinosaurs remain major terrestrial animals.
+  Mammals face different opportunities for diversification.
+variables: []
+causedBy:
+  - event-dinosaurs-continue-evolving
+evidence: []

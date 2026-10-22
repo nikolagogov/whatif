@@ -1,0 +1,240 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  url?: string;
+  type?: string;
+}
+
+const {
+  title,
+  description = 'Had It Gone explores alternate history, speculative science, and cosmic scenarios — what if the world had taken another path?',
+  image = '/og-image.png',
+  url = 'https://haditgone.com',
+  type = 'website',
+} = Astro.props;
+
+const navLinks = [
+  { href: '/history', label: 'History', key: 'history' },
+  { href: '/science', label: 'Science', key: 'science' },
+  { href: '/space', label: 'Space', key: 'space' },
+  { href: '/society', label: 'Society', key: 'society' },
+];
+
+const currentSector = Astro.url.pathname.split('/')[1] || '';
+
+const siteUrl = Astro.site ?? new URL('https://haditgone.com');
+const absoluteImage = new URL(image, siteUrl).href;
+const absoluteUrl = url.startsWith('http') ? url : new URL(url, siteUrl).href;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+
+		<title>{title}</title>
+		<meta name="description" content={description} />
+
+		<link rel="alternate" type="application/rss+xml" title="Had It Gone" href="/rss.xml" />
+
+		<meta property="og:type" content={type} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={absoluteUrl} />
+		<meta property="og:image" content={absoluteImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:site_name" content="Had It Gone" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={absoluteImage} />
+	</head>
+
+	<body>
+
+		{type === 'article' && (
+			<div class="reading-progress" id="readingProgress"></div>
+		)}
+
+					<nav class="site-nav">
+  <div class="nav-inner">
+				<a href="/" class="logo">HAD IT <span>GONE</span></a>
+
+				<ul class="nav-links" id="navLinks">
+					{navLinks.map(link => (
+						<li>
+							<a
+								href={link.href}
+								class={link.key === currentSector ? 'active' : ''}
+							>
+								{link.label}
+							</a>
+						</li>
+					))}
+				</ul>
+
+				<div class="nav-controls">
+					<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+						<span class="theme-label-light">🌙 Dark</span>
+						<span class="theme-label-dark">☀️ Light</span>
+					</button>
+
+					<button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+						<span></span>
+						<span></span>
+						<span></span>
+					</button>
+				</div>
+			</div>
+		</nav>
+
+		<main class="page-frame">
+			<slot />
+		</main>
+
+
+<footer class="site-footer">
+  <a class="footer-logo" href="/" aria-label="Had It Gone home">
+    HAD IT <span>GONE</span>
+  </a>
+
+  <nav class="footer-nav" aria-label="Footer navigation">
+    <a href="/">Home</a>
+    <a href="/history">History</a>
+    <a href="/science">Science</a>
+    <a href="/space">Space</a>
+    <a href="/society">Society</a>
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy</a>
+  </nav>
+
+  <p class="footer-copy">© 2026 Had It Gone</p>
+</footer>
+
+		<button class="back-to-top" id="backToTop" aria-label="Back to top">
+			↑
+		</button>
+
+		<script>
+			/* THEME */
+
+			const themeToggle = document.getElementById('themeToggle');
+			const savedTheme = localStorage.getItem('theme');
+
+			if (savedTheme === 'dark') {
+				document.documentElement.setAttribute('data-theme', 'dark');
+			}
+
+			if (themeToggle) {
+				themeToggle.addEventListener('click', () => {
+					const current =
+						document.documentElement.getAttribute('data-theme');
+
+					const next = current === 'dark' ? 'light' : 'dark';
+
+					if (next === 'dark') {
+						document.documentElement.setAttribute(
+							'data-theme',
+							'dark'
+						);
+
+						localStorage.setItem('theme', 'dark');
+					} else {
+						document.documentElement.removeAttribute('data-theme');
+						localStorage.setItem('theme', 'light');
+					}
+				});
+			}
+
+
+			/* MOBILE NAVIGATION */
+
+			const toggle = document.getElementById('navToggle');
+			const navLinks = document.getElementById('navLinks');
+
+			if (toggle && navLinks) {
+				toggle.addEventListener('click', () => {
+					navLinks.classList.toggle('open');
+					toggle.classList.toggle('open');
+				});
+
+				navLinks.querySelectorAll('a').forEach(link => {
+					link.addEventListener('click', () => {
+						navLinks.classList.remove('open');
+						toggle.classList.remove('open');
+					});
+				});
+			}
+
+
+			/* READING PROGRESS */
+
+			function updateReadingProgress() {
+				const progressBar =
+					document.getElementById('readingProgress');
+
+				if (!progressBar) return;
+
+				const scrollTop = window.scrollY;
+
+				const docHeight =
+					document.documentElement.scrollHeight -
+					window.innerHeight;
+
+				const progress =
+					docHeight > 0
+						? Math.min(100, (scrollTop / docHeight) * 100)
+						: 0;
+
+				progressBar.style.width = progress + '%';
+			}
+
+			window.addEventListener(
+				'scroll',
+				updateReadingProgress,
+				{ passive: true }
+			);
+
+			window.addEventListener(
+				'resize',
+				updateReadingProgress
+			);
+
+			updateReadingProgress();
+
+
+			/* BACK TO TOP */
+
+			const backToTop = document.getElementById('backToTop');
+
+			if (backToTop) {
+				window.addEventListener('scroll', () => {
+					if (window.scrollY > 900) {
+						backToTop.classList.add('visible');
+					} else {
+						backToTop.classList.remove('visible');
+					}
+				}, { passive: true });
+
+				backToTop.addEventListener('click', () => {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				});
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,18 @@
+schemaVersion: 1
+id: world-state-islamic-europe-present-day
+name: Europe Develops Through Interwoven Traditions
+worldId: world-islamic-europe
+divergenceId: divergence-umayyads-win-tours
+time:
+  label: "Present day"
+  year: 2026
+  precision: year
+status: SIMULATED
+description: >-
+  The historical concept of the West may develop differently or fail to emerge
+  in its familiar form. Intellectual traditions and institutions evolve through
+  a different combination of European and Islamic influences. Colonization and
+  Atlantic exploration may follow different routes, actors, and timelines.
+variables: []
+causedBy: []
+evidence: []

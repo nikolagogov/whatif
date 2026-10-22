@@ -1,6 +1,10 @@
 ---
 import { getCollection, render } from 'astro:content';
-import '../../styles/global.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sortPosts } from '../../lib/sorting';
+import { getWorldStates } from '../../lib/world-states';
+import { compareStoredWorldStates } from '../../lib/world-comparison';
+import { getRelatedArticles } from '../../lib/related-articles';  
 
 export async function getStaticPaths() {
   const historyPosts = await getCollection('history');
@@ -28,157 +32,769 @@ export async function getStaticPaths() {
     props: { post, sector: 'society' },
   }));
 
-  return [...historyPaths, ...sciencePaths, ...spacePaths, ...societyPaths];
+  return [
+    ...historyPaths,
+    ...sciencePaths,
+    ...spacePaths,
+    ...societyPaths,
+  ];
 }
 
 const { post, sector } = Astro.props;
+
 const { Content } = await render(post);
 
+const wordCount = (post.body || '').split(/\s+/).length;
+const readingTime = Math.ceil(wordCount / 200);
+
 const sectorTitles: Record<string, string> = {
-  history: '🏛️ Alternate History',
-  science: '🧪 Speculative Science',
-  space: '🌌 Cosmic Shifts',
-  society: '🌍 Society & Geopolitics',
+  history: 'History',
+  science: 'Science',
+  space: 'Space',
+  society: 'Society',
 };
+const sectorTitle = sectorTitles[sector] || 'Home';
 
-const sectorTitle = sectorTitles[sector] || 'Article';
+// -------------------------------------------------------------
+// FRONTMATTER DATA (WORLD / SCENARIO)
+// -------------------------------------------------------------
+const pageUrl = `https://haditgone.com/${sector}/${post.id}`;
+const {
+  title,
+  description,
+  image,  
+  world,
+  divergence,
+  timeline = [],
+  entities = [],
+  } = post.data;
 
-const navLinks = [
-  { href: '/history', label: '🏛️ History', key: 'history' },
-  { href: '/science', label: '🧪 Science', key: 'science' },
-  { href: '/space', label: '🌌 Space', key: 'space' },
-  { href: '/society', label: '🌍 Society', key: 'society' },
-];
+const timelineItems = timeline.map((item) => ({
+  ...item,
+  targetHeading: item.headingId ?? null,
+}));
 
-// СВЪРЗАНИ СТАТИИ
+const hasWorld = Boolean(world?.name || world?.id);
+const formatWorldStateLabel = (key: string) =>
+  key
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+const worldStates = world?.id
+  ? getWorldStates()
+      .filter((state) => state.worldId === world.id)
+      .sort((a, b) => a.time.year - b.time.year)
+      .map((state) => ({
+        date: state.time.label,
+        label: state.description || 'World State',
+        items: (state.variables as Array<{ key: string; value: unknown }>).flatMap(
+          (variable) =>
+            variable.value &&
+            typeof variable.value === 'object' &&
+            !Array.isArray(variable.value)
+              ? Object.entries(variable.value).map(([label, value]) => ({
+                  label: formatWorldStateLabel(label),
+                  value: String(value),
+                }))
+              : [{ label: variable.key, value: String(variable.value) }]
+        ),
+      }))
+  : [];
+const storedWorldStates = world?.id
+  ? getWorldStates()
+      .filter((state) => state.worldId === world.id)
+      .sort((a, b) => a.time.year - b.time.year)
+  : [];
+
+const isRecord = (
+  value: unknown
+): value is Record<string, unknown> =>
+  value !== null &&
+  typeof value === 'object' &&
+  !Array.isArray(value);
+
+const worldComparison =
+  storedWorldStates.length >= 2
+    ? compareStoredWorldStates(
+        storedWorldStates[0].id,
+        storedWorldStates[storedWorldStates.length - 1].id
+      )
+    : null;
+const worldLabel = hasWorld
+  ? (divergence ? 'Alternate World' : 'World')
+  : 'Scenario';
+
+// Всички постове за свързани връзки (MVP логика)
 const historyAll = await getCollection('history');
 const scienceAll = await getCollection('science');
 const spaceAll = await getCollection('space');
 const societyAll = await getCollection('society');
 
 const allPostsCombined = [
-  ...historyAll.map(p => ({ ...p, sector: 'history' })),
-  ...scienceAll.map(p => ({ ...p, sector: 'science' })),
-  ...spaceAll.map(p => ({ ...p, sector: 'space' })),
-  ...societyAll.map(p => ({ ...p, sector: 'society' })),
+  ...historyAll.map(p => ({ ...p, sector: 'history' as const })),
+  ...scienceAll.map(p => ({ ...p, sector: 'science' as const })),
+  ...spaceAll.map(p => ({ ...p, sector: 'space' as const })),
+  ...societyAll.map(p => ({ ...p, sector: 'society' as const })),
 ];
 
-const otherPosts = allPostsCombined.filter(p => 
-  !(p.sector === sector && p.id === post.id)
+const sectorPostsSorted = sortPosts(
+  allPostsCombined.filter(p => p.sector === sector)
 );
 
-const currentTags = post.data.tags || [];
-
-// Статии с общи тагове
-const relatedByTags = otherPosts.filter(p => 
-  p.data.tags && p.data.tags.length > 0 && 
-  p.data.tags.some(tag => currentTags.includes(tag))
+const currentPostIndex = sectorPostsSorted.findIndex(
+  p => p.id === post.id
 );
 
-// Fallback 1: статии от същата секция
-const sectorPosts = otherPosts.filter(p => 
-  p.sector === sector && 
-  !relatedByTags.some(r => r.sector === p.sector && r.id === p.id)
+const previousPost =
+  sectorPostsSorted[
+    (currentPostIndex - 1 + sectorPostsSorted.length) %
+      sectorPostsSorted.length
+  ];
+
+const nextPost =
+  sectorPostsSorted[
+    (currentPostIndex + 1) % sectorPostsSorted.length
+  ];
+
+const alternativePaths = world?.id
+  ? sortPosts(
+      allPostsCombined.filter(
+        p => p.id !== post.id && p.data.world?.id === world.id
+      )
+    ).slice(0, 3)
+  : [];
+
+const finalRelated = getRelatedArticles(
+  { ...post, sector: sector as 'history' | 'science' | 'society' | 'space' },
+  allPostsCombined
 );
-
-// Fallback 2: статии от всички други секции (ако в тази секция няма достатъчно)
-const otherSectorPosts = otherPosts.filter(p => 
-  p.sector !== sector && 
-  !relatedByTags.some(r => r.sector === p.sector && r.id === p.id)
-);
-
-// Разбъркай
-const shuffledRelated = [...relatedByTags].sort(() => Math.random() - 0.5);
-const shuffledSector = [...sectorPosts].sort(() => Math.random() - 0.5);
-const shuffledOther = [...otherSectorPosts].sort(() => Math.random() - 0.5);
-
-// Комбинирай: тагове → същата секция → други секции
-const combined = [...shuffledRelated, ...shuffledSector, ...shuffledOther];
-const relatedPosts = combined.slice(0, 3);
 ---
+<BaseLayout
+  title={`${title} | Had It Gone`}
+  description={description}
+  image={image}
+  url={pageUrl}
+  type="article"
+>
+  <article class="article-page scenario-experience">
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{post.data.title} | The What-If Portal</title>
-		<meta name="description" content={post.data.description} />
-	</head>
-	<body>
-		<div class="reading-progress" id="readingProgress"></div>
+    <!-- 1. BREADCRUMBS -->
+    <div class="scenario-breadcrumbs">
+      <a href={`/${sector}`} class="sector-tag">{sectorTitle}</a>
+      {world?.name && <span class="world-tag">World: {world.name}</span>}
+    </div>
 
-		<nav>
-			<a href="/" class="logo">What If <span>Hub</span></a>
-			<ul class="nav-links">
-				{navLinks.map(link => (
-					<li>
-						<a href={link.href} class={link.key === sector ? 'active' : ''}>{link.label}</a>
-					</li>
-				))}
-			</ul>
-		</nav>
+    <!-- 2. HERO / WORLD ENTRY -->
+    <header class="world-entry-hero">
+      <div class="hero-backdrop" style={`background-image: url('${image}');`}></div>
+      <div class="hero-content-box">
+        <span class="entry-eyebrow">{worldLabel}</span>
+        <h1>{title}</h1>
 
-		<div class="page-frame">
-			<article class="article-page">
-				<a href={`/${sector}`} class="sector-tag">{sectorTitle}</a>
+        {divergence && (
+          <div class="entry-divergence">
+            <span class="divergence-label">
+              Divergence Point{divergence.date ? ` — ${divergence.date}` : ''}
+            </span>
+            <p>{divergence.title}</p>
+          </div>
+        )}
 
-				<div class="article-hero">
-					<div class="hero-image" style={`background-image: url('${post.data.image}');`}></div>
-					<div class="hero-text">
-						<h1>{post.data.title}</h1>
-						<p class="hero-description">{post.data.description}</p>
-					</div>
-				</div>
+        <div class="hero-meta-row">
+          <span class="hero-meta">⏱ {readingTime} min read</span>
+          <button
+            class="save-btn"
+            id="saveBtn"
+            data-article-id={post.id}
+            data-article-sector={sector}
+            aria-label="Save scenario"
+          >
+            <span class="save-icon">☆</span>
+            <span class="save-text">Save Scenario</span>
+          </button>
+        </div>
+      </div>
+    </header>
 
-				<div class="article-body">
-					<Content />
-				</div>
+        
+        
+   
+    <!-- 3. ARTICLE INTRO: CONTENTS + WORLD COMPARISON -->
+    <div
+      class="article-intro-grid"
+      style="display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; gap: 3rem;"
+    >
+      <nav
+        class="toc"
+        id="toc"
+        aria-label="Table of contents"
+        style="display: none; width: 100%; min-width: 0; box-sizing: border-box;"
+      >
+        <div class="toc-title">Contents</div>
+        <ul class="toc-list" id="tocList"></ul>
+      </nav>
 
-				{relatedPosts.length > 0 && (
-					<div class="related-articles">
-						<h3 class="related-title">📖 Read next</h3>
-						<div class="related-grid">
-							{relatedPosts.map(related => (
-								<a href={`/${related.sector}/${related.id}`} class="related-card">
-									<div class="related-img" style={`background-image: url('${related.data.image}');`}></div>
-									<div class="related-body">
-										<span class="related-sector">{related.sector}</span>
-										<h4>{related.data.title}</h4>
-									</div>
-								</a>
-							))}
-						</div>
-					</div>
-				)}
+      {divergence?.referenceOutcome && divergence?.alternateOutcome && (
+      <section
+          class="world-compare-section"
+          style="width: 100%; min-width: 0; margin-top: 0; align-self: start;"
+        >
+          <div class="toc-title" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
+            Our World / This World
+          </div>
 
-				<a href={`/${sector}`} class="back-link">← Back to {sectorTitle}</a>
-			</article>
+          <div
+            class="compare-matrix-grid"
+            style="display: flex; flex-direction: column; gap: 0.75rem;"
+          >
+            <div class="matrix-box our-reality">
+              <div class="matrix-title">Our World</div>
+              <p>{divergence.referenceOutcome}</p>
+            </div>
 
-			<footer class="site-footer">
-				<div class="footer-logo">What If <span>Hub</span></div>
-				<ul class="footer-links">
-					<li><a href="/">Home</a></li>
-					<li><a href="/history">History</a></li>
-					<li><a href="/science">Science</a></li>
-					<li><a href="/space">Space</a></li>
-					<li><a href="/society">Society</a></li>
-				</ul>
-				<p class="footer-copy">© 2026 The What-If Portal. All rights reserved.</p>
-			</footer>
-		</div>
+            <div class="matrix-box alt-reality">
+              <div class="matrix-title">This World</div>
+              <p>{divergence.alternateOutcome}</p>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
 
-		<script>
-			const progressBar = document.getElementById('readingProgress') as HTMLElement | null;
-			if (progressBar) {
-				window.addEventListener('scroll', () => {
-					const scrollTop = window.scrollY;
-					const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-					const progress = (scrollTop / docHeight) * 100;
-					progressBar.style.width = progress + '%';
-				});
-			}
-		</script>
-	</body>
-</html>
+    <!-- 3. NARRATIVE -->
+    <div class="article-body narrative-flow">
+      <Content />
+    </div>
+
+    <!-- 4. TIMELINE -->
+    {timeline.length > 0 && (
+      <section class="world-timeline-section">
+        <div class="section-header-line">
+          <h2>Timeline</h2>
+        </div>
+        <div class="timeline-stream">
+
+{timelineItems.map((item) => (
+  <div class:list={['timeline-stream-node', { 'is-linked': item.targetHeading }]}>
+    <div class="timeline-event-header">
+      <span class="node-year">{item.date}</span>
+      {item.targetHeading ? (
+        <a
+          class="node-event timeline-event-link"
+          href={`#${item.targetHeading}`}
+          data-target-heading={item.targetHeading}
+        >
+          {item.title}
+        </a>
+      ) : (
+        <p class="node-event">{item.title}</p>
+      )}
+    </div>
+    {item.description && <p class="node-desc">{item.description}</p>}
+  </div>
+))}
+
+        </div>
+      </section>
+    )}
+
+    <!-- WORLD STATE -->
+    {worldStates.length > 0 && (
+      <section class="world-state-section">
+        <div class="section-header-line">
+          <h2>World State</h2>
+        </div>
+        {worldStates.map((state) => (
+          <div class="world-state-snapshot">
+            <div class="world-state-header">
+              <span class="world-state-date">{state.date}</span>
+              <h3 class="world-state-label">{state.label}</h3>
+            </div>
+            <div class="world-state-grid">
+              {state.items.map((item) => (
+                <div class="world-state-item">
+                  <div class="world-state-item-label">{item.label}</div>
+                  <div class="world-state-item-value">{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+    )}
+
+    <!-- 5. KEY ENTITIES -->
+    {entities.length > 0 && (
+      <section class="world-entities-section">
+        <div class="section-header-line">
+          <h2>Key Entities</h2>
+        </div>
+        <div class="entities-grid">
+          {entities.map((entity) => (
+            <div class="entity-card">
+              <h4>{entity.name}</h4>
+              {entity.type && <p>{entity.type}</p>}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- 8. ALTERNATIVE PATHS & RELATED -->
+    <footer class="scenario-exploration-footer">
+
+      <nav class="scenario-pagination" aria-label="Article navigation">
+        <a
+          class="scenario-pagination-link previous"
+          href={`/${previousPost.sector}/${previousPost.id}`}
+        >
+          <span class="scenario-pagination-direction">← Previous</span>
+          <span class="scenario-pagination-title">
+            {previousPost.data.title}
+          </span>
+        </a>
+
+        <a
+          class="scenario-pagination-link next"
+          href={`/${nextPost.sector}/${nextPost.id}`}
+        >
+          <span class="scenario-pagination-direction">Next →</span>
+          <span class="scenario-pagination-title">
+            {nextPost.data.title}
+          </span>
+        </a>
+      </nav>
+
+      {alternativePaths.length > 0 && (
+        <div class="exploration-block">
+          <h3>Alternative Paths in {world?.name}</h3>
+          <div class="exploration-grid">
+            {alternativePaths.map(alt => (
+              <a href={`/${alt.sector}/${alt.id}`} class="explore-card">
+                <div class="explore-thumb" style={`background-image: url('${alt.data.image}');`}></div>
+                <div class="explore-info">
+                  <span class="explore-sector">{alt.sector}</span>
+                  <h4>{alt.data.title}</h4>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {finalRelated.length > 0 && (
+        <div class="exploration-block">
+          <h3>Related Scenarios</h3>
+          <div class="exploration-grid">
+            {finalRelated.map(rel => (
+              <a href={`/${rel.sector}/${rel.id}`} class="explore-card">
+                <div class="explore-thumb" style={`background-image: url('${rel.data.image}');`}></div>
+                <div class="explore-info">
+                  <span class="explore-sector">{rel.sector}</span>
+                  <h4>{rel.data.title}</h4>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- SHARE & NAVIGATION -->
+      <div class="share-section">
+        <button class="share-trigger" id="shareTrigger" aria-label="Share this scenario">
+          🔗 Share Scenario
+        </button>
+
+        <div class="share-modal" id="shareModal" style="display: none;">
+          <div class="share-modal-backdrop" id="shareModalBackdrop"></div>
+          <div class="share-modal-content">
+            <div class="share-modal-header">
+              <h3>Share Scenario</h3>
+              <button class="share-modal-close" id="shareModalClose" aria-label="Close">✕</button>
+            </div>
+            <div class="share-modal-grid">
+              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">𝕏</span><span class="share-option-label">X</span></a>
+              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">f</span><span class="share-option-label">Facebook</span></a>
+              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">in</span><span class="share-option-label">LinkedIn</span></a>
+              <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">💬</span><span class="share-option-label">WhatsApp</span></a>
+              <a href={`https://t.me/share/url?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">✈</span><span class="share-option-label">Telegram</span></a>
+              <a href={`https://www.reddit.com/submit?url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">r/</span><span class="share-option-label">Reddit</span></a>
+              <a href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('Read this: ' + pageUrl)}`} class="share-option"><span class="share-option-icon">✉️</span><span class="share-option-label">Email</span></a>
+              <button class="share-option" id="shareCopyOption" data-url={pageUrl}><span class="share-option-icon">📋</span><span class="share-option-label">Copy Link</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="back-links">
+        <a href={`/${sector}`} class="back-link">← Return to {sectorTitle}</a>
+        <a href="/" class="back-link">← Back to Homepage</a>
+      </div>
+    </footer>
+  </article>
+
+  <!-- СКРИПТОВЕ -->
+  <script is:inline>
+
+function buildTOC() {
+  var toc = document.getElementById('toc');
+  var tocList = document.getElementById('tocList');
+  var articleBody = document.querySelector('.narrative-flow');
+
+  if (!toc || !tocList || !articleBody) return;
+
+  var headings = Array.from(articleBody.querySelectorAll('h2'));
+  tocList.innerHTML = '';
+
+  if (headings.length < 2) {
+    toc.style.display = 'none';
+    return;
+  }
+
+  toc.style.display = 'block';
+
+  function makeHeadingId(text) {
+    return text
+      .toLowerCase()
+      .replace(/[–—]/g, '-')
+      .replace(/:/g, '')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-') || 'section';
+  }
+
+  // 1. Задай уникални ID-та на всички heading-и.
+  var usedIds = new Set();
+
+  headings.forEach(function (heading, index) {
+    var baseId = makeHeadingId(heading.textContent.trim()) || 'section-' + index;
+    var uniqueId = baseId;
+    var suffix = 2;
+
+    while (
+      usedIds.has(uniqueId) ||
+      (document.getElementById(uniqueId) && document.getElementById(uniqueId) !== heading)
+    ) {
+      uniqueId = baseId + '-' + suffix;
+      suffix++;
+    }
+
+    heading.id = uniqueId;
+    usedIds.add(uniqueId);
+  });
+
+  // Помощна функция за скролване към родителския контейнер на заглавието
+  function scrollToHeading(heading) {
+    // Намираме най-близкия родителски контейнер (section, div и т.н.)
+    var target = heading.closest('section, div.narrative-flow') || heading;
+    
+    // Изчисляваме позицията спрямо екрана
+    var navHeight = 80; // Височина на фиксираното меню
+    var targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight;
+
+    window.scrollTo({
+      top: targetTop,
+      behavior: 'smooth'
+    });
+
+    history.pushState(null, '', '#' + heading.id);
+  }
+
+  // 2. Резолвни Timeline линковете.
+  var timelineLinks = document.querySelectorAll('.timeline-event-link');
+
+  timelineLinks.forEach(function (link) {
+    var targetId = link.getAttribute('data-target-heading');
+    if (!targetId) {
+      link.removeAttribute('href');
+      return;
+    }
+
+    var targetHeading = headings.find(function (heading) {
+      return heading.id === targetId;
+    });
+
+    if (!targetHeading) {
+      targetHeading = headings.find(function (heading) {
+        return makeHeadingId(heading.textContent.trim()) === targetId;
+      });
+    }
+
+    if (!targetHeading) {
+      link.removeAttribute('href');
+      return;
+    }
+
+    targetHeading.id = targetId;
+    link.href = '#' + targetId;
+
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      scrollToHeading(targetHeading);
+    });
+  });
+
+  // 3. Изгради TOC списъка.
+  headings.forEach(function (heading) {
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+
+    a.href = '#' + heading.id;
+    a.textContent = heading.textContent.trim();
+
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      scrollToHeading(heading);
+    });
+
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+buildTOC();
+
+    function updateProgressBar() {
+      var progressBar = document.getElementById('readingProgress');
+      if (!progressBar) return;
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progressBar.style.width = progress + '%';
+    }
+    window.addEventListener('scroll', updateProgressBar, { passive: true });
+    window.addEventListener('resize', updateProgressBar);
+    updateProgressBar();
+
+    // CONTINUE READING
+    var CONTINUE_KEY = 'hig_continue';
+
+    function saveContinueProgress() {
+      var docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      var scrollY = Math.max(0, window.scrollY);
+      var progress = docHeight > 0
+        ? Math.min(100, Math.max(0, Math.round((scrollY / docHeight) * 100)))
+        : 0;
+
+      try {
+        var list = JSON.parse(
+          localStorage.getItem(CONTINUE_KEY) || '[]'
+        );
+
+        if (!Array.isArray(list)) list = [];
+
+        list = list.filter(function (item) {
+          return !(
+            item.id === articleId &&
+            item.sector === articleSector
+          );
+        });
+
+        if (scrollY > 0 && progress < 90) {
+          list.unshift({
+            id: articleId,
+            url: '/' + articleSector + '/' + articleId,
+            sector: articleSector,
+            title: document.querySelector('h1')?.textContent?.trim() || articleId,
+            progress: progress,
+            scrollY: scrollY,
+            ts: Date.now()
+          });
+        }
+
+        localStorage.setItem(
+          CONTINUE_KEY,
+          JSON.stringify(list.slice(0, 50))
+        );
+      } catch (e) {
+        console.warn('Could not save reading progress.', e);
+      }
+    }
+
+    var progressSavePending = false;
+
+    window.addEventListener('scroll', function () {
+      if (progressSavePending) return;
+
+      progressSavePending = true;
+
+      requestAnimationFrame(function () {
+        saveContinueProgress();
+        progressSavePending = false;
+      });
+    }, { passive: true });
+
+    window.addEventListener('pagehide', saveContinueProgress);
+
+    // SHARE MODAL
+    var shareTrigger = document.getElementById('shareTrigger');
+    var shareModal = document.getElementById('shareModal');
+    var shareModalClose = document.getElementById('shareModalClose');
+    var shareModalBackdrop = document.getElementById('shareModalBackdrop');
+    function openShareModal() {
+      if (shareModal) {
+        if (shareModal.parentElement !== document.body) document.body.appendChild(shareModal);
+        shareModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeShareModal() {
+      if (shareModal) { shareModal.style.display = 'none'; document.body.style.overflow = ''; }
+    }
+    if (shareTrigger) shareTrigger.addEventListener('click', openShareModal);
+    if (shareModalClose) shareModalClose.addEventListener('click', closeShareModal);
+    if (shareModalBackdrop) shareModalBackdrop.addEventListener('click', closeShareModal);
+
+    var shareCopyOption = document.getElementById('shareCopyOption');
+    if (shareCopyOption) {
+      shareCopyOption.addEventListener('click', function () {
+        var url = shareCopyOption.getAttribute('data-url');
+        if (url && navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(function () {
+            var label = shareCopyOption.querySelector('.share-option-label');
+            if (label) {
+              var original = label.textContent;
+              label.textContent = 'Copied';
+              setTimeout(function () { label.textContent = original; }, 1500);
+            }
+          });
+        }
+      });
+    }
+
+    // SAVE / BOOKMARKS
+    var saveBtn = document.getElementById('saveBtn');
+
+    if (saveBtn) {
+      var articleId = saveBtn.getAttribute('data-article-id');
+      var articleSector = saveBtn.getAttribute('data-article-sector');
+      var BOOKMARK_KEY = 'hig_bookmarks';
+
+      var isSameArticle = function (item) {
+        if (typeof item === 'string') {
+          return item === articleId;
+        }
+        return item.id === articleId && item.sector === articleSector;
+      };
+
+      var getBookmarks = function () {
+        try {
+          return JSON.parse(localStorage.getItem(BOOKMARK_KEY) || '[]');
+        } catch (e) {
+          return [];
+        }
+      };
+
+      var setBookmarks = function (list) {
+        localStorage.setItem(BOOKMARK_KEY, JSON.stringify(list));
+      };
+
+      var updateSaveBtn = function () {
+        var list = getBookmarks();
+        var isSaved = list.some(function (item) {
+          return isSameArticle(item);
+        });
+
+        var icon = saveBtn.querySelector('.save-icon');
+        var text = saveBtn.querySelector('.save-text');
+
+        if (isSaved) {
+          if (icon) icon.textContent = '★';
+          if (text) text.textContent = 'Saved';
+          saveBtn.classList.add('is-saved');
+        } else {
+          if (icon) icon.textContent = '☆';
+          if (text) text.textContent = 'Save Scenario';
+          saveBtn.classList.remove('is-saved');
+        }
+      };
+
+      saveBtn.addEventListener('click', function () {
+        var list = getBookmarks();
+        var idx = list.findIndex(function (item) {
+          return isSameArticle(item);
+        });
+
+        if (idx !== -1) {
+          list.splice(idx, 1);
+        } else {
+          list.unshift({
+            id: articleId,
+            url: '/' + articleSector + '/' + articleId,
+            sector: articleSector,
+            title: document.querySelector('h1')?.textContent?.trim() || articleId,
+            description: document.querySelector('meta[name="description"]')?.content || '',
+            ts: Date.now()
+          });
+        }
+
+        setBookmarks(list);
+        updateSaveBtn();
+      });
+
+      updateSaveBtn();
+    }
+
+    // RESTORE READING POSITION
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+
+      if (params.get('from') !== 'continue') return;
+
+      var savedY = Number(params.get('scrollY'));
+      if (!Number.isFinite(savedY) || savedY < 0) return;
+
+      function restorePosition() {
+        window.scrollTo({
+          top: savedY,
+          behavior: 'auto'
+        });
+      }
+
+      if (document.readyState === 'complete') {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(restorePosition);
+        });
+      } else {
+        window.addEventListener('load', function () {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(restorePosition);
+          });
+        }, { once: true });
+      }
+    })();
+  </script>
+</BaseLayout>
+
+<style is:global>
+  /* 
+    Уверяваме се, че скролът няма да скрие заглавието под фиксираната навигация.
+    Това помага и при директно отваряне на линк с #hash от друг сайт.
+  */
+  .narrative-flow h2 {
+    scroll-margin-top: 100px;
+  }
+</style>
+<style is:global>
+  /* Подравняване на заглавията в двете колони */
+  .toc-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+  }
+
+  /* Компенсация за скролване на секции */
+  .world-timeline-section,
+  .world-state-section,
+  .world-entities-section,
+  .narrative-flow section, 
+  .narrative-flow > div {
+    scroll-margin-top: 90px; /* Коригирай тази стойност, ако navbar е по-висок/нисък */
+  }
+</style>

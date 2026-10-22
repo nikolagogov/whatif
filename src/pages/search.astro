@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const historyPosts = await getCollection('history');
+const sciencePosts = await getCollection('science');
+const spacePosts = await getCollection('space');
+const societyPosts = await getCollection('society');
+
+const allPosts = [
+  ...historyPosts.map(p => ({ ...p, sector: 'History', sectorSlug: 'history' })),
+  ...sciencePosts.map(p => ({ ...p, sector: 'Science', sectorSlug: 'science' })),
+  ...spacePosts.map(p => ({ ...p, sector: 'Space', sectorSlug: 'space' })),
+  ...societyPosts.map(p => ({ ...p, sector: 'Society', sectorSlug: 'society' })),
+];
+
+const searchData = allPosts.map(p => ({
+  title: p.data.title,
+  description: p.data.description,
+  sector: p.sector,
+  url: `/${p.sectorSlug}/${p.id}`,
+  tags: p.data.tags || [],
+  topics: p.data.topics || [],
+}));
+---
+
+<BaseLayout
+  title="Search | Had It Gone"
+  description="Search articles on Had It Gone."
+  url="https://haditgone.com/search"
+  type="website"
+>
+  <div class="search-page">
+    <h1 class="search-page-title">Search</h1>
+
+    <div class="search-box search-box-page">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search articles..." />
+    </div>
+
+    <div class="search-page-results" id="searchResults">
+      <p class="search-page-info" id="searchInfo">Type to search articles...</p>
+      <div class="search-page-list" id="searchResultsList"></div>
+    </div>
+  </div>
+
+  <script define:vars={{ searchData }}>
+    const input = document.getElementById('searchInput');
+    const info = document.getElementById('searchInfo');
+    const list = document.getElementById('searchResultsList');
+
+    // Прочети ?q= от URL-а
+    const params = new URLSearchParams(window.location.search);
+    const initialQuery = params.get('q') || '';
+
+    if (initialQuery) {
+      input.value = initialQuery;
+      performSearch(initialQuery);
+    }
+
+    input.addEventListener('input', (e) => {
+      performSearch(e.target.value);
+    });
+
+    function performSearch(rawQuery) {
+      const query = rawQuery.toLowerCase().trim();
+
+      if (query.length < 2) {
+        info.textContent = 'Type to search articles...';
+        list.innerHTML = '';
+        return;
+      }
+
+      const matches = searchData.filter(post =>
+        post.title.toLowerCase().includes(query) ||
+        post.description.toLowerCase().includes(query) ||
+        post.tags.some(tag => tag.toLowerCase().includes(query)) ||
+        post.topics.some(topic => topic.toLowerCase().includes(query))
+      );
+
+      if (matches.length === 0) {
+        info.textContent = `No articles found for "${rawQuery}".`;
+        list.innerHTML = '';
+      } else {
+        info.textContent = `${matches.length} ${matches.length === 1 ? 'result' : 'results'} for "${rawQuery}"`;
+        list.innerHTML = matches.map(post => `
+          <a href="${post.url}" class="search-page-item">
+            <span class="search-page-sector">${post.sector}</span>
+            <h3>${post.title}</h3>
+            <p>${post.description}</p>
+          </a>
+        `).join('');
+      }
+    }
+  </script>
+</BaseLayout>

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "name": "HAD IT GONE Concept Engine Editorial Benchmark",
+  "createdFrom": "concept-engine-report.json schemaVersion 5",
+  "purpose": "A small human-reviewed set for comparing future concept-engine versions. This is an initial editorial benchmark, not a statistically representative sample.",
+  "decisionDefinitions": {
+    "accept": "The pair is a useful editorial connection as currently framed.",
+    "reject": "The evidence currently shown does not justify a useful editorial connection.",
+    "needs-review": "A potentially useful comparison exists, but it needs a specific thesis or stronger evidence before acceptance."
+  },
+  "items": [
+    {"id":"B001","a":"vienna-1683","b":"waterloo-1815","outcome":"reject","relationshipType":null,"rationale":"The quoted passages concern different events; broad military and succession labels do not establish a shared process."},
+    {"id":"B002","a":"islamic-europe","b":"waterloo-1815","outcome":"reject","relationshipType":null,"rationale":"Conquest and political authority are too broad to establish a specific conceptual link."},
+    {"id":"B003","a":"islamic-europe","b":"vienna-1683","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Could support a comparison of expansion and resistance, but the current evidence does not specify a common mechanism."},
+    {"id":"B004","a":"spanish-armada","b":"vienna-1683","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Potential comparison of invasion logistics, supply and defensive constraints; needs a precise editorial question."},
+    {"id":"B005","a":"alexander-west","b":"islamic-europe","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Potential comparison of succession and resilience in large empires; current excerpts do not establish a shared process."},
+    {"id":"B006","a":"alexandria","b":"islamic-europe","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Potential connection through institutions and transmission of knowledge, but the evidence needs to be made explicit."},
+    {"id":"B007","a":"spanish-armada","b":"waterloo-1815","outcome":"reject","relationshipType":null,"rationale":"A shared military theme alone is insufficient; no specific mechanism is demonstrated."},
+    {"id":"B008","a":"islamic-europe","b":"spanish-armada","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Could compare attempts at territorial expansion and their constraints, but needs a clearly framed comparison."},
+    {"id":"B009","a":"alexander-west","b":"waterloo-1815","outcome":"reject","relationshipType":null,"rationale":"The succession signal is not supported as the same process in both excerpts."},
+    {"id":"B010","a":"alexander-west","b":"vienna-1683","outcome":"reject","relationshipType":null,"rationale":"The apparent succession overlap is too general and the Vienna excerpt refers to a different succession conflict."},
+    {"id":"B011","a":"alexander-west","b":"alexandria","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Potential comparison of political stability and support for knowledge, but a specific thesis and article evidence are required."},
+    {"id":"B012","a":"alexander-west","b":"rome-never-fell","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Potential comparison of imperial longevity and succession, but current lexical evidence is not enough."},
+    {"id":"B013","a":"napoleon-egypt","b":"waterloo-1815","outcome":"accept","relationshipType":"CONCEPTUAL","rationale":"Two distinct divergence points in Napoleon's career form a useful direct comparative pair; the connection should be framed as comparison, not causation."},
+    {"id":"B014","a":"islamic-europe","b":"rome-never-fell","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Potential comparison of imperial integration, religion and institutional durability, but the current evidence does not establish a precise connection."},
+    {"id":"B015","a":"napoleon-egypt","b":"vienna-1683","outcome":"reject","relationshipType":null,"rationale":"Shared historical context does not establish a specific conceptual relationship."},
+    {"id":"B016","a":"rome-never-fell","b":"waterloo-1815","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Potential comparison of imperial systems and European balance of power, but it needs a concrete thesis and supporting passages."},
+    {"id":"B017","a":"cuban-crisis","b":"napoleon-egypt","outcome":"reject","relationshipType":null,"rationale":"Lexical overlap does not establish a meaningful conceptual link."},
+    {"id":"B018","a":"cuban-crisis","b":"spanish-armada","outcome":"reject","relationshipType":null,"rationale":"The shared terms do not reveal a clear common mechanism or editorial comparison."},
+    {"id":"B019","a":"cuban-crisis","b":"waterloo-1815","outcome":"reject","relationshipType":null,"rationale":"No supported common process is established by the current evidence."},
+    {"id":"B020","a":"islamic-europe","b":"napoleon-egypt","outcome":"needs-review","relationshipType":"CONCEPTUAL","rationale":"Geographic and historical overlaps may support a comparison, but a precise shared question is not yet identified."}
+  ]
+}

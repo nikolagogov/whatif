@@ -1,289 +1,398 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import '../styles/global.css';
+import spotlight from '../data/spotlight.json';
+import { sortPosts } from '../lib/sorting';
 
-const historyPosts = await getCollection('history');
-const sciencePosts = await getCollection('science');
-const spacePosts = await getCollection('space');
-const societyPosts = await getCollection('society');
+const historyArticles = await getCollection('history');
+const scienceArticles = await getCollection('science');
+const spaceArticles = await getCollection('space');
+const societyArticles = await getCollection('society');
 
-function getLatest(posts: any[]) {
-  return [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())[0];
-}
+type SectorKey = 'history' | 'science' | 'space' | 'society';
 
-function getFeatured(posts: any[]) {
-  return posts.find((post: any) => post.data.featured === true) || getLatest(posts);
-}
-
-const historyFeatured = getFeatured(historyPosts);
-const historyLatest = getLatest(historyPosts);
-const scienceFeatured = getFeatured(sciencePosts);
-const scienceLatest = getLatest(sciencePosts);
-const spaceFeatured = getFeatured(spacePosts);
-const spaceLatest = getLatest(spacePosts);
-const societyFeatured = getFeatured(societyPosts);
-const societyLatest = getLatest(societyPosts);
-
-const allPosts = [
-  ...historyPosts.map(p => ({ ...p, sector: 'History', sectorSlug: 'history' })),
-  ...sciencePosts.map(p => ({ ...p, sector: 'Science', sectorSlug: 'science' })),
-  ...spacePosts.map(p => ({ ...p, sector: 'Space', sectorSlug: 'space' })),
-  ...societyPosts.map(p => ({ ...p, sector: 'Society', sectorSlug: 'society' })),
+const all = [
+  ...historyArticles.map(a => ({ ...a, sector: 'history' as const, sectorLabel: 'History', emoji: '🏛️' })),
+  ...scienceArticles.map(a => ({ ...a, sector: 'science' as const, sectorLabel: 'Science', emoji: '🔬' })),
+  ...spaceArticles.map(a => ({ ...a, sector: 'space' as const, sectorLabel: 'Space', emoji: '🚀' })),
+  ...societyArticles.map(a => ({ ...a, sector: 'society' as const, sectorLabel: 'Society', emoji: '🌍' })),
 ];
 
-const recentPosts = [...allPosts]
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
+const sorted = sortPosts(all);
 
-const searchData = allPosts.map(p => ({
-  title: p.data.title,
-  description: p.data.description,
-  sector: p.sector,
-  url: `/${p.sectorSlug}/${p.id}`,
+// Spotlight: търси по id (slug), после по title, после fallback към най-новата
+const homeKey = typeof spotlight.home === 'string' ? spotlight.home : '';
+const homeSpotlight =
+  sorted.find(a => a.id === homeKey) ||
+  sorted.find(a => a.data.title === homeKey) ||
+  sorted[0];
+
+// Latest: 3 най-нови, БЕЗ Cover Story (за да не се дублира)
+const latest3 = sorted
+  .filter(a => a.id !== homeSpotlight?.id)
+  .slice(0, 3);
+
+// Всички статии — за Surprise Me (избира от целия archive)
+const allArticles = sorted.map(a => ({
+  url: `/${a.sector}/${a.id}`,
+  title: a.data.title,
 }));
+
+const exploreSectors: {
+  key: SectorKey;
+  label: string;
+  emoji: string;
+  accent: string;
+  img: string;
+}[] = [
+  { key: 'history', label: 'History', emoji: '🏛️', accent: 'The world that was', img: '/images/sectors/history.jpg' },
+  { key: 'science', label: 'Science', emoji: '🔬', accent: 'The world that could be', img: '/images/sectors/science.jpg' },
+  { key: 'space',   label: 'Space',   emoji: '🚀', accent: 'The world beyond',     img: '/images/sectors/space.jpg' },
+  { key: 'society', label: 'Society', emoji: '🌍', accent: 'The world we build',  img: '/images/sectors/society.jpg' },
+];
+
+const counts: Record<SectorKey, number> = {
+  history: historyArticles.length,
+  science: scienceArticles.length,
+  space: spaceArticles.length,
+  society: societyArticles.length,
+};
+
+// Fallback title (ако статията няма coverTitleLines)
+const coverTitle = homeSpotlight.data.title.replace(/^What If\s+/i, '');
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>The What-If Portal | Multi-Sector Speculative Hub</title>
-	</head>
-	<body>
-		<nav>
-			<a href="/" class="logo">What If <span>Hub</span></a>
-			<ul class="nav-links">
-				<li><a href="/history">🏛️ History</a></li>
-				<li><a href="/science">🧪 Science</a></li>
-				<li><a href="/space">🌌 Space</a></li>
-				<li><a href="/society">🌍 Society</a></li>
-			</ul>
-		</nav>
+<BaseLayout title="Had It Gone — What If History Had Turned Differently?">
+  <div class="home-page">
 
-		<div class="page-frame">
-			<div class="home-layout">
-				<div class="main-content">
-					<div class="hero-portal">
-						<h1>The What-If Portal</h1>
-						<p>A master database of alternate timelines, speculative sciences, and cosmic shifts.</p>
-					</div>
+    <!-- MASTHEAD -->
+    <section class="masthead">
+      <div class="masthead-logo">
+        <img src="/logo-light.png" alt="Had It Gone" class="logo-light" />
+        <img src="/logo-dark.png" alt="Had It Gone" class="logo-dark" />
+      </div>
+      <p class="masthead-tagline">What if history had turned differently?</p>
+      <p class="masthead-sub">
+        Speculative history, alternate science, and cosmic scenarios — grounded in research, driven by curiosity.
+      </p>
+    </section>
 
-					<div class="search-box">
-						<span class="search-icon">🔍</span>
-						<input type="text" id="searchInput" placeholder="Search articles..." />
-					</div>
+    <!-- SEARCH -->
+    <section class="home-search">
+      <a href="/search" class="home-search-link">
+        <span>Search the archive</span>
+        <span class="home-search-icon">⌕</span>
+      </a>
+    </section>
 
-					<div class="search-results" id="searchResults">
-						<div class="search-results-list" id="searchResultsList"></div>
-					</div>
+    <!-- COVER STORY -->
+    {homeSpotlight && (
+      <section class="cover-story">
+        <div class="cover-story-header">
+          <span class="cover-story-label">Cover Story</span>
+        </div>
+        <a href={`/${homeSpotlight.sector}/${homeSpotlight.id}`} class="cover-story-link">
+          <div class="cover-story-image" style={`background-image: url('${homeSpotlight.data.image}')`}></div>
+          <div class="cover-story-overlay"></div>
+          <div class="cover-story-content">
+            <div class="cover-story-meta">
+              {homeSpotlight.sectorLabel}
+            </div>
+            <h2 class="cover-story-title">
+              {homeSpotlight.data.coverTitleLines ? (
+                homeSpotlight.data.coverTitleLines.map((line: string, i: number) => (
+                  i === 0
+                    ? <span class="cover-story-title-intro">{line}</span>
+                    : <span class="cover-story-title-line">{line}</span>
+                ))
+              ) : (
+                <span class="cover-story-title-line">{coverTitle}</span>
+              )}
+            </h2>
+            <p class="cover-story-description">{homeSpotlight.data.description}</p>
+            <span class="cover-story-cta">Read the scenario →</span>
+          </div>
+        </a>
+      </section>
+    )}
 
-					<div class="banner">
-						<div class="banner-inner">
-							<p>"History is written by the victors. But what if there were no victors?"</p>
-							<div class="banner-author">— The What-If Portal</div>
-						</div>
-					</div>
+    <!-- PERSONAL ROW -->
+    <section class="home-personal-row" id="personal-row" style="display: none;">
+      <div class="home-personal-panel" id="continue-panel">
+        <div class="personal-panel-header">
+          <h3>Continue Reading</h3>
+          <a href="/continue" class="section-see-all">See all →</a>
+        </div>
+        <div class="personal-panel-list" id="continue-list"></div>
+      </div>
+      <div class="home-personal-panel" id="bookmarks-panel">
+        <div class="personal-panel-header">
+          <h3>Bookmarks</h3>
+          <a href="/bookmarks" class="section-see-all">See all →</a>
+        </div>
+        <div class="personal-panel-list" id="bookmarks-list"></div>
+      </div>
+    </section>
 
-					<!-- HISTORY -->
-					<div class="sector-wrap">
-						<a href="/history" class="sector-hero">
-							<div class="sector-hero-img" style="background-image: url('/images/sectors/history.jpg');"></div>
-							<div class="sector-hero-body">
-								<h2>🏛️ Alternate History</h2>
-								<p>Analyzing key turning points in human history.</p>
-								<div class="sector-hero-actions">
-									<span class="explore-btn">Explore History →</span>
-									<span class="sector-count">{historyPosts.length} articles</span>
-								</div>
-							</div>
-						</a>
-						<div class="sector-subcards">
-							<a href={`/history/${historyFeatured.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${historyFeatured.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label featured">★ Featured</span>
-									<div class="subcard-title">{historyFeatured.data.title}</div>
-								</div>
-							</a>
-							<a href={`/history/${historyLatest.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${historyLatest.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label latest">⏱ Latest</span>
-									<div class="subcard-title">{historyLatest.data.title}</div>
-								</div>
-							</a>
-						</div>
-					</div>
+    <!-- LATEST -->
+    <section class="home-section">
+      <div class="section-header-row">
+        <h2 class="home-section-title">Latest Scenarios</h2>
+        <a href="/latest" class="section-see-all">View all →</a>
+      </div>
+      <div class="home-latest">
+        {latest3.map(article => (
+          <a href={`/${article.sector}/${article.id}`} class="home-latest-item">
+  <div class="home-latest-img-wrap">
+    <img 
+      src={article.data.image} 
+      alt={article.data.title}
+      class="home-latest-img"
+      loading="lazy"
+      width="600"
+      height="375"
+    />
+  </div>
+  <div class="home-latest-sector">{article.sectorLabel}</div>
+  <h3 class="home-latest-title">{article.data.title}</h3>
+  <p class="home-latest-desc">{article.data.description}</p>
+  <div class="home-latest-rule"></div>
+</a>
+        ))}
+      </div>
+    </section>
 
-					<!-- SCIENCE -->
-					<div class="sector-wrap">
-						<a href="/science" class="sector-hero">
-							<div class="sector-hero-img" style="background-image: url('/images/sectors/science.jpg');"></div>
-							<div class="sector-hero-body">
-								<h2>🧪 Speculative Science</h2>
-								<p>Altering the fundamental biology, physics, and evolution of our planet.</p>
-								<div class="sector-hero-actions">
-									<span class="explore-btn">Explore Science →</span>
-									<span class="sector-count">{sciencePosts.length} articles</span>
-								</div>
-							</div>
-						</a>
-						<div class="sector-subcards">
-							<a href={`/science/${scienceFeatured.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${scienceFeatured.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label featured">★ Featured</span>
-									<div class="subcard-title">{scienceFeatured.data.title}</div>
-								</div>
-							</a>
-							<a href={`/science/${scienceLatest.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${scienceLatest.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label latest">⏱ Latest</span>
-									<div class="subcard-title">{scienceLatest.data.title}</div>
-								</div>
-							</a>
-						</div>
-					</div>
+    <!-- EXPLORE -->
+    <section class="home-section">
+      <h2 class="home-section-title">Explore the Worlds</h2>
+      <div class="home-explore">
+        {exploreSectors.map(s => (
+          <a href={`/${s.key}`} class="home-explore-card">
+  <img 
+    src={s.img} 
+    alt=""
+    class="home-explore-img"
+    loading="lazy"
+    width="400"
+    height="533"
+  />
+  <div class="home-explore-overlay"></div>
+  <div class="home-explore-content">
+  <h3 class="home-explore-title">{s.label}</h3>
+  <p class="home-explore-accent">{s.accent}</p>
+  <span class="home-explore-count">
+    {counts[s.key]} {counts[s.key] === 1 ? 'scenario' : 'scenarios'} →
+  </span>
+</div>
+</a>
+        ))}
+      </div>
+    </section>
 
-					<!-- SPACE -->
-					<div class="sector-wrap">
-						<a href="/space" class="sector-hero">
-							<div class="sector-hero-img" style="background-image: url('/images/sectors/space.jpg');"></div>
-							<div class="sector-hero-body">
-								<h2>🌌 Cosmic Shifts</h2>
-								<p>Exploring celestial alterations in our solar system.</p>
-								<div class="sector-hero-actions">
-									<span class="explore-btn">Explore Space →</span>
-									<span class="sector-count">{spacePosts.length} articles</span>
-								</div>
-							</div>
-						</a>
-						<div class="sector-subcards">
-							<a href={`/space/${spaceFeatured.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${spaceFeatured.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label featured">★ Featured</span>
-									<div class="subcard-title">{spaceFeatured.data.title}</div>
-								</div>
-							</a>
-							<a href={`/space/${spaceLatest.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${spaceLatest.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label latest">⏱ Latest</span>
-									<div class="subcard-title">{spaceLatest.data.title}</div>
-								</div>
-							</a>
-						</div>
-					</div>
+    <!-- RANDOM — editorial closing CTA -->
+    <section class="home-random">
+      <div class="home-random-inner">
+        <div class="home-random-text">
+          <span class="home-random-label">Not sure where to start?</span>
+          <p class="home-random-line">
+            Discover a random scenario from the archive.
+          </p>
+        </div>
+        <button class="home-random-btn" id="random-btn">
+          Surprise me →
+        </button>
+      </div>
+    </section>
 
-					<!-- SOCIETY -->
-					<div class="sector-wrap">
-						<a href="/society" class="sector-hero">
-							<div class="sector-hero-img" style="background-image: url('/images/sectors/society.jpg');"></div>
-							<div class="sector-hero-body">
-								<h2>🌍 Society &amp; Geopolitics</h2>
-								<p>Exploring how social structures and political decisions shape our world.</p>
-								<div class="sector-hero-actions">
-									<span class="explore-btn">Explore Society →</span>
-									<span class="sector-count">{societyPosts.length} articles</span>
-								</div>
-							</div>
-						</a>
-						<div class="sector-subcards">
-							<a href={`/society/${societyFeatured.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${societyFeatured.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label featured">★ Featured</span>
-									<div class="subcard-title">{societyFeatured.data.title}</div>
-								</div>
-							</a>
-							<a href={`/society/${societyLatest.id}`} class="subcard">
-								<div class="subcard-img" style={`background-image: url('${societyLatest.data.image}');`}></div>
-								<div class="subcard-body">
-									<span class="subcard-label latest">⏱ Latest</span>
-									<div class="subcard-title">{societyLatest.data.title}</div>
-								</div>
-							</a>
-						</div>
-					</div>
-				</div>
+  </div>
 
-				<aside class="sidebar">
-					<div class="sidebar-box">
-						<h3 class="sidebar-title">📚 Sectors</h3>
-						<ul class="sidebar-list">
-							<li><a href="/history">🏛️ History <span class="count">{historyPosts.length}</span></a></li>
-							<li><a href="/science">🧪 Science <span class="count">{sciencePosts.length}</span></a></li>
-							<li><a href="/space">🌌 Space <span class="count">{spacePosts.length}</span></a></li>
-							<li><a href="/society">🌍 Society <span class="count">{societyPosts.length}</span></a></li>
-						</ul>
-					</div>
+  <script define:vars={{ allArticles }}>
+    // RANDOM SCENARIO — избира от ВСИЧКИ статии в archive-а
+    const randBtn = document.getElementById('random-btn');
+    randBtn?.addEventListener('click', () => {
+      if (!allArticles || allArticles.length === 0) return;
+      const pick = allArticles[Math.floor(Math.random() * allArticles.length)];
+      window.location.href = pick.url;
+    });
 
-					<div class="sidebar-box">
-						<h3 class="sidebar-title">🆕 Recently Added</h3>
-						{recentPosts.map(post => (
-							<a href={`/${post.sectorSlug}/${post.id}`} class="recent-item">
-								<span class="recent-sector">{post.sector}</span>
-								<div class="recent-title">{post.data.title}</div>
-							</a>
-						))}
-					</div>
+    // PERSONAL ROW — Continue Reading + Bookmarks
+    const continueList = document.getElementById('continue-list');
+    const bookmarksList = document.getElementById('bookmarks-list');
+    const personalRow = document.getElementById('personal-row');
+    const continuePanel = document.getElementById('continue-panel');
+    const bookmarksPanel = document.getElementById('bookmarks-panel');
 
-					<div class="sidebar-cta">
-						<h3>Explore the Unknown</h3>
-						<p>Dive into alternate timelines and cosmic possibilities.</p>
-					</div>
-				</aside>
-			</div>
+    function renderPersonal() {
+      if (
+        !continueList ||
+        !bookmarksList ||
+        !personalRow ||
+        !continuePanel ||
+        !bookmarksPanel
+      ) return;
 
-			<footer class="site-footer">
-				<div class="footer-logo">What If <span>Hub</span></div>
-				<ul class="footer-links">
-					<li><a href="/">Home</a></li>
-					<li><a href="/history">History</a></li>
-					<li><a href="/science">Science</a></li>
-					<li><a href="/space">Space</a></li>
-					<li><a href="/society">Society</a></li>
-				</ul>
-				<p class="footer-copy">© 2026 The What-If Portal. All rights reserved.</p>
-			</footer>
-		</div>
+      let continueData = [];
+      let bookmarksData = [];
 
-		<script define:vars={{ searchData }}>
-			const input = document.getElementById('searchInput');
-			const results = document.getElementById('searchResults');
-			const list = document.getElementById('searchResultsList');
+      try {
+        const parsed = JSON.parse(localStorage.getItem('hig_continue') || '[]');
+        continueData = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        continueData = [];
+      }
 
-			input.addEventListener('input', (e) => {
-				const query = e.target.value.toLowerCase().trim();
+      try {
+        const parsed = JSON.parse(localStorage.getItem('hig_bookmarks') || '[]');
+        bookmarksData = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        bookmarksData = [];
+      }
 
-				if (query.length < 2) {
-					results.classList.remove('active');
-					return;
-				}
+      // Continue Reading: без дублиране, без 0% и без завършени статии.
+      const uniqueContinue = new Map();
 
-				const matches = searchData.filter(post =>
-					post.title.toLowerCase().includes(query) ||
-					post.description.toLowerCase().includes(query)
-				);
+      continueData
+        .filter(c =>
+          Number(c.progress) > 0 &&
+          Number(c.progress) < 90 &&
+          c.id &&
+          c.sector
+        )
+        .sort((a, b) => Number(b.ts || 0) - Number(a.ts || 0))
+        .forEach(c => {
+          const key = `${c.sector}/${c.id}`;
+          if (!uniqueContinue.has(key)) uniqueContinue.set(key, c);
+        });
 
-				if (matches.length === 0) {
-					list.innerHTML = '<div class="search-empty">No articles found.</div>';
-				} else {
-					list.innerHTML = matches.slice(0, 8).map(post => `
-						<a href="${post.url}" class="search-result-item">
-							<span class="sector-tag">${post.sector}</span>
-							<h4>${post.title}</h4>
-							<p>${post.description}</p>
-						</a>
-					`).join('');
-				}
+      continueData = [...uniqueContinue.values()].slice(0, 3);
 
-				results.classList.add('active');
-			});
-		</script>
-	</body>
-</html>
+      // Bookmarks.
+      bookmarksData = bookmarksData
+        .filter(b => b && (typeof b === 'string' || b.id))
+        .sort((a, b) => Number(b.ts || 0) - Number(a.ts || 0))
+        .slice(0, 3);
+        // Показваме само секциите, които имат съдържание.
+const hasContinue = continueData.length > 0;
+const hasBookmarks = bookmarksData.length > 0;
+
+continuePanel.style.display = hasContinue ? '' : 'none';
+bookmarksPanel.style.display = hasBookmarks ? '' : 'none';
+
+personalRow.style.display =
+  hasContinue || hasBookmarks ? 'grid' : 'none';
+
+            // Continue Reading cards.
+      continueList.innerHTML = continueData.length
+        ? continueData.map(c => `
+            <div class="personal-card-wrap">
+              <a
+                href="${c.url}?from=continue&scrollY=${Math.max(0, Number(c.scrollY) || 0)}"
+                class="personal-card"
+              >
+                <span class="personal-card-sector">${c.sector || 'Scenario'}</span>
+                <h4>${c.title || c.id}</h4>
+                <div class="personal-progress">
+                  <div class="personal-progress-bar" style="width:${Number(c.progress) || 0}%"></div>
+                </div>
+                <span class="personal-progress-text">${Math.round(Number(c.progress) || 0)}% read</span>
+              </a>
+              <button
+                type="button"
+                class="section-see-all personal-remove"
+                data-remove-continue="${c.id}"
+                data-remove-sector="${c.sector}"
+              >✕ Remove</button>
+            </div>
+          `).join('')
+        : `<div class="personal-empty">Nothing in progress.<span>Start reading a scenario.</span></div>`;
+
+      // Bookmarks cards.
+      bookmarksList.innerHTML = bookmarksData.length
+        ? bookmarksData.map(b => {
+            const item = typeof b === 'string'
+              ? { id: b, url: '', sector: 'Scenario', title: b }
+              : b;
+
+            const url = item.url || `/${item.sector}/${item.id}`;
+
+            return `
+              <div class="personal-card-wrap">
+                <a href="${url}" class="personal-card">
+                  <span class="personal-card-sector">${item.sector || 'Scenario'}</span>
+                  <h4>${item.title || item.id}</h4>
+                  <p>${item.description || ''}</p>
+                </a>
+                <button
+                  type="button"
+                  class="section-see-all personal-remove"
+                  data-remove-bookmark="${item.id}"
+                  data-remove-sector="${item.sector || ''}"
+                >✕ Remove</button>
+              </div>
+            `;
+          }).join('')
+        : `<div class="personal-empty">No bookmarks yet.<span>Tap ☆ on any scenario to save it.</span></div>`;
+
+      // Remove from Continue Reading.
+      continueList.querySelectorAll('[data-remove-continue]').forEach(btn => {
+        btn.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const id = btn.dataset.removeContinue;
+          const sector = btn.dataset.removeSector;
+
+          try {
+            const items = JSON.parse(localStorage.getItem('hig_continue') || '[]');
+            const filtered = (Array.isArray(items) ? items : []).filter(
+              item => !(item.id === id && item.sector === sector)
+            );
+
+            localStorage.setItem('hig_continue', JSON.stringify(filtered));
+            renderPersonal();
+          } catch (error) {
+            console.error('Could not remove Continue Reading item.', error);
+          }
+        });
+      });
+
+      // Remove from Bookmarks.
+      bookmarksList.querySelectorAll('[data-remove-bookmark]').forEach(btn => {
+        btn.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const id = btn.dataset.removeBookmark;
+          const sector = btn.dataset.removeSector;
+
+          try {
+            const items = JSON.parse(localStorage.getItem('hig_bookmarks') || '[]');
+            const filtered = (Array.isArray(items) ? items : []).filter(item => {
+              if (typeof item === 'string') return item !== id;
+              return !(item.id === id && (item.sector || '') === sector);
+            });
+
+            localStorage.setItem('hig_bookmarks', JSON.stringify(filtered));
+            renderPersonal();
+          } catch (error) {
+            console.error('Could not remove bookmark.', error);
+          }
+        });
+      });
+          }
+
+    renderPersonal();
+
+    window.addEventListener('pageshow', renderPersonal);
+
+    window.addEventListener('storage', event => {
+      if (
+        event.key === 'hig_continue' ||
+        event.key === 'hig_bookmarks' ||
+        event.key === null
+      ) {
+        renderPersonal();
+      }
+    });
+</script>
+</BaseLayout>

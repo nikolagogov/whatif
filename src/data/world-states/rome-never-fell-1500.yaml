@@ -1,0 +1,17 @@
+id: world-state-rome-never-fell-1500
+name: Roman Institutions Endure into the Renaissance
+schemaVersion: 1
+worldId: world-western-rome-survives
+divergenceId: divergence-western-rome-survives
+status: SIMULATED
+time:
+  label: '1500'
+  year: 1500
+  precision: year
+description: >-
+  Roman law and Latin remain more institutionally continuous.
+  Europe develops without the familiar post-Roman divide.
+variables: []
+causedBy:
+  - rome-never-fell-timeline-4
+evidence: []

@@ -1,0 +1,22 @@
+schemaVersion: 1
+id: world-state-alexander-west-balance-of-power
+name: A New Mediterranean Balance of Power
+worldId: world-alexander-west
+divergenceId: divergence-alexander-survives
+time:
+  label: "3rd–2nd centuries BC"
+  year: -200
+  precision: period
+status: SIMULATED
+description: >-
+  Greek influence expands westward, while the Roman Republic develops
+  under altered geopolitical pressure in a Mediterranean shaped by
+  Alexander's survival and his western ambitions.
+variables:
+  - key: territorial_control
+    value:
+      greek_influence: "Expands westward"
+      roman_republic: "Develops under altered pressure"
+    status: SIMULATED
+causedBy: []
+evidence: []

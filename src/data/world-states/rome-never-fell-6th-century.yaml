@@ -1,0 +1,17 @@
+id: world-state-rome-never-fell-6th-century
+name: The Western Roman Empire Survives
+schemaVersion: 1
+worldId: world-western-rome-survives
+divergenceId: divergence-western-rome-survives
+status: SIMULATED
+time:
+  label: 6th century
+  year: 550
+  precision: period
+description: >-
+  The Western Roman Empire survives as a smaller regional power.
+  Imperial institutions continue in adapted form.
+variables: []
+causedBy:
+  - rome-never-fell-timeline-2
+evidence: []

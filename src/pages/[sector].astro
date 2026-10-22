@@ -1,6 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import spotlightDataRaw from '../data/spotlight.json';
+
+const spotlightData = spotlightDataRaw as Record<string, string>;
 
 export async function getStaticPaths() {
   return [
@@ -13,105 +16,227 @@ export async function getStaticPaths() {
 
 const { sector } = Astro.params;
 
-const sectorInfo: Record<string, { title: string; emoji: string; description: string; image: string }> = {
+type ExploreTile = {
+  slug: string;
+  emoji: string;
+  title: string;
+  subtitle: string;
+};
+
+type SectorInfo = {
+  title: string;
+  emoji: string;
+  intro: string;
+  image: string;
+  archiveLabel: string;
+  exploreTitle?: string;
+  exploreTiles?: ExploreTile[];
+};
+
+const sectorInfo: Record<string, SectorInfo> = {
   history: {
-    title: 'Alternate History',
+    title: 'History',
     emoji: '🏛️',
-    description: 'Analyzing key turning points in human history. What if critical battles, empires, or discoveries took a completely different path?',
+    intro: 'Empires, wars, and decisions that could have gone another way.',
     image: '/images/sectors/history.jpg',
+    archiveLabel: 'The History Archive',
+    exploreTitle: 'Explore History',
+    exploreTiles: [
+      { slug: 'ancient-world', emoji: '🏛️', title: 'Ancient World', subtitle: 'Alexander, Alexandria, and the ancient Mediterranean.' },
+      { slug: 'empires', emoji: '👑', title: 'Empires', subtitle: 'Rome, Persia, and empires that might have followed.' },
+      { slug: 'wars', emoji: '⚔️', title: 'Wars & Conflicts', subtitle: 'Battles and crises that changed the course of history.' },
+    ],
   },
   science: {
-    title: 'Speculative Science',
+    title: 'Science',
     emoji: '🧪',
-    description: 'Altering the fundamental biology, physics, and evolution of our planet to see how nature would adapt.',
+    intro: 'Evolution, biology, and discoveries that could have changed the natural world.',
     image: '/images/sectors/science.jpg',
+    archiveLabel: 'The Science Archive',
+    exploreTitle: 'Explore Science',
+    exploreTiles: [
+      { slug: 'evolution', emoji: '🦕', title: 'Evolution & Deep Time', subtitle: 'Deep time and the paths life might have taken.' },
+      { slug: 'biology', emoji: '🧬', title: 'Biology & Life', subtitle: 'Life, cells, and the rules of the natural world.' },
+      { slug: 'discoveries', emoji: '🔬', title: 'Discoveries & Inventions', subtitle: 'Inventions and insights that arrived early — or never.' },
+      { slug: 'earth', emoji: '🌍', title: 'Earth & Environment', subtitle: 'The planet as it was — and as it might have been.' },
+      { slug: 'human-body', emoji: '🧠', title: 'Human Body & Mind', subtitle: 'The body and mind as they could have evolved.' },
+    ],
   },
   space: {
-    title: 'Cosmic Shifts',
+    title: 'Space',
     emoji: '🌌',
-    description: 'Exploring celestial alterations in our solar system. What if planets changed positions or nearby worlds developed active life?',
+    intro: 'Altered worlds and different paths through the universe.',
     image: '/images/sectors/space.jpg',
+    archiveLabel: 'The Space Archive',
+    exploreTitle: 'Explore Space',
+    exploreTiles: [
+      { slug: 'mars-worlds', emoji: '🔴', title: 'Mars & Its Lost Oceans', subtitle: 'A world that might have remained blue, warm, and habitable.' },
+      { slug: 'earth-moon', emoji: '🌙', title: 'Earth & Moon', subtitle: 'Our own planet and the worlds closest to it.' },
+      { slug: 'planets', emoji: '🪐', title: 'Planets & Moons', subtitle: 'Worlds that might have taken a different shape.' },
+      { slug: 'cosmic-events', emoji: '☄️', title: 'Cosmic Events', subtitle: 'Impacts, collisions, and other turning points.' },
+      { slug: 'universe', emoji: '✨', title: 'Stars & Universe', subtitle: 'The cosmos at scales we can barely imagine.' },
+    ],
   },
   society: {
-    title: 'Society & Geopolitics',
+    title: 'Society',
     emoji: '🌍',
-    description: 'Exploring how different social structures, political decisions, and cultural shifts could have changed the modern world.',
+    intro: 'Systems, technologies, and cultures that might have shaped a different world.',
     image: '/images/sectors/society.jpg',
+    archiveLabel: 'The Society Archive',
+    exploreTitle: 'Explore Society',
+    exploreTiles: [
+      { slug: 'technology', emoji: '💡', title: 'Technology & Innovation', subtitle: 'Inventions and systems that might have changed us.' },
+      { slug: 'politics', emoji: '🏛️', title: 'Politics & Power', subtitle: 'Power, governance, and different social orders.' },
+      { slug: 'culture', emoji: '🎭', title: 'Culture & Ideas', subtitle: 'Ideas, beliefs, and the paths they might have taken.' },
+      { slug: 'economics', emoji: '💰', title: 'Economics & Trade', subtitle: 'Trade, wealth, and alternative economic worlds.' },
+      { slug: 'civilization', emoji: '🏙️', title: 'Civilization & Collapse', subtitle: 'Rise, fall, and the roads not taken.' },
+    ],
   },
 };
 
-const info = sectorInfo[sector] || { title: 'Articles', emoji: '📄', description: '', image: '' };
+const info = sectorInfo[sector] || {
+  title: 'Articles',
+  emoji: '📄',
+  intro: '',
+  image: '',
+  archiveLabel: 'The Archive',
+};
 
 const posts = await getCollection(sector as 'history' | 'science' | 'space' | 'society');
-const sortedPosts = [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-const navLinks = [
-  { href: '/history', label: '🏛️ History', key: 'history' },
-  { href: '/science', label: '🧪 Science', key: 'science' },
-  { href: '/space', label: '🌌 Space', key: 'space' },
-  { href: '/society', label: '🌍 Society', key: 'society' },
-];
+// Сортиране по дата (най-новите първи)
+import { sortPosts } from '../lib/sorting';
+
+// ...
+
+const sortedByDate = sortPosts(posts);
+
+// Spotlight — от JSON файла
+const spotlightId = spotlightData[sector];
+const spotlightPost =
+  sortedByDate.find(p => p.id === spotlightId) || sortedByDate[0];
+
+// Latest — 3 най-нови статии, различни от Spotlight
+const latestPosts = sortedByDate
+  .filter(p => p.id !== spotlightPost?.id)
+  .slice(0, 3);
+
+// Archive — останалите (без Spotlight и Latest)
+const latestIds = latestPosts.map(p => p.id);
+const archivePosts = sortedByDate.filter(
+  p => p.id !== spotlightPost?.id && !latestIds.includes(p.id)
+);
+
+// Explore — само ако има ≥ 6 статии и секцията има дефинирани плочки
+const showExplore = !!info.exploreTiles?.length;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{info.title} | The What-If Portal</title>
-		<meta name="description" content={info.description} />
-	</head>
-	<body>
-		<nav>
-			<a href="/" class="logo">What If <span>Hub</span></a>
-			<ul class="nav-links">
-				{navLinks.map(link => (
-					<li>
-						<a href={link.href} class={link.key === sector ? 'active' : ''}>{link.label}</a>
-					</li>
-				))}
-			</ul>
-		</nav>
+<BaseLayout
+  title={`${info.title} | Had It Gone`}
+  description={info.intro}
+  image={info.image}
+  url={`https://haditgone.com/${sector}`}
+  type="website"
+>
+  <div class="section-container" data-sector={sector}>
 
-		<div class="page-frame">
-			<div class="sector-header">
-				<div class="sector-header-img" style={`background-image: url('${info.image}');`}></div>
-				<div class="sector-header-body">
-					<h1>{info.emoji} {info.title}</h1>
-					<p>{info.description}</p>
-					<a href="/" class="back-link">← Back to Portal</a>
-				</div>
-			</div>
+    {/* SECTOR HERO */}
+    <section class="section-hero">
+      <div class="sector-header-img" style={`background-image: url('${info.image}');`}></div>
+      <div class="sector-header-body">
+        <h1>
+          <span class="sector-emoji">{info.emoji}</span>
+          <span class="sector-title">{info.title}</span>
+        </h1>
+        <p>{info.intro}</p>
+        <a href="/" class="back-link">← Back to Homepage</a>
+      </div>
+    </section>
 
-			<div class="articles-container">
-				{sortedPosts.length === 0 ? (
-					<div class="no-articles">No articles in this sector yet.</div>
-				) : (
-					sortedPosts.map(post => (
-						<a href={`/${sector}/${post.id}`} class="article-card">
-							<div class="article-card-img" style={`background-image: url('${post.data.image}');`}></div>
-							<div class="article-card-body">
-								{post.data.featured && <span class="featured-tag">★ Featured</span>}
-								<h2>{post.data.title}</h2>
-								<p>{post.data.description}</p>
-							</div>
-						</a>
-					))
-				)}
-			</div>
+    {posts.length === 0 ? (
+      <div class="no-articles">No articles in this sector yet.</div>
+    ) : (
+      <>
+        {/* SPOTLIGHT */}
+        {spotlightPost && (
+          <section class="section-block" data-role="spotlight">
+            <h2 class="section-heading">🔦 Spotlight</h2>
+            <a href={`/${sector}/${spotlightPost.id}`} class="spotlight-card">
+              <div
+                class="spotlight-img"
+                style={`background-image: url('${spotlightPost.data.image}');`}
+              ></div>
+              <div class="spotlight-body">
+                <h3>{spotlightPost.data.title}</h3>
+                <p>{spotlightPost.data.description}</p>
+                <span class="spotlight-cta">Read the scenario →</span>
+              </div>
+            </a>
+          </section>
+        )}
 
-			<footer class="site-footer">
-				<div class="footer-logo">What If <span>Hub</span></div>
-				<ul class="footer-links">
-					<li><a href="/">Home</a></li>
-					<li><a href="/history">History</a></li>
-					<li><a href="/science">Science</a></li>
-					<li><a href="/space">Space</a></li>
-					<li><a href="/society">Society</a></li>
-				</ul>
-				<p class="footer-copy">© 2026 The What-If Portal. All rights reserved.</p>
-			</footer>
-		</div>
-	</body>
-</html>
+        {/* LATEST — 3 компактни карти */}
+        {latestPosts.length > 0 && (
+          <section class="section-block" data-role="latest">
+            <h2 class="section-heading">🕐 Latest</h2>
+            <div class="latest-grid">
+              {latestPosts.map(post => (
+                <a href={`/${sector}/${post.id}`} class="latest-card">
+                  <div class="latest-img" style={`background-image: url('${post.data.image}');`}></div>
+                  <div class="latest-body">
+                    <h3>{post.data.title}</h3>
+                    <p>{post.data.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* EXPLORE — topic navigation */}
+        {showExplore && (
+          <section class="section-block" data-role="explore">
+            <h2 class="section-heading">{info.exploreTitle}</h2>
+            <div class="explore-grid">
+              {info.exploreTiles!.map(tile => (
+                <a
+                  href={`/${sector}/${tile.slug}`}
+                  class="explore-tile"
+                >
+                  <div class="explore-emoji">{tile.emoji}</div>
+                  <h4 class="explore-title">{tile.title}</h4>
+                  <p class="explore-subtitle">{tile.subtitle}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ARCHIVE */}
+        <section class="section-block" data-role="archive">
+          <h2 class="section-heading">
+            📚 {info.archiveLabel}
+          </h2>
+
+          <div class="archive-grid">
+            {archivePosts.map(post => (
+              <a
+                href={`/${sector}/${post.id}`}
+                class="archive-card"
+              >
+                <div
+                  class="archive-img"
+                  style={`background-image: url('${post.data.image}');`}
+                ></div>
+                <div class="archive-body">
+                  <h4>{post.data.title}</h4>
+                  <p>{post.data.description}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      </>
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404 — Page Not Found | Had It Gone"
+  description="The path you were looking for doesn't exist. But maybe another one does."
+  url="https://haditgone.com/404"
+  type="website"
+>
+  <div style="max-width: 750px; margin: 0 auto; padding: 20px 30px 30px; text-align: center;">
+
+    <div style="font-size: 4.5rem; font-weight: 900; line-height: 1; margin-bottom: 10px; background: linear-gradient(135deg, var(--neon-blue), var(--accent-pink)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+      404
+    </div>
+
+    <h1 style="font-size: 1.5rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-main);">
+      This path was never taken.
+    </h1>
+
+    <p style="font-size: 0.95rem; color: var(--text-muted); margin: 0 0 20px 0; line-height: 1.55;">
+      The page you were looking for doesn't exist — but there are plenty of other timelines to explore.
+    </p>
+
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px;">
+      <a href="/" class="explore-btn" style="font-size: 0.85rem; padding: 12px 26px;">
+        ← Back to Portal
+      </a>
+    </div>
+
+    <div style="padding-top: 20px; border-top: 2px solid var(--border);">
+      <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0 0 14px 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">
+        Or try one of these
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+        <a href="/history" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
+          <div class="subcard-body">
+            <div class="subcard-title" style="font-size: 0.85rem;">🏛️ History</div>
+          </div>
+        </a>
+        <a href="/science" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
+          <div class="subcard-body">
+            <div class="subcard-title" style="font-size: 0.85rem;">🧪 Science</div>
+          </div>
+        </a>
+        <a href="/space" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
+          <div class="subcard-body">
+            <div class="subcard-title" style="font-size: 0.85rem;">🌌 Space</div>
+          </div>
+        </a>
+        <a href="/society" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
+          <div class="subcard-body">
+            <div class="subcard-title" style="font-size: 0.85rem;">🌍 Society</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</BaseLayout>

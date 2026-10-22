@@ -1,0 +1,17 @@
+id: world-state-dinosaurs-alternate-intelligence
+name: Intelligent Life Evolves Along Another Path
+schemaVersion: 1
+worldId: world-dinosaurs-survive
+divergenceId: divergence-asteroid-misses-earth
+status: SIMULATED
+time:
+  label: Millions of years later
+  year: 1000000
+  precision: period
+description: >-
+  Humanity may never emerge. Evolution follows a different
+  and uncertain path.
+variables: []
+causedBy:
+  - event-alternate-intelligence
+evidence: []

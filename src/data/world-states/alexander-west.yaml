@@ -1,0 +1,33 @@
+
+schemaVersion: 1
+
+id: world-state-alexander-west-initial
+name: Alexander Secures His Empire
+
+worldId: world-alexander-west
+divergenceId: divergence-alexander-survives
+
+time:
+  label: "323 BC"
+  year: -323
+  precision: year
+
+status: SIMULATED
+
+description: >-
+  Alexander survives his illness in Babylon, secures his existing empire,
+  and prepares to consolidate his position before pursuing campaigns
+  in the western Mediterranean.
+
+variables:
+  - key: territorial_control
+    value:
+      macedonian_empire: "Survives under Alexander"
+      western_mediterranean: "Emerging strategic frontier"
+    status: SIMULATED
+
+causedBy: []
+
+evidence:
+  - article: "history/alexander-west"
+    claim: "Alexander recovers from his illness and secures his existing empire."

@@ -1,0 +1,174 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const historyPosts = await getCollection('history');
+const sciencePosts = await getCollection('science');
+const spacePosts = await getCollection('space');
+const societyPosts = await getCollection('society');
+
+const allPosts = [
+  ...historyPosts.map(p => ({ ...p, sector: 'History', sectorSlug: 'history' })),
+  ...sciencePosts.map(p => ({ ...p, sector: 'Science', sectorSlug: 'science' })),
+  ...spacePosts.map(p => ({ ...p, sector: 'Space', sectorSlug: 'space' })),
+  ...societyPosts.map(p => ({ ...p, sector: 'Society', sectorSlug: 'society' })),
+];
+
+// Данни за JS — id, title, description, sector, url
+const articlesData = allPosts.map(p => ({
+  id: p.id,
+  title: p.data.title,
+  description: p.data.description,
+  sector: p.sector,
+  url: `/${p.sectorSlug}/${p.id}`,
+}));
+---
+
+<BaseLayout
+  title="Bookmarks | Had It Gone"
+  description="Your saved articles on Had It Gone."
+  url="https://haditgone.com/bookmarks"
+  type="website"
+>
+  <div class="section-container">
+    <section class="topic-hero">
+      <a href="/" class="topic-back">← Back to Homepage</a>
+      <h1 class="topic-title">
+        <span class="topic-emoji">★</span>
+        Your Bookmarks
+      </h1>
+      <p class="topic-subtitle" id="bookmarksCount">
+        Saved articles are stored locally in your browser.
+      </p>
+    </section>
+
+    <section class="section-block" id="bookmarksBlock" style="display: none;">
+      <div class="archive-grid" id="bookmarksGrid"></div>
+    </section>
+
+    <section class="section-block" id="emptyBlock">
+      <div class="no-articles">
+        You haven't saved any articles yet.<br />
+        Click the ☆ Save button on any article to bookmark it.
+      </div>
+    </section>
+  </div>
+
+<script is:inline define:vars={{ articlesData }}>
+// @ts-nocheck
+(function () {
+  var KEY = 'hig_bookmarks';
+
+  var grid = document.getElementById('bookmarksGrid');
+  var block = document.getElementById('bookmarksBlock');
+  var empty = document.getElementById('emptyBlock');
+  var count = document.getElementById('bookmarksCount');
+
+  function render() {
+    var data = [];
+
+    try {
+      var parsed = JSON.parse(localStorage.getItem(KEY) || '[]');
+      data = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      data = [];
+    }
+
+    var seen = new Set();
+
+    var articles = data.map(function (item) {
+      if (typeof item === 'string') {
+        return articlesData.find(function (a) {
+          return a.id === item;
+        }) || null;
+      }
+
+      if (!item || !item.id) return null;
+
+      var article = articlesData.find(function (a) {
+        return a.id === item.id &&
+          (!item.sector ||
+           a.sector.toLowerCase() === String(item.sector).toLowerCase());
+      });
+
+      if (!article) return null;
+
+      return {
+        id: article.id,
+        sector: article.sector,
+        title: item.title || article.title,
+        description: item.description || article.description || '',
+        url: article.url,
+        ts: Number(item.ts) || 0
+      };
+    }).filter(Boolean)
+      .filter(function (item) {
+        var key = item.sector.toLowerCase() + '/' + item.id;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort(function (a, b) {
+        return b.ts - a.ts;
+      });
+
+    if (grid) {
+      grid.innerHTML = articles.map(function (a) {
+        return '<div class="continue-card">' +
+          '<a href="' + a.url + '" class="continue-card-link">' +
+          '<span class="continue-card-sector">' + a.sector + '</span>' +
+          '<h4>' + a.title + '</h4>' +
+          '<p>' + a.description + '</p>' +
+          '</a>' +
+          '<button class="continue-remove" data-article-id="' +
+          a.id + '" data-article-sector="' + a.sector.toLowerCase() +
+          '">✕ Remove</button></div>';
+      }).join('');
+
+      grid.querySelectorAll('.continue-remove').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-article-id');
+          var sector = btn.getAttribute('data-article-sector');
+
+          var current = [];
+          try {
+            current = JSON.parse(localStorage.getItem(KEY) || '[]');
+            if (!Array.isArray(current)) current = [];
+          } catch (e) {
+            current = [];
+          }
+
+          current = current.filter(function (item) {
+            if (typeof item === 'string') return item !== id;
+
+            return !(item && item.id === id &&
+              (!item.sector ||
+               String(item.sector).toLowerCase() === sector));
+          });
+
+          localStorage.setItem(KEY, JSON.stringify(current));
+          render();
+        });
+      });
+    }
+
+    if (block) block.style.display = articles.length ? 'block' : 'none';
+    if (empty) empty.style.display = articles.length ? 'none' : 'block';
+
+    if (count) {
+      count.textContent = articles.length
+        ? articles.length + (articles.length === 1
+          ? ' saved scenario'
+          : ' saved scenarios')
+        : 'No saved articles yet.';
+    }
+  }
+
+  render();
+  window.addEventListener('pageshow', render);
+  window.addEventListener('storage', function (e) {
+    if (e.key === KEY || e.key === null) render();
+  });
+})();
+</script>
+</BaseLayout>

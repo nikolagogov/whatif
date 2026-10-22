@@ -1,0 +1,4316 @@
+{
+  "generatedAt": "2026-10-21T15:11:32.361Z",
+  "stats": {
+    "nodes": 156,
+    "edges": 345,
+    "articles": 13,
+    "errors": 0,
+    "warnings": 0
+  },
+  "nodes": [
+    {
+      "id": "article:history/alexander-west",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If Alexander the Great Had Not Died at 32?",
+      "title": "What If Alexander the Great Had Not Died at 32?",
+      "sector": "history",
+      "path": "src/content/history/alexander-west.md",
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "world-alexander-west",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "A Greek Mediterranean",
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "divergence-alexander-survives",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "Alexander survives his illness in Babylon",
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "article:history/alexandria",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the Library of Alexandria Was Never Destroyed?",
+      "title": "What If the Library of Alexandria Was Never Destroyed?",
+      "sector": "history",
+      "path": "src/content/history/alexandria.md",
+      "articles": [
+        "src/content/history/alexandria.md"
+      ]
+    },
+    {
+      "id": "world-alexandria-survives",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "The Unbroken Chain of Knowledge",
+      "articles": [
+        "src/content/history/alexandria.md"
+      ]
+    },
+    {
+      "id": "divergence-alexandria-library-survives",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Library of Alexandria survives the fire",
+      "articles": [
+        "src/content/history/alexandria.md"
+      ]
+    },
+    {
+      "id": "article:history/aztec-europe",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the Aztecs Had Discovered Europe?",
+      "title": "What If the Aztecs Had Discovered Europe?",
+      "sector": "history",
+      "path": "src/content/history/aztec-europe.md",
+      "articles": [
+        "src/content/history/aztec-europe.md"
+      ]
+    },
+    {
+      "id": "world-aztec-atlantic",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "An Aztec Atlantic World",
+      "articles": [
+        "src/content/history/aztec-europe.md"
+      ]
+    },
+    {
+      "id": "divergence-aztecs-discover-europe",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Aztecs develop ocean-going ships and reach Europe",
+      "articles": [
+        "src/content/history/aztec-europe.md"
+      ]
+    },
+    {
+      "id": "article:history/cuban-crisis",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the Cuban Missile Crisis Had Gone Hot?",
+      "title": "What If the Cuban Missile Crisis Had Gone Hot?",
+      "sector": "history",
+      "path": "src/content/history/cuban-crisis.md",
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "world-nuclear-war-1962",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "A World After Nuclear War",
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "divergence-cuban-crisis-escalates",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Cuban Missile Crisis escalates into nuclear war",
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "article:history/islamic-europe",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the Umayyads Had Conquered Europe?",
+      "title": "What If the Umayyads Had Conquered Europe?",
+      "sector": "history",
+      "path": "src/content/history/islamic-europe.md",
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "world-islamic-europe",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "An Islamic Europe",
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "divergence-umayyads-win-tours",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Umayyads win at the Battle of Tours",
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "article:history/napoleon-egypt",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If Napoleon Had Won in Egypt?",
+      "title": "What If Napoleon Had Won in Egypt?",
+      "sector": "history",
+      "path": "src/content/history/napoleon-egypt.md",
+      "articles": [
+        "src/content/history/napoleon-egypt.md"
+      ]
+    },
+    {
+      "id": "world-napoleonic-europe",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "Napoleonic Europe",
+      "articles": [
+        "src/content/history/napoleon-egypt.md",
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "divergence-egypt-1798",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The French fleet is not destroyed at Aboukir Bay",
+      "articles": [
+        "src/content/history/napoleon-egypt.md"
+      ]
+    },
+    {
+      "id": "article:history/rome-never-fell",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If Rome Had Never Fallen?",
+      "title": "What If Rome Had Never Fallen?",
+      "sector": "history",
+      "path": "src/content/history/rome-never-fell.md",
+      "articles": [
+        "src/content/history/rome-never-fell.md"
+      ]
+    },
+    {
+      "id": "world-western-rome-survives",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "The Unbroken Roman Empire",
+      "articles": [
+        "src/content/history/rome-never-fell.md"
+      ]
+    },
+    {
+      "id": "divergence-western-rome-survives",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Western Roman Empire survives the fifth century",
+      "articles": [
+        "src/content/history/rome-never-fell.md"
+      ]
+    },
+    {
+      "id": "article:history/spanish-armada",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the Spanish Armada Had Landed?",
+      "title": "What If the Spanish Armada Had Landed?",
+      "sector": "history",
+      "path": "src/content/history/spanish-armada.md",
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "world-spanish-armada-victory",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "A Catholic England",
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "divergence-spanish-armada-lands",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Spanish Armada successfully lands its invasion force",
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "article:history/vienna-1683",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the Ottomans Had Taken Vienna?",
+      "title": "What If the Ottomans Had Taken Vienna?",
+      "sector": "history",
+      "path": "src/content/history/vienna-1683.md",
+      "articles": [
+        "src/content/history/vienna-1683.md"
+      ]
+    },
+    {
+      "id": "world-ottoman-vienna",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "A Divided Europe",
+      "articles": [
+        "src/content/history/vienna-1683.md"
+      ]
+    },
+    {
+      "id": "divergence-vienna-falls",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Ottoman army captures Vienna",
+      "articles": [
+        "src/content/history/vienna-1683.md"
+      ]
+    },
+    {
+      "id": "article:history/waterloo-1815",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If Napoleon Had Won at Waterloo?",
+      "title": "What If Napoleon Had Won at Waterloo?",
+      "sector": "history",
+      "path": "src/content/history/waterloo-1815.md",
+      "articles": [
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "divergence-waterloo-1815",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The Prussian army fails to reach Waterloo in time",
+      "articles": [
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "article:science/dinosaurs",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the Asteroid Had Missed the Earth?",
+      "title": "What If the Asteroid Had Missed the Earth?",
+      "sector": "science",
+      "path": "src/content/science/dinosaurs.md",
+      "articles": [
+        "src/content/science/dinosaurs.md"
+      ]
+    },
+    {
+      "id": "world-dinosaurs-survive",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "A World Ruled by Dinosaurs",
+      "articles": [
+        "src/content/science/dinosaurs.md"
+      ]
+    },
+    {
+      "id": "divergence-asteroid-misses-earth",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The asteroid misses Earth",
+      "articles": [
+        "src/content/science/dinosaurs.md"
+      ]
+    },
+    {
+      "id": "article:space/mars",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If Mars Never Lost Its Ancient Oceans?",
+      "title": "What If Mars Never Lost Its Ancient Oceans?",
+      "sector": "space",
+      "path": "src/content/space/mars.md",
+      "articles": [
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "world-living-mars",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "Living Mars",
+      "articles": [
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "divergence-mars-keeps-oceans",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "Mars retains its oceans and thick atmosphere",
+      "articles": [
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "article:society/internet",
+      "kind": "article",
+      "type": "ARTICLE",
+      "label": "What If the World Wide Web Had Never Been Invented?",
+      "title": "What If the World Wide Web Had Never Been Invented?",
+      "sector": "society",
+      "path": "src/content/society/internet.md",
+      "articles": [
+        "src/content/society/internet.md"
+      ]
+    },
+    {
+      "id": "world-disconnected-world",
+      "kind": "world",
+      "type": "WORLD",
+      "label": "The Disconnected World",
+      "articles": [
+        "src/content/society/internet.md"
+      ]
+    },
+    {
+      "id": "divergence-web-never-invented",
+      "kind": "divergence",
+      "type": "DIVERGENCE",
+      "label": "The World Wide Web is never invented",
+      "articles": [
+        "src/content/society/internet.md"
+      ]
+    },
+    {
+      "id": "transition-arabian-campaign-322-bc",
+      "kind": "world-transition",
+      "type": "WORLD_TRANSITION",
+      "label": "Arabian Campaign 322 Bc",
+      "from": null,
+      "to": null,
+      "description": null
+    },
+    {
+      "id": "alexander-survives-323-bc",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Fever Breaks",
+      "time": "323 BC",
+      "description": "Alexander recovers from his illness and secures his existing empire.",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "arabian-campaign-322-bc",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Arabian Campaign",
+      "time": "322 BC",
+      "description": "Alexander secures coastal routes and strengthens his position.",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "western-fleet-320-bc",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Building the Fleet",
+      "time": "321–320 BC",
+      "description": "A fleet is assembled to challenge Carthage.",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "war-carthage-318-bc",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The War at Sea",
+      "time": "318–315 BC",
+      "description": "The struggle for control of the western Mediterranean begins.",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "mediterranean-transformed",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A Different Mediterranean",
+      "time": "3rd–2nd centuries BC",
+      "description": "Greek influence expands westward while Rome follows a different political path.",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "alexandria-timeline-1",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The library survives",
+      "time": "48 BC",
+      "description": "Caesar's fire damages the harbour district but leaves the library intact.",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "alexandria-timeline-2",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Alexandria's scientific centre",
+      "time": "2nd century AD",
+      "description": "Scholars and engineers develop a continuous research tradition.",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "alexandria-timeline-3",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Early mechanization",
+      "time": "3rd century AD",
+      "description": "Mechanical power finds wider use in mines, workshops, and agriculture.",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "alexandria-timeline-4",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Knowledge crosses cultures",
+      "time": "7th century",
+      "description": "Alexandria connects Greek scholarship with Arabic, Persian, and Indian intellectual traditions.",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "alexandria-timeline-5",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Scientific continuity",
+      "time": "Medieval period",
+      "description": "Knowledge accumulates through connected scholarly institutions rather than repeated rediscovery.",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article:history/aztec-europe:timeline:1",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Aztecs Reach Europe",
+      "time": "1519",
+      "description": "An Aztec expedition crosses the Atlantic and reaches Portugal.",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article:history/aztec-europe:timeline:2",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "First Diplomatic Contacts",
+      "time": "1520",
+      "description": "Aztec envoys establish relations with European rulers.",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article:history/aztec-europe:timeline:3",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A New Atlantic Order Emerges",
+      "time": "1521",
+      "description": "Contact between the two civilizations reshapes trade and political alliances.",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "nuclear-exchange-1962",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The nuclear exchange",
+      "time": "27 October 1962",
+      "description": "The Cuban Missile Crisis escalates into a nuclear exchange between the United States and the Soviet Union.",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "nuclear-winter",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Nuclear winter",
+      "time": "1962–1965",
+      "description": "Nuclear fallout and climatic disruption devastate agriculture and cause widespread famine.",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "southern-hemisphere-survival",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The surviving south",
+      "time": "Late 20th century",
+      "description": "Countries in the Southern Hemisphere preserve more of their population and institutional capacity.",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "new-world-order-2020s",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A different world order",
+      "time": "2020s",
+      "description": "Surviving powers in the Global South shape a radically different international order.",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article:history/islamic-europe:timeline:1",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Umayyads win at Tours",
+      "time": "732",
+      "description": "The Frankish defeat creates an opportunity for further Muslim expansion into Western Europe.",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article:history/islamic-europe:timeline:2",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Muslim rule expands into France",
+      "time": "8th–9th centuries",
+      "description": "If political stability and military success continue, parts of Western Europe come under lasting Islamic rule.",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article:history/islamic-europe:timeline:3",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Intellectual and cultural exchange grows",
+      "time": "Medieval period",
+      "description": "Arabic scholarship, European traditions, and knowledge from across the Islamic world interact in new centres of learning.",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article:history/islamic-europe:timeline:4",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A different age of exploration",
+      "time": "15th–16th centuries",
+      "description": "Political and maritime developments may lead to different patterns of Atlantic exploration and overseas expansion.",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article:history/islamic-europe:timeline:5",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A different conception of Europe",
+      "time": "Present day",
+      "description": "Religious, linguistic, and political identities develop along a path unlike the historical division between Europe and the Islamic world.",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "event-aboukir-victory",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The French fleet survives Aboukir Bay",
+      "time": "1798-08-01",
+      "description": "Nelson's attack fails, and French naval presence in the Eastern Mediterranean is preserved.",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "event-egypt-consolidation",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "French control over Egypt is consolidated",
+      "time": "1799",
+      "description": "Napoleon remains in the East and builds a permanent administration.",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "event-levant-campaign",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Levant campaign succeeds",
+      "time": "1800",
+      "description": "French forces take Acre and push into Syria.",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "event-eastern-empire",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "An Eastern French empire emerges",
+      "time": "1810s",
+      "description": "Egypt and the Levant become a permanent part of the French sphere.",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "rome-never-fell-timeline-1",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The empire survives",
+      "time": "5th century",
+      "description": "The Western Roman state avoids final collapse.",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "rome-never-fell-timeline-2",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A smaller Rome",
+      "time": "6th century",
+      "description": "The empire consolidates a more limited territory in the western Mediterranean.",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "rome-never-fell-timeline-3",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Roman continuity",
+      "time": "Medieval period",
+      "description": "Roman law, Latin, and imperial institutions persist in altered forms.",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "rome-never-fell-timeline-4",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A different Europe",
+      "time": "1500",
+      "description": "Europe develops without the familiar historical divide between Rome and the Middle Ages.",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "spanish-armada-timeline-1",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The landing succeeds",
+      "time": "1588",
+      "description": "The Armada escorts Parma's army across the Channel.",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "spanish-armada-timeline-2",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Catholic restoration",
+      "time": "Late 16th century",
+      "description": "England's religious settlement is overturned amid conflict and resistance.",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "spanish-armada-timeline-3",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A different balance of power",
+      "time": "17th century",
+      "description": "Spain's influence expands, but the cost of controlling England strains its empire.",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "spanish-armada-timeline-4",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "No British Empire as we know it",
+      "time": "Modern era",
+      "description": "Global trade and colonial expansion develop along a different path.",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "vienna-1683-timeline-1",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The fall of Vienna",
+      "time": "1683-09",
+      "description": "Ottoman forces capture the Habsburg capital.",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "vienna-1683-timeline-2",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Ottoman advance",
+      "time": "Late 17th century",
+      "description": "The fall of Vienna changes the strategic balance in Central Europe.",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "vienna-1683-timeline-3",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "France fills the vacuum",
+      "time": "18th century",
+      "description": "France expands its influence as European powers adjust to the altered balance.",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "vienna-1683-timeline-4",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A different Enlightenment",
+      "time": "18th century",
+      "description": "Intellectual and political developments unfold under a different continental order.",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "event-waterloo-victory",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Napoleon wins Waterloo",
+      "time": "1815-06-18",
+      "description": "Without the decisive Prussian intervention, the French break Wellington's army.",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "event-french-consolidation",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "France consolidates its position",
+      "time": "1816",
+      "description": "The coalition loses the political leverage needed to impose the historical settlement.",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "event-european-order",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A new European order emerges",
+      "time": "1820",
+      "description": "France becomes the dominant continental power, while Britain remains its principal rival.",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "event-succession-question",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The succession question",
+      "time": "1830s",
+      "description": "Napoleon's age turns succession and imperial continuity into central political questions.",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "event-imperial-decline",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Napoleonic system begins to decline",
+      "time": "1850s",
+      "description": "The empire survives, but its institutions become increasingly difficult to sustain.",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "event-asteroid-misses-earth",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The asteroid misses Earth",
+      "time": "66 million years ago",
+      "description": "The impact never occurs and the Cretaceous extinction event unfolds differently.",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "event-dinosaurs-continue-evolving",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Dinosaurs continue to diversify",
+      "time": "66–50 million years ago",
+      "description": "Non-avian dinosaurs remain dominant across Earth's terrestrial ecosystems.",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "event-mammals-remain-marginal",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Mammals remain in the shadows",
+      "time": "Cenozoic era",
+      "description": "Without the extinction of the dinosaurs, mammals do not receive the same evolutionary opportunity to diversify.",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "event-alternate-intelligence",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A different path to intelligence",
+      "time": "Millions of years later",
+      "description": "Some dinosaur lineages may evolve increasingly complex behaviour and intelligence, though the outcome remains uncertain.",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "event-alternate-earth",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A very different Earth",
+      "time": "Today",
+      "description": "Earth remains dominated by ecosystems shaped by dinosaurs rather than mammals and primates.",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "event-mars-retains-habitability",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Mars retains its oceans and atmosphere",
+      "time": "Ancient Mars",
+      "description": "Mars remains warm and wet instead of losing its surface water and thick atmosphere.",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "event-humanity-observes-living-mars",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Humanity observes a blue Mars",
+      "time": "Ancient civilizations",
+      "description": "Mars appears as a visibly active and potentially habitable world in the night sky.",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "event-mars-space-race",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The race for Mars",
+      "time": "20th century",
+      "description": "The space age becomes a race to reach and study a living neighbouring world.",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "event-mars-research-bases",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Permanent research bases become possible",
+      "time": "1980s",
+      "description": "Long-term human research presence on Mars becomes conceivable.",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "event-mars-settlements",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Human settlements beyond Earth",
+      "time": "2000s",
+      "description": "Humanity may establish its first permanent settlements beyond Earth.",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article:society/internet:timeline:1",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "The Web is never proposed",
+      "time": "1989",
+      "description": "The system designed to make information sharing between computers simple and universal never emerges.",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article:society/internet:timeline:2",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Information networks remain fragmented",
+      "time": "1990s",
+      "description": "Commercial online services, telephone networks, television, and private computer systems develop independently.",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article:society/internet:timeline:3",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Global collaboration slows",
+      "time": "Early 2000s",
+      "description": "Scientific research, open-source software, online education, and international communication lack the Web's universal platform.",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article:society/internet:timeline:4",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "Alternative digital ecosystems expand",
+      "time": "2010s",
+      "description": "Regional and commercial networks grow, potentially divided by national borders, corporate control, and political blocs.",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article:society/internet:timeline:5",
+      "kind": "timeline-event",
+      "type": "TIMELINE_EVENT",
+      "label": "A world of information islands",
+      "time": "Present day",
+      "description": "People still communicate through technology, but access to knowledge and global participation remain more fragmented.",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "entity-alexander",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Alexander the Great",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "entity-alexandrian-scholars",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Alexandrian scholars",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexandria.md"
+      ]
+    },
+    {
+      "id": "entity-battle-of-tours",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Battle of Tours",
+      "aliases": [],
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "entity-brazil",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Brazil",
+      "aliases": [],
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "entity-c-rdoba",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Córdoba",
+      "aliases": [],
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "entity-carthage",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Carthage",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "entity-charles-martel",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Charles Martel",
+      "aliases": [],
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "entity-christianity",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Christianity",
+      "aliases": [],
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "entity-cuba",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Cuba",
+      "aliases": [],
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "entity-duke-parma",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Duke of Parma",
+      "aliases": [],
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "entity-elizabeth-i",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Elizabeth I",
+      "aliases": [],
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "entity-england",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "England",
+      "aliases": [],
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "entity-habsburg-monarchy",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Habsburg Monarchy",
+      "aliases": [],
+      "articles": [
+        "src/content/history/vienna-1683.md"
+      ]
+    },
+    {
+      "id": "entity-islam",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Islam",
+      "aliases": [],
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "entity-islamic-golden-age",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Islamic Golden Age",
+      "aliases": [],
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "entity-islamic-scholarly-world",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Scholars of the Islamic world",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexandria.md"
+      ]
+    },
+    {
+      "id": "entity-kara-mustafa",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Kara Mustafa Pasha",
+      "aliases": [],
+      "articles": [
+        "src/content/history/vienna-1683.md"
+      ]
+    },
+    {
+      "id": "entity-library-alexandria",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Library of Alexandria",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexandria.md"
+      ]
+    },
+    {
+      "id": "entity-macedon",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Macedonian Empire",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "entity-nigeria",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Nigeria",
+      "aliases": [],
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "entity-philip-ii",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Philip II of Spain",
+      "aliases": [],
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "entity-ravenna",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Ravenna",
+      "aliases": [],
+      "articles": [
+        "src/content/history/rome-never-fell.md"
+      ]
+    },
+    {
+      "id": "entity-roman-empire",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Roman Empire",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexandria.md"
+      ]
+    },
+    {
+      "id": "entity-south-africa",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "South Africa",
+      "aliases": [],
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "entity-spanish-empire",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Spanish Empire",
+      "aliases": [],
+      "articles": [
+        "src/content/history/spanish-armada.md"
+      ]
+    },
+    {
+      "id": "entity-umayyad-caliphate",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Umayyad Caliphate",
+      "aliases": [],
+      "articles": [
+        "src/content/history/islamic-europe.md"
+      ]
+    },
+    {
+      "id": "entity-vienna",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Vienna",
+      "aliases": [],
+      "articles": [
+        "src/content/history/vienna-1683.md"
+      ]
+    },
+    {
+      "id": "entity-western-roman-empire",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Western Roman Empire",
+      "aliases": [],
+      "articles": [
+        "src/content/history/rome-never-fell.md"
+      ]
+    },
+    {
+      "id": "feature-ancient-oceans",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Ancient oceans",
+      "aliases": [],
+      "articles": [
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "group-digital-communities-and-independent-publishers",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Digital communities and independent publishers",
+      "aliases": [],
+      "articles": [
+        "src/content/society/internet.md"
+      ]
+    },
+    {
+      "id": "group-dinosaurs",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Dinosaurs",
+      "aliases": [],
+      "articles": [
+        "src/content/science/dinosaurs.md"
+      ]
+    },
+    {
+      "id": "group-humanity",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Humanity",
+      "aliases": [],
+      "articles": [
+        "src/content/science/dinosaurs.md",
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "group-mammals",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Mammals",
+      "aliases": [],
+      "articles": [
+        "src/content/science/dinosaurs.md"
+      ]
+    },
+    {
+      "id": "group-primates",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Primates",
+      "aliases": [],
+      "articles": [
+        "src/content/science/dinosaurs.md"
+      ]
+    },
+    {
+      "id": "institution-universities-and-research-institutions",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Universities and research institutions",
+      "aliases": [],
+      "articles": [
+        "src/content/society/internet.md"
+      ]
+    },
+    {
+      "id": "person-duke-of-wellington",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Duke of Wellington",
+      "aliases": [],
+      "articles": [
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "person-hern-n-cort-s",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Hernán Cortés",
+      "aliases": [],
+      "articles": [
+        "src/content/history/aztec-europe.md"
+      ]
+    },
+    {
+      "id": "person-napoleon-bonaparte",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Napoleon Bonaparte",
+      "aliases": [],
+      "articles": [
+        "src/content/history/napoleon-egypt.md",
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "place-egypt",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Egypt",
+      "aliases": [],
+      "articles": [
+        "src/content/history/napoleon-egypt.md"
+      ]
+    },
+    {
+      "id": "place-greek-mediterranean",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Greek Mediterranean",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "place-levant",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "The Levant",
+      "aliases": [],
+      "articles": [
+        "src/content/history/napoleon-egypt.md"
+      ]
+    },
+    {
+      "id": "place-rome",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Rome",
+      "aliases": [
+        "Roma"
+      ],
+      "articles": [
+        "src/content/history/rome-never-fell.md"
+      ]
+    },
+    {
+      "id": "place-tenochtitlan",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Tenochtitlan",
+      "aliases": [],
+      "articles": [
+        "src/content/history/aztec-europe.md"
+      ]
+    },
+    {
+      "id": "place-waterloo",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Waterloo",
+      "aliases": [],
+      "articles": [
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "planet-earth",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Earth",
+      "aliases": [],
+      "articles": [
+        "src/content/science/dinosaurs.md",
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "planet-mars",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Mars",
+      "aliases": [],
+      "articles": [
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "polity-aztec-empire",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Aztec Empire",
+      "aliases": [],
+      "articles": [
+        "src/content/history/aztec-europe.md"
+      ]
+    },
+    {
+      "id": "polity-britain",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Britain",
+      "aliases": [],
+      "articles": [
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "polity-france",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "France",
+      "aliases": [],
+      "articles": [
+        "src/content/history/napoleon-egypt.md",
+        "src/content/history/vienna-1683.md",
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "polity-ottoman-empire",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Ottoman Empire",
+      "aliases": [],
+      "articles": [
+        "src/content/history/napoleon-egypt.md",
+        "src/content/history/vienna-1683.md"
+      ]
+    },
+    {
+      "id": "polity-portugal",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Portugal",
+      "aliases": [],
+      "articles": [
+        "src/content/history/aztec-europe.md"
+      ]
+    },
+    {
+      "id": "polity-prussia",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Prussia",
+      "aliases": [],
+      "articles": [
+        "src/content/history/waterloo-1815.md"
+      ]
+    },
+    {
+      "id": "polity-roman-republic",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Roman Republic",
+      "aliases": [],
+      "articles": [
+        "src/content/history/alexander-west.md"
+      ]
+    },
+    {
+      "id": "region-northern-hemisphere",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Northern Hemisphere",
+      "aliases": [],
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "region-southern-hemisphere",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Southern Hemisphere",
+      "aliases": [],
+      "articles": [
+        "src/content/history/cuban-crisis.md"
+      ]
+    },
+    {
+      "id": "state-soviet-union",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Soviet Union",
+      "aliases": [],
+      "articles": [
+        "src/content/history/cuban-crisis.md",
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "state-united-states",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "United States",
+      "aliases": [
+        "USA"
+      ],
+      "articles": [
+        "src/content/history/cuban-crisis.md",
+        "src/content/space/mars.md"
+      ]
+    },
+    {
+      "id": "technology-commercial-online-networks",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "Commercial online networks",
+      "aliases": [],
+      "articles": [
+        "src/content/society/internet.md"
+      ]
+    },
+    {
+      "id": "technology-world-wide-web",
+      "kind": "entity",
+      "type": "ENTITY",
+      "label": "World Wide Web",
+      "aliases": [],
+      "articles": [
+        "src/content/society/internet.md"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "contains-world:article:history/alexander-west:world-alexander-west",
+      "type": "HAS_WORLD",
+      "from": "article:history/alexander-west",
+      "to": "world-alexander-west",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "contains-divergence:article:history/alexander-west:divergence-alexander-survives",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/alexander-west",
+      "to": "divergence-alexander-survives",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "contains-world:article:history/alexandria:world-alexandria-survives",
+      "type": "HAS_WORLD",
+      "from": "article:history/alexandria",
+      "to": "world-alexandria-survives",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "contains-divergence:article:history/alexandria:divergence-alexandria-library-survives",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/alexandria",
+      "to": "divergence-alexandria-library-survives",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "related:article:history/alexandria:article:history/alexander-west",
+      "type": "RELATED_ARTICLE",
+      "from": "article:history/alexandria",
+      "to": "article:history/alexander-west",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "related:article:history/alexandria:article:history/rome-never-fell",
+      "type": "RELATED_ARTICLE",
+      "from": "article:history/alexandria",
+      "to": "article:history/rome-never-fell",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "related:article:history/alexandria:article:history/islamic-europe",
+      "type": "RELATED_ARTICLE",
+      "from": "article:history/alexandria",
+      "to": "article:history/islamic-europe",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "contains-world:article:history/aztec-europe:world-aztec-atlantic",
+      "type": "HAS_WORLD",
+      "from": "article:history/aztec-europe",
+      "to": "world-aztec-atlantic",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "contains-divergence:article:history/aztec-europe:divergence-aztecs-discover-europe",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/aztec-europe",
+      "to": "divergence-aztecs-discover-europe",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "contains-world:article:history/cuban-crisis:world-nuclear-war-1962",
+      "type": "HAS_WORLD",
+      "from": "article:history/cuban-crisis",
+      "to": "world-nuclear-war-1962",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "contains-divergence:article:history/cuban-crisis:divergence-cuban-crisis-escalates",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/cuban-crisis",
+      "to": "divergence-cuban-crisis-escalates",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "contains-world:article:history/islamic-europe:world-islamic-europe",
+      "type": "HAS_WORLD",
+      "from": "article:history/islamic-europe",
+      "to": "world-islamic-europe",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "contains-divergence:article:history/islamic-europe:divergence-umayyads-win-tours",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/islamic-europe",
+      "to": "divergence-umayyads-win-tours",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "contains-world:article:history/napoleon-egypt:world-napoleonic-europe",
+      "type": "HAS_WORLD",
+      "from": "article:history/napoleon-egypt",
+      "to": "world-napoleonic-europe",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "contains-divergence:article:history/napoleon-egypt:divergence-egypt-1798",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/napoleon-egypt",
+      "to": "divergence-egypt-1798",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "contains-world:article:history/rome-never-fell:world-western-rome-survives",
+      "type": "HAS_WORLD",
+      "from": "article:history/rome-never-fell",
+      "to": "world-western-rome-survives",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "contains-divergence:article:history/rome-never-fell:divergence-western-rome-survives",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/rome-never-fell",
+      "to": "divergence-western-rome-survives",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "contains-world:article:history/spanish-armada:world-spanish-armada-victory",
+      "type": "HAS_WORLD",
+      "from": "article:history/spanish-armada",
+      "to": "world-spanish-armada-victory",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "contains-divergence:article:history/spanish-armada:divergence-spanish-armada-lands",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/spanish-armada",
+      "to": "divergence-spanish-armada-lands",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "contains-world:article:history/vienna-1683:world-ottoman-vienna",
+      "type": "HAS_WORLD",
+      "from": "article:history/vienna-1683",
+      "to": "world-ottoman-vienna",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "contains-divergence:article:history/vienna-1683:divergence-vienna-falls",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/vienna-1683",
+      "to": "divergence-vienna-falls",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "contains-world:article:history/waterloo-1815:world-napoleonic-europe",
+      "type": "HAS_WORLD",
+      "from": "article:history/waterloo-1815",
+      "to": "world-napoleonic-europe",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "contains-divergence:article:history/waterloo-1815:divergence-waterloo-1815",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:history/waterloo-1815",
+      "to": "divergence-waterloo-1815",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "contains-world:article:science/dinosaurs:world-dinosaurs-survive",
+      "type": "HAS_WORLD",
+      "from": "article:science/dinosaurs",
+      "to": "world-dinosaurs-survive",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "contains-divergence:article:science/dinosaurs:divergence-asteroid-misses-earth",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:science/dinosaurs",
+      "to": "divergence-asteroid-misses-earth",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "contains-world:article:space/mars:world-living-mars",
+      "type": "HAS_WORLD",
+      "from": "article:space/mars",
+      "to": "world-living-mars",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "contains-divergence:article:space/mars:divergence-mars-keeps-oceans",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:space/mars",
+      "to": "divergence-mars-keeps-oceans",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "contains-world:article:society/internet:world-disconnected-world",
+      "type": "HAS_WORLD",
+      "from": "article:society/internet",
+      "to": "world-disconnected-world",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "contains-divergence:article:society/internet:divergence-web-never-invented",
+      "type": "HAS_DIVERGENCE",
+      "from": "article:society/internet",
+      "to": "divergence-web-never-invented",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexander-west:alexander-survives-323-bc",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexander-west",
+      "to": "alexander-survives-323-bc",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexander-west:arabian-campaign-322-bc",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexander-west",
+      "to": "arabian-campaign-322-bc",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexander-west:western-fleet-320-bc",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexander-west",
+      "to": "western-fleet-320-bc",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexander-west:war-carthage-318-bc",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexander-west",
+      "to": "war-carthage-318-bc",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexander-west:mediterranean-transformed",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexander-west",
+      "to": "mediterranean-transformed",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexandria:alexandria-timeline-1",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexandria",
+      "to": "alexandria-timeline-1",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexandria:alexandria-timeline-2",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexandria",
+      "to": "alexandria-timeline-2",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexandria:alexandria-timeline-3",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexandria",
+      "to": "alexandria-timeline-3",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexandria:alexandria-timeline-4",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexandria",
+      "to": "alexandria-timeline-4",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-timeline-event:article:history/alexandria:alexandria-timeline-5",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/alexandria",
+      "to": "alexandria-timeline-5",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-timeline-event:article:history/aztec-europe:article:history/aztec-europe:timeline:1",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/aztec-europe",
+      "to": "article:history/aztec-europe:timeline:1",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/aztec-europe:article:history/aztec-europe:timeline:2",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/aztec-europe",
+      "to": "article:history/aztec-europe:timeline:2",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/aztec-europe:article:history/aztec-europe:timeline:3",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/aztec-europe",
+      "to": "article:history/aztec-europe:timeline:3",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/cuban-crisis:nuclear-exchange-1962",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/cuban-crisis",
+      "to": "nuclear-exchange-1962",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-timeline-event:article:history/cuban-crisis:nuclear-winter",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/cuban-crisis",
+      "to": "nuclear-winter",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-timeline-event:article:history/cuban-crisis:southern-hemisphere-survival",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/cuban-crisis",
+      "to": "southern-hemisphere-survival",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-timeline-event:article:history/cuban-crisis:new-world-order-2020s",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/cuban-crisis",
+      "to": "new-world-order-2020s",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-timeline-event:article:history/islamic-europe:article:history/islamic-europe:timeline:1",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/islamic-europe",
+      "to": "article:history/islamic-europe:timeline:1",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/islamic-europe:article:history/islamic-europe:timeline:2",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/islamic-europe",
+      "to": "article:history/islamic-europe:timeline:2",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/islamic-europe:article:history/islamic-europe:timeline:3",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/islamic-europe",
+      "to": "article:history/islamic-europe:timeline:3",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/islamic-europe:article:history/islamic-europe:timeline:4",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/islamic-europe",
+      "to": "article:history/islamic-europe:timeline:4",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/islamic-europe:article:history/islamic-europe:timeline:5",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/islamic-europe",
+      "to": "article:history/islamic-europe:timeline:5",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-timeline-event:article:history/napoleon-egypt:event-aboukir-victory",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/napoleon-egypt",
+      "to": "event-aboukir-victory",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-timeline-event:article:history/napoleon-egypt:event-egypt-consolidation",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/napoleon-egypt",
+      "to": "event-egypt-consolidation",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-timeline-event:article:history/napoleon-egypt:event-levant-campaign",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/napoleon-egypt",
+      "to": "event-levant-campaign",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-timeline-event:article:history/napoleon-egypt:event-eastern-empire",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/napoleon-egypt",
+      "to": "event-eastern-empire",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-timeline-event:article:history/rome-never-fell:rome-never-fell-timeline-1",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/rome-never-fell",
+      "to": "rome-never-fell-timeline-1",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "article-timeline-event:article:history/rome-never-fell:rome-never-fell-timeline-2",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/rome-never-fell",
+      "to": "rome-never-fell-timeline-2",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "article-timeline-event:article:history/rome-never-fell:rome-never-fell-timeline-3",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/rome-never-fell",
+      "to": "rome-never-fell-timeline-3",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "article-timeline-event:article:history/rome-never-fell:rome-never-fell-timeline-4",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/rome-never-fell",
+      "to": "rome-never-fell-timeline-4",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "article-timeline-event:article:history/spanish-armada:spanish-armada-timeline-1",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/spanish-armada",
+      "to": "spanish-armada-timeline-1",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-timeline-event:article:history/spanish-armada:spanish-armada-timeline-2",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/spanish-armada",
+      "to": "spanish-armada-timeline-2",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-timeline-event:article:history/spanish-armada:spanish-armada-timeline-3",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/spanish-armada",
+      "to": "spanish-armada-timeline-3",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-timeline-event:article:history/spanish-armada:spanish-armada-timeline-4",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/spanish-armada",
+      "to": "spanish-armada-timeline-4",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-timeline-event:article:history/vienna-1683:vienna-1683-timeline-1",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/vienna-1683",
+      "to": "vienna-1683-timeline-1",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-timeline-event:article:history/vienna-1683:vienna-1683-timeline-2",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/vienna-1683",
+      "to": "vienna-1683-timeline-2",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-timeline-event:article:history/vienna-1683:vienna-1683-timeline-3",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/vienna-1683",
+      "to": "vienna-1683-timeline-3",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-timeline-event:article:history/vienna-1683:vienna-1683-timeline-4",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/vienna-1683",
+      "to": "vienna-1683-timeline-4",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-timeline-event:article:history/waterloo-1815:event-waterloo-victory",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/waterloo-1815",
+      "to": "event-waterloo-victory",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-timeline-event:article:history/waterloo-1815:event-french-consolidation",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/waterloo-1815",
+      "to": "event-french-consolidation",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-timeline-event:article:history/waterloo-1815:event-european-order",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/waterloo-1815",
+      "to": "event-european-order",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-timeline-event:article:history/waterloo-1815:event-succession-question",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/waterloo-1815",
+      "to": "event-succession-question",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-timeline-event:article:history/waterloo-1815:event-imperial-decline",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:history/waterloo-1815",
+      "to": "event-imperial-decline",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-timeline-event:article:science/dinosaurs:event-asteroid-misses-earth",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:science/dinosaurs",
+      "to": "event-asteroid-misses-earth",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-timeline-event:article:science/dinosaurs:event-dinosaurs-continue-evolving",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:science/dinosaurs",
+      "to": "event-dinosaurs-continue-evolving",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-timeline-event:article:science/dinosaurs:event-mammals-remain-marginal",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:science/dinosaurs",
+      "to": "event-mammals-remain-marginal",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-timeline-event:article:science/dinosaurs:event-alternate-intelligence",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:science/dinosaurs",
+      "to": "event-alternate-intelligence",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-timeline-event:article:science/dinosaurs:event-alternate-earth",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:science/dinosaurs",
+      "to": "event-alternate-earth",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-timeline-event:article:space/mars:event-mars-retains-habitability",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:space/mars",
+      "to": "event-mars-retains-habitability",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-timeline-event:article:space/mars:event-humanity-observes-living-mars",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:space/mars",
+      "to": "event-humanity-observes-living-mars",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-timeline-event:article:space/mars:event-mars-space-race",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:space/mars",
+      "to": "event-mars-space-race",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-timeline-event:article:space/mars:event-mars-research-bases",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:space/mars",
+      "to": "event-mars-research-bases",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-timeline-event:article:space/mars:event-mars-settlements",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:space/mars",
+      "to": "event-mars-settlements",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-timeline-event:article:society/internet:article:society/internet:timeline:1",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:society/internet",
+      "to": "article:society/internet:timeline:1",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-timeline-event:article:society/internet:article:society/internet:timeline:2",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:society/internet",
+      "to": "article:society/internet:timeline:2",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-timeline-event:article:society/internet:article:society/internet:timeline:3",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:society/internet",
+      "to": "article:society/internet:timeline:3",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-timeline-event:article:society/internet:article:society/internet:timeline:4",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:society/internet",
+      "to": "article:society/internet:timeline:4",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-timeline-event:article:society/internet:article:society/internet:timeline:5",
+      "type": "HAS_TIMELINE_EVENT",
+      "from": "article:society/internet",
+      "to": "article:society/internet:timeline:5",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-relationship:article:history/alexander-west:ALLIANCE:entity-macedon:place-greek-mediterranean",
+      "type": "ALLIANCE",
+      "from": "entity-macedon",
+      "to": "place-greek-mediterranean",
+      "article": "article:history/alexander-west",
+      "evidence": "src/content/history/alexander-west.md",
+      "label": "Imperial expansion shapes the Mediterranean"
+    },
+    {
+      "id": "article-relationship:article:history/alexander-west:RIVALRY:entity-macedon:entity-carthage",
+      "type": "RIVALRY",
+      "from": "entity-macedon",
+      "to": "entity-carthage",
+      "article": "article:history/alexander-west",
+      "evidence": "src/content/history/alexander-west.md",
+      "label": "Competition for western influence"
+    },
+    {
+      "id": "article-relationship:article:history/alexander-west:results_in:alexander-survives-323-bc:arabian-campaign-322-bc",
+      "type": "results_in",
+      "from": "alexander-survives-323-bc",
+      "to": "arabian-campaign-322-bc",
+      "article": "article:history/alexander-west",
+      "evidence": "src/content/history/alexander-west.md",
+      "label": "Alexander's survival enables the Arabian campaign"
+    },
+    {
+      "id": "article-relationship:article:history/alexander-west:causes:divergence-alexander-survives:alexander-survives-323-bc",
+      "type": "causes",
+      "from": "divergence-alexander-survives",
+      "to": "alexander-survives-323-bc",
+      "article": "article:history/alexander-west",
+      "evidence": "src/content/history/alexander-west.md",
+      "label": "Alexander's survival begins the alternate timeline"
+    },
+    {
+      "id": "article-relationship:article:history/alexandria:causes:divergence-alexandria-library-survives:alexandria-timeline-1",
+      "type": "causes",
+      "from": "divergence-alexandria-library-survives",
+      "to": "alexandria-timeline-1",
+      "article": "article:history/alexandria",
+      "evidence": "src/content/history/alexandria.md",
+      "label": "The surviving library preserves the continuity of knowledge"
+    },
+    {
+      "id": "article-relationship:article:history/alexandria:KNOWLEDGE_EXCHANGE:entity-alexandrian-scholars:entity-islamic-scholarly-world",
+      "type": "KNOWLEDGE_EXCHANGE",
+      "from": "entity-alexandrian-scholars",
+      "to": "entity-islamic-scholarly-world",
+      "article": "article:history/alexandria",
+      "evidence": "src/content/history/alexandria.md",
+      "label": "Scientific knowledge is preserved and transmitted"
+    },
+    {
+      "id": "article-relationship:article:history/aztec-europe:causes:divergence-aztecs-discover-europe:article:history/aztec-europe:timeline:1",
+      "type": "causes",
+      "from": "divergence-aztecs-discover-europe",
+      "to": "article:history/aztec-europe:timeline:1",
+      "article": "article:history/aztec-europe",
+      "evidence": "src/content/history/aztec-europe.md",
+      "label": "Aztec ocean-going ships enable the Atlantic crossing"
+    },
+    {
+      "id": "article-relationship:article:history/aztec-europe:located-in:place-tenochtitlan:polity-aztec-empire",
+      "type": "located-in",
+      "from": "place-tenochtitlan",
+      "to": "polity-aztec-empire",
+      "article": "article:history/aztec-europe",
+      "evidence": "src/content/history/aztec-europe.md",
+      "label": "Capital of"
+    },
+    {
+      "id": "article-relationship:article:history/aztec-europe:diplomatic-contact:polity-aztec-empire:polity-portugal",
+      "type": "diplomatic-contact",
+      "from": "polity-aztec-empire",
+      "to": "polity-portugal",
+      "article": "article:history/aztec-europe",
+      "evidence": "src/content/history/aztec-europe.md",
+      "label": "Alternate diplomatic relations"
+    },
+    {
+      "id": "article-relationship:article:history/cuban-crisis:causes:divergence-cuban-crisis-escalates:nuclear-exchange-1962",
+      "type": "causes",
+      "from": "divergence-cuban-crisis-escalates",
+      "to": "nuclear-exchange-1962",
+      "article": "article:history/cuban-crisis",
+      "evidence": "src/content/history/cuban-crisis.md",
+      "label": "The failed crisis settlement triggers nuclear exchange"
+    },
+    {
+      "id": "article-relationship:article:history/cuban-crisis:CONFLICT:state-united-states:state-soviet-union",
+      "type": "CONFLICT",
+      "from": "state-united-states",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis",
+      "evidence": "src/content/history/cuban-crisis.md",
+      "label": "Nuclear exchange escalates"
+    },
+    {
+      "id": "article-relationship:article:history/cuban-crisis:SHIFT_OF_POWER:region-southern-hemisphere:region-northern-hemisphere",
+      "type": "SHIFT_OF_POWER",
+      "from": "region-southern-hemisphere",
+      "to": "region-northern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "evidence": "src/content/history/cuban-crisis.md",
+      "label": "Relative global influence changes"
+    },
+    {
+      "id": "article-relationship:article:history/islamic-europe:causes:divergence-umayyads-win-tours:article:history/islamic-europe:timeline:1",
+      "type": "causes",
+      "from": "divergence-umayyads-win-tours",
+      "to": "article:history/islamic-europe:timeline:1",
+      "article": "article:history/islamic-europe",
+      "evidence": "src/content/history/islamic-europe.md",
+      "label": "The Umayyad victory opens the way for expansion into Europe"
+    },
+    {
+      "id": "article-relationship:article:history/napoleon-egypt:causes:divergence-egypt-1798:event-aboukir-victory",
+      "type": "causes",
+      "from": "divergence-egypt-1798",
+      "to": "event-aboukir-victory",
+      "article": "article:history/napoleon-egypt",
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-relationship:article:history/napoleon-egypt:results_in:event-aboukir-victory:event-egypt-consolidation",
+      "type": "results_in",
+      "from": "event-aboukir-victory",
+      "to": "event-egypt-consolidation",
+      "article": "article:history/napoleon-egypt",
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-relationship:article:history/napoleon-egypt:results_in:event-egypt-consolidation:event-levant-campaign",
+      "type": "results_in",
+      "from": "event-egypt-consolidation",
+      "to": "event-levant-campaign",
+      "article": "article:history/napoleon-egypt",
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-relationship:article:history/napoleon-egypt:results_in:event-levant-campaign:event-eastern-empire",
+      "type": "results_in",
+      "from": "event-levant-campaign",
+      "to": "event-eastern-empire",
+      "article": "article:history/napoleon-egypt",
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-relationship:article:history/napoleon-egypt:involves:event-aboukir-victory:person-napoleon-bonaparte",
+      "type": "involves",
+      "from": "event-aboukir-victory",
+      "to": "person-napoleon-bonaparte",
+      "article": "article:history/napoleon-egypt",
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-relationship:article:history/napoleon-egypt:involves:event-egypt-consolidation:place-egypt",
+      "type": "involves",
+      "from": "event-egypt-consolidation",
+      "to": "place-egypt",
+      "article": "article:history/napoleon-egypt",
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-relationship:article:history/napoleon-egypt:involves:event-levant-campaign:place-levant",
+      "type": "involves",
+      "from": "event-levant-campaign",
+      "to": "place-levant",
+      "article": "article:history/napoleon-egypt",
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-relationship:article:history/rome-never-fell:causes:divergence-western-rome-survives:rome-never-fell-timeline-1",
+      "type": "causes",
+      "from": "divergence-western-rome-survives",
+      "to": "rome-never-fell-timeline-1",
+      "article": "article:history/rome-never-fell",
+      "evidence": "src/content/history/rome-never-fell.md",
+      "label": "The Western Roman Empire avoids its historical collapse"
+    },
+    {
+      "id": "article-relationship:article:history/rome-never-fell:POLITICAL_CONTINUITY:entity-western-roman-empire:place-rome",
+      "type": "POLITICAL_CONTINUITY",
+      "from": "entity-western-roman-empire",
+      "to": "place-rome",
+      "article": "article:history/rome-never-fell",
+      "evidence": "src/content/history/rome-never-fell.md",
+      "label": "Rome remains an imperial centre"
+    },
+    {
+      "id": "article-relationship:article:history/rome-never-fell:INSTITUTIONAL_INFLUENCE:entity-western-roman-empire:entity-ravenna",
+      "type": "INSTITUTIONAL_INFLUENCE",
+      "from": "entity-western-roman-empire",
+      "to": "entity-ravenna",
+      "article": "article:history/rome-never-fell",
+      "evidence": "src/content/history/rome-never-fell.md",
+      "label": "Imperial institutions persist in altered form"
+    },
+    {
+      "id": "article-relationship:article:history/spanish-armada:causes:divergence-spanish-armada-lands:spanish-armada-timeline-1",
+      "type": "causes",
+      "from": "divergence-spanish-armada-lands",
+      "to": "spanish-armada-timeline-1",
+      "article": "article:history/spanish-armada",
+      "evidence": "src/content/history/spanish-armada.md",
+      "label": "The successful landing establishes a foothold in England"
+    },
+    {
+      "id": "article-relationship:article:history/spanish-armada:CONFLICT:entity-spanish-empire:entity-england",
+      "type": "CONFLICT",
+      "from": "entity-spanish-empire",
+      "to": "entity-england",
+      "article": "article:history/spanish-armada",
+      "evidence": "src/content/history/spanish-armada.md",
+      "label": "Invasion and resistance"
+    },
+    {
+      "id": "article-relationship:article:history/spanish-armada:POLITICAL_INFLUENCE:entity-spanish-empire:entity-england",
+      "type": "POLITICAL_INFLUENCE",
+      "from": "entity-spanish-empire",
+      "to": "entity-england",
+      "article": "article:history/spanish-armada",
+      "evidence": "src/content/history/spanish-armada.md",
+      "label": "Spanish power shapes the religious settlement"
+    },
+    {
+      "id": "article-relationship:article:history/vienna-1683:causes:divergence-vienna-falls:vienna-1683-timeline-1",
+      "type": "causes",
+      "from": "divergence-vienna-falls",
+      "to": "vienna-1683-timeline-1",
+      "article": "article:history/vienna-1683",
+      "evidence": "src/content/history/vienna-1683.md",
+      "label": "The Ottoman capture of Vienna changes the balance of power"
+    },
+    {
+      "id": "article-relationship:article:history/vienna-1683:CONFLICT:polity-ottoman-empire:entity-habsburg-monarchy",
+      "type": "CONFLICT",
+      "from": "polity-ottoman-empire",
+      "to": "entity-habsburg-monarchy",
+      "article": "article:history/vienna-1683",
+      "evidence": "src/content/history/vienna-1683.md",
+      "label": "The balance of power in Central Europe shifts"
+    },
+    {
+      "id": "article-relationship:article:history/vienna-1683:STRATEGIC_PRESSURE:polity-ottoman-empire:polity-france",
+      "type": "STRATEGIC_PRESSURE",
+      "from": "polity-ottoman-empire",
+      "to": "polity-france",
+      "article": "article:history/vienna-1683",
+      "evidence": "src/content/history/vienna-1683.md",
+      "label": "European powers adjust to Ottoman expansion"
+    },
+    {
+      "id": "article-relationship:article:history/waterloo-1815:causes:divergence-waterloo-1815:event-waterloo-victory",
+      "type": "causes",
+      "from": "divergence-waterloo-1815",
+      "to": "event-waterloo-victory",
+      "article": "article:history/waterloo-1815",
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "article-relationship:article:history/waterloo-1815:results_in:event-waterloo-victory:event-french-consolidation",
+      "type": "results_in",
+      "from": "event-waterloo-victory",
+      "to": "event-french-consolidation",
+      "article": "article:history/waterloo-1815",
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "article-relationship:article:history/waterloo-1815:involves:event-waterloo-victory:person-napoleon-bonaparte",
+      "type": "involves",
+      "from": "event-waterloo-victory",
+      "to": "person-napoleon-bonaparte",
+      "article": "article:history/waterloo-1815",
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "article-relationship:article:history/waterloo-1815:involves:event-waterloo-victory:person-duke-of-wellington",
+      "type": "involves",
+      "from": "event-waterloo-victory",
+      "to": "person-duke-of-wellington",
+      "article": "article:history/waterloo-1815",
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "article-relationship:article:history/waterloo-1815:involves:event-waterloo-victory:place-waterloo",
+      "type": "involves",
+      "from": "event-waterloo-victory",
+      "to": "place-waterloo",
+      "article": "article:history/waterloo-1815",
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "article-relationship:article:science/dinosaurs:causes:divergence-asteroid-misses-earth:event-asteroid-misses-earth",
+      "type": "causes",
+      "from": "divergence-asteroid-misses-earth",
+      "to": "event-asteroid-misses-earth",
+      "article": "article:science/dinosaurs",
+      "evidence": "src/content/science/dinosaurs.md",
+      "label": "The asteroid's miss prevents the mass extinction"
+    },
+    {
+      "id": "article-relationship:article:science/dinosaurs:ECOLOGICAL_PRESSURE:group-dinosaurs:group-mammals",
+      "type": "ECOLOGICAL_PRESSURE",
+      "from": "group-dinosaurs",
+      "to": "group-mammals",
+      "article": "article:science/dinosaurs",
+      "evidence": "src/content/science/dinosaurs.md",
+      "label": "Continued dinosaur dominance constrains mammalian diversification"
+    },
+    {
+      "id": "article-relationship:article:science/dinosaurs:EVOLUTIONARY_CHANGE:group-dinosaurs:group-primates",
+      "type": "EVOLUTIONARY_CHANGE",
+      "from": "group-dinosaurs",
+      "to": "group-primates",
+      "article": "article:science/dinosaurs",
+      "evidence": "src/content/science/dinosaurs.md",
+      "label": "Different ecosystems alter evolutionary opportunities"
+    },
+    {
+      "id": "article-relationship:article:space/mars:causes:divergence-mars-keeps-oceans:event-mars-retains-habitability",
+      "type": "causes",
+      "from": "divergence-mars-keeps-oceans",
+      "to": "event-mars-retains-habitability",
+      "article": "article:space/mars",
+      "evidence": "src/content/space/mars.md",
+      "label": "Mars retains its oceans and remains potentially habitable"
+    },
+    {
+      "id": "article-relationship:article:space/mars:PLANETARY_CHANGE:planet-mars:feature-ancient-oceans",
+      "type": "PLANETARY_CHANGE",
+      "from": "planet-mars",
+      "to": "feature-ancient-oceans",
+      "article": "article:space/mars",
+      "evidence": "src/content/space/mars.md",
+      "label": "Persistent surface water reshapes planetary history"
+    },
+    {
+      "id": "article-relationship:article:space/mars:SCIENTIFIC_DISCOVERY:planet-mars:planet-earth",
+      "type": "SCIENTIFIC_DISCOVERY",
+      "from": "planet-mars",
+      "to": "planet-earth",
+      "article": "article:space/mars",
+      "evidence": "src/content/space/mars.md",
+      "label": "Evidence of ancient life changes science and philosophy"
+    },
+    {
+      "id": "article-relationship:article:society/internet:causes:divergence-web-never-invented:article:society/internet:timeline:1",
+      "type": "causes",
+      "from": "divergence-web-never-invented",
+      "to": "article:society/internet:timeline:1",
+      "article": "article:society/internet",
+      "evidence": "src/content/society/internet.md",
+      "label": "The Web's non-invention prevents a universal information platform"
+    },
+    {
+      "id": "article-entity:article:history/alexander-west:entity-alexander",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexander-west",
+      "to": "entity-alexander",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-entity:article:history/alexander-west:polity-roman-republic",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexander-west",
+      "to": "polity-roman-republic",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-entity:article:history/alexander-west:entity-macedon",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexander-west",
+      "to": "entity-macedon",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-entity:article:history/alexander-west:place-greek-mediterranean",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexander-west",
+      "to": "place-greek-mediterranean",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "article-entity:article:history/alexander-west:entity-carthage",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexander-west",
+      "to": "entity-carthage",
+      "article": "article:history/alexander-west"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-alexander:entity-carthage",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-alexander",
+      "to": "entity-carthage",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-alexander:entity-macedon",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-alexander",
+      "to": "entity-macedon",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-alexander:place-greek-mediterranean",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-alexander",
+      "to": "place-greek-mediterranean",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-alexander:polity-roman-republic",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-alexander",
+      "to": "polity-roman-republic",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-carthage:entity-macedon",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-carthage",
+      "to": "entity-macedon",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-carthage:place-greek-mediterranean",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-carthage",
+      "to": "place-greek-mediterranean",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-carthage:polity-roman-republic",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-carthage",
+      "to": "polity-roman-republic",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-macedon:place-greek-mediterranean",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-macedon",
+      "to": "place-greek-mediterranean",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:entity-macedon:polity-roman-republic",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-macedon",
+      "to": "polity-roman-republic",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "context:article:history/alexander-west:place-greek-mediterranean:polity-roman-republic",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-greek-mediterranean",
+      "to": "polity-roman-republic",
+      "article": "article:history/alexander-west",
+      "contextual": true,
+      "evidence": "src/content/history/alexander-west.md"
+    },
+    {
+      "id": "article-entity:article:history/alexandria:entity-library-alexandria",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexandria",
+      "to": "entity-library-alexandria",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-entity:article:history/alexandria:entity-roman-empire",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexandria",
+      "to": "entity-roman-empire",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-entity:article:history/alexandria:entity-alexandrian-scholars",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexandria",
+      "to": "entity-alexandrian-scholars",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "article-entity:article:history/alexandria:entity-islamic-scholarly-world",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/alexandria",
+      "to": "entity-islamic-scholarly-world",
+      "article": "article:history/alexandria"
+    },
+    {
+      "id": "context:article:history/alexandria:entity-alexandrian-scholars:entity-islamic-scholarly-world",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-alexandrian-scholars",
+      "to": "entity-islamic-scholarly-world",
+      "article": "article:history/alexandria",
+      "contextual": true,
+      "evidence": "src/content/history/alexandria.md"
+    },
+    {
+      "id": "context:article:history/alexandria:entity-alexandrian-scholars:entity-library-alexandria",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-alexandrian-scholars",
+      "to": "entity-library-alexandria",
+      "article": "article:history/alexandria",
+      "contextual": true,
+      "evidence": "src/content/history/alexandria.md"
+    },
+    {
+      "id": "context:article:history/alexandria:entity-alexandrian-scholars:entity-roman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-alexandrian-scholars",
+      "to": "entity-roman-empire",
+      "article": "article:history/alexandria",
+      "contextual": true,
+      "evidence": "src/content/history/alexandria.md"
+    },
+    {
+      "id": "context:article:history/alexandria:entity-islamic-scholarly-world:entity-library-alexandria",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-islamic-scholarly-world",
+      "to": "entity-library-alexandria",
+      "article": "article:history/alexandria",
+      "contextual": true,
+      "evidence": "src/content/history/alexandria.md"
+    },
+    {
+      "id": "context:article:history/alexandria:entity-islamic-scholarly-world:entity-roman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-islamic-scholarly-world",
+      "to": "entity-roman-empire",
+      "article": "article:history/alexandria",
+      "contextual": true,
+      "evidence": "src/content/history/alexandria.md"
+    },
+    {
+      "id": "context:article:history/alexandria:entity-library-alexandria:entity-roman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-library-alexandria",
+      "to": "entity-roman-empire",
+      "article": "article:history/alexandria",
+      "contextual": true,
+      "evidence": "src/content/history/alexandria.md"
+    },
+    {
+      "id": "article-entity:article:history/aztec-europe:polity-aztec-empire",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/aztec-europe",
+      "to": "polity-aztec-empire",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article-entity:article:history/aztec-europe:place-tenochtitlan",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/aztec-europe",
+      "to": "place-tenochtitlan",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article-entity:article:history/aztec-europe:polity-portugal",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/aztec-europe",
+      "to": "polity-portugal",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "article-entity:article:history/aztec-europe:person-hern-n-cort-s",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/aztec-europe",
+      "to": "person-hern-n-cort-s",
+      "article": "article:history/aztec-europe"
+    },
+    {
+      "id": "context:article:history/aztec-europe:person-hern-n-cort-s:place-tenochtitlan",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-hern-n-cort-s",
+      "to": "place-tenochtitlan",
+      "article": "article:history/aztec-europe",
+      "contextual": true,
+      "evidence": "src/content/history/aztec-europe.md"
+    },
+    {
+      "id": "context:article:history/aztec-europe:person-hern-n-cort-s:polity-aztec-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-hern-n-cort-s",
+      "to": "polity-aztec-empire",
+      "article": "article:history/aztec-europe",
+      "contextual": true,
+      "evidence": "src/content/history/aztec-europe.md"
+    },
+    {
+      "id": "context:article:history/aztec-europe:person-hern-n-cort-s:polity-portugal",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-hern-n-cort-s",
+      "to": "polity-portugal",
+      "article": "article:history/aztec-europe",
+      "contextual": true,
+      "evidence": "src/content/history/aztec-europe.md"
+    },
+    {
+      "id": "context:article:history/aztec-europe:place-tenochtitlan:polity-aztec-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-tenochtitlan",
+      "to": "polity-aztec-empire",
+      "article": "article:history/aztec-europe",
+      "contextual": true,
+      "evidence": "src/content/history/aztec-europe.md"
+    },
+    {
+      "id": "context:article:history/aztec-europe:place-tenochtitlan:polity-portugal",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-tenochtitlan",
+      "to": "polity-portugal",
+      "article": "article:history/aztec-europe",
+      "contextual": true,
+      "evidence": "src/content/history/aztec-europe.md"
+    },
+    {
+      "id": "context:article:history/aztec-europe:polity-aztec-empire:polity-portugal",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "polity-aztec-empire",
+      "to": "polity-portugal",
+      "article": "article:history/aztec-europe",
+      "contextual": true,
+      "evidence": "src/content/history/aztec-europe.md"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:state-united-states",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:state-soviet-union",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:entity-cuba",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "entity-cuba",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:entity-brazil",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "entity-brazil",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:entity-nigeria",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "entity-nigeria",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:entity-south-africa",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "entity-south-africa",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:region-southern-hemisphere",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "region-southern-hemisphere",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "article-entity:article:history/cuban-crisis:region-northern-hemisphere",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/cuban-crisis",
+      "to": "region-northern-hemisphere",
+      "article": "article:history/cuban-crisis"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-brazil:entity-cuba",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-brazil",
+      "to": "entity-cuba",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-brazil:entity-nigeria",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-brazil",
+      "to": "entity-nigeria",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-brazil:entity-south-africa",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-brazil",
+      "to": "entity-south-africa",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-brazil:region-northern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-brazil",
+      "to": "region-northern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-brazil:region-southern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-brazil",
+      "to": "region-southern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-brazil:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-brazil",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-brazil:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-brazil",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-cuba:entity-nigeria",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-cuba",
+      "to": "entity-nigeria",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-cuba:entity-south-africa",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-cuba",
+      "to": "entity-south-africa",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-cuba:region-northern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-cuba",
+      "to": "region-northern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-cuba:region-southern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-cuba",
+      "to": "region-southern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-cuba:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-cuba",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-cuba:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-cuba",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-nigeria:entity-south-africa",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-nigeria",
+      "to": "entity-south-africa",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-nigeria:region-northern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-nigeria",
+      "to": "region-northern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-nigeria:region-southern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-nigeria",
+      "to": "region-southern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-nigeria:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-nigeria",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-nigeria:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-nigeria",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-south-africa:region-northern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-south-africa",
+      "to": "region-northern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-south-africa:region-southern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-south-africa",
+      "to": "region-southern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-south-africa:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-south-africa",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:entity-south-africa:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-south-africa",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:region-northern-hemisphere:region-southern-hemisphere",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "region-northern-hemisphere",
+      "to": "region-southern-hemisphere",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:region-northern-hemisphere:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "region-northern-hemisphere",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:region-northern-hemisphere:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "region-northern-hemisphere",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:region-southern-hemisphere:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "region-southern-hemisphere",
+      "to": "state-soviet-union",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:region-southern-hemisphere:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "region-southern-hemisphere",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "context:article:history/cuban-crisis:state-soviet-union:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "state-soviet-union",
+      "to": "state-united-states",
+      "article": "article:history/cuban-crisis",
+      "contextual": true,
+      "evidence": "src/content/history/cuban-crisis.md"
+    },
+    {
+      "id": "article-entity:article:history/islamic-europe:entity-charles-martel",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/islamic-europe",
+      "to": "entity-charles-martel",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-entity:article:history/islamic-europe:entity-umayyad-caliphate",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/islamic-europe",
+      "to": "entity-umayyad-caliphate",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-entity:article:history/islamic-europe:entity-c-rdoba",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/islamic-europe",
+      "to": "entity-c-rdoba",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-entity:article:history/islamic-europe:entity-islam",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/islamic-europe",
+      "to": "entity-islam",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-entity:article:history/islamic-europe:entity-christianity",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/islamic-europe",
+      "to": "entity-christianity",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-entity:article:history/islamic-europe:entity-islamic-golden-age",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/islamic-europe",
+      "to": "entity-islamic-golden-age",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "article-entity:article:history/islamic-europe:entity-battle-of-tours",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/islamic-europe",
+      "to": "entity-battle-of-tours",
+      "article": "article:history/islamic-europe"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-battle-of-tours:entity-c-rdoba",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-battle-of-tours",
+      "to": "entity-c-rdoba",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-battle-of-tours:entity-charles-martel",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-battle-of-tours",
+      "to": "entity-charles-martel",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-battle-of-tours:entity-christianity",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-battle-of-tours",
+      "to": "entity-christianity",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-battle-of-tours:entity-islam",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-battle-of-tours",
+      "to": "entity-islam",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-battle-of-tours:entity-islamic-golden-age",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-battle-of-tours",
+      "to": "entity-islamic-golden-age",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-battle-of-tours:entity-umayyad-caliphate",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-battle-of-tours",
+      "to": "entity-umayyad-caliphate",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-c-rdoba:entity-charles-martel",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-c-rdoba",
+      "to": "entity-charles-martel",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-c-rdoba:entity-christianity",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-c-rdoba",
+      "to": "entity-christianity",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-c-rdoba:entity-islam",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-c-rdoba",
+      "to": "entity-islam",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-c-rdoba:entity-islamic-golden-age",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-c-rdoba",
+      "to": "entity-islamic-golden-age",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-c-rdoba:entity-umayyad-caliphate",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-c-rdoba",
+      "to": "entity-umayyad-caliphate",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-charles-martel:entity-christianity",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-charles-martel",
+      "to": "entity-christianity",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-charles-martel:entity-islam",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-charles-martel",
+      "to": "entity-islam",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-charles-martel:entity-islamic-golden-age",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-charles-martel",
+      "to": "entity-islamic-golden-age",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-charles-martel:entity-umayyad-caliphate",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-charles-martel",
+      "to": "entity-umayyad-caliphate",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-christianity:entity-islam",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-christianity",
+      "to": "entity-islam",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-christianity:entity-islamic-golden-age",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-christianity",
+      "to": "entity-islamic-golden-age",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-christianity:entity-umayyad-caliphate",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-christianity",
+      "to": "entity-umayyad-caliphate",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-islam:entity-islamic-golden-age",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-islam",
+      "to": "entity-islamic-golden-age",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-islam:entity-umayyad-caliphate",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-islam",
+      "to": "entity-umayyad-caliphate",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "context:article:history/islamic-europe:entity-islamic-golden-age:entity-umayyad-caliphate",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-islamic-golden-age",
+      "to": "entity-umayyad-caliphate",
+      "article": "article:history/islamic-europe",
+      "contextual": true,
+      "evidence": "src/content/history/islamic-europe.md"
+    },
+    {
+      "id": "article-entity:article:history/napoleon-egypt:person-napoleon-bonaparte",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/napoleon-egypt",
+      "to": "person-napoleon-bonaparte",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-entity:article:history/napoleon-egypt:polity-france",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/napoleon-egypt",
+      "to": "polity-france",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-entity:article:history/napoleon-egypt:polity-ottoman-empire",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/napoleon-egypt",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-entity:article:history/napoleon-egypt:place-egypt",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/napoleon-egypt",
+      "to": "place-egypt",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "article-entity:article:history/napoleon-egypt:place-levant",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/napoleon-egypt",
+      "to": "place-levant",
+      "article": "article:history/napoleon-egypt"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:person-napoleon-bonaparte:place-egypt",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "place-egypt",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:person-napoleon-bonaparte:place-levant",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "place-levant",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:person-napoleon-bonaparte:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "polity-france",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:person-napoleon-bonaparte:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:place-egypt:place-levant",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-egypt",
+      "to": "place-levant",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:place-egypt:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-egypt",
+      "to": "polity-france",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:place-egypt:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-egypt",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:place-levant:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-levant",
+      "to": "polity-france",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:place-levant:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-levant",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "context:article:history/napoleon-egypt:polity-france:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "polity-france",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/napoleon-egypt",
+      "contextual": true,
+      "evidence": "src/content/history/napoleon-egypt.md"
+    },
+    {
+      "id": "article-entity:article:history/rome-never-fell:entity-western-roman-empire",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/rome-never-fell",
+      "to": "entity-western-roman-empire",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "article-entity:article:history/rome-never-fell:place-rome",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/rome-never-fell",
+      "to": "place-rome",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "article-entity:article:history/rome-never-fell:entity-ravenna",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/rome-never-fell",
+      "to": "entity-ravenna",
+      "article": "article:history/rome-never-fell"
+    },
+    {
+      "id": "context:article:history/rome-never-fell:entity-ravenna:entity-western-roman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-ravenna",
+      "to": "entity-western-roman-empire",
+      "article": "article:history/rome-never-fell",
+      "contextual": true,
+      "evidence": "src/content/history/rome-never-fell.md"
+    },
+    {
+      "id": "context:article:history/rome-never-fell:entity-ravenna:place-rome",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-ravenna",
+      "to": "place-rome",
+      "article": "article:history/rome-never-fell",
+      "contextual": true,
+      "evidence": "src/content/history/rome-never-fell.md"
+    },
+    {
+      "id": "context:article:history/rome-never-fell:entity-western-roman-empire:place-rome",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-western-roman-empire",
+      "to": "place-rome",
+      "article": "article:history/rome-never-fell",
+      "contextual": true,
+      "evidence": "src/content/history/rome-never-fell.md"
+    },
+    {
+      "id": "article-entity:article:history/spanish-armada:entity-spanish-empire",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/spanish-armada",
+      "to": "entity-spanish-empire",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-entity:article:history/spanish-armada:entity-england",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/spanish-armada",
+      "to": "entity-england",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-entity:article:history/spanish-armada:entity-elizabeth-i",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/spanish-armada",
+      "to": "entity-elizabeth-i",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-entity:article:history/spanish-armada:entity-philip-ii",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/spanish-armada",
+      "to": "entity-philip-ii",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "article-entity:article:history/spanish-armada:entity-duke-parma",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/spanish-armada",
+      "to": "entity-duke-parma",
+      "article": "article:history/spanish-armada"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-duke-parma:entity-elizabeth-i",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-duke-parma",
+      "to": "entity-elizabeth-i",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-duke-parma:entity-england",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-duke-parma",
+      "to": "entity-england",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-duke-parma:entity-philip-ii",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-duke-parma",
+      "to": "entity-philip-ii",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-duke-parma:entity-spanish-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-duke-parma",
+      "to": "entity-spanish-empire",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-elizabeth-i:entity-england",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-elizabeth-i",
+      "to": "entity-england",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-elizabeth-i:entity-philip-ii",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-elizabeth-i",
+      "to": "entity-philip-ii",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-elizabeth-i:entity-spanish-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-elizabeth-i",
+      "to": "entity-spanish-empire",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-england:entity-philip-ii",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-england",
+      "to": "entity-philip-ii",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-england:entity-spanish-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-england",
+      "to": "entity-spanish-empire",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "context:article:history/spanish-armada:entity-philip-ii:entity-spanish-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-philip-ii",
+      "to": "entity-spanish-empire",
+      "article": "article:history/spanish-armada",
+      "contextual": true,
+      "evidence": "src/content/history/spanish-armada.md"
+    },
+    {
+      "id": "article-entity:article:history/vienna-1683:polity-ottoman-empire",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/vienna-1683",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-entity:article:history/vienna-1683:entity-vienna",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/vienna-1683",
+      "to": "entity-vienna",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-entity:article:history/vienna-1683:entity-habsburg-monarchy",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/vienna-1683",
+      "to": "entity-habsburg-monarchy",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-entity:article:history/vienna-1683:polity-france",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/vienna-1683",
+      "to": "polity-france",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "article-entity:article:history/vienna-1683:entity-kara-mustafa",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/vienna-1683",
+      "to": "entity-kara-mustafa",
+      "article": "article:history/vienna-1683"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-habsburg-monarchy:entity-kara-mustafa",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-habsburg-monarchy",
+      "to": "entity-kara-mustafa",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-habsburg-monarchy:entity-vienna",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-habsburg-monarchy",
+      "to": "entity-vienna",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-habsburg-monarchy:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-habsburg-monarchy",
+      "to": "polity-france",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-habsburg-monarchy:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-habsburg-monarchy",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-kara-mustafa:entity-vienna",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-kara-mustafa",
+      "to": "entity-vienna",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-kara-mustafa:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-kara-mustafa",
+      "to": "polity-france",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-kara-mustafa:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-kara-mustafa",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-vienna:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-vienna",
+      "to": "polity-france",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:entity-vienna:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "entity-vienna",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "context:article:history/vienna-1683:polity-france:polity-ottoman-empire",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "polity-france",
+      "to": "polity-ottoman-empire",
+      "article": "article:history/vienna-1683",
+      "contextual": true,
+      "evidence": "src/content/history/vienna-1683.md"
+    },
+    {
+      "id": "article-entity:article:history/waterloo-1815:person-napoleon-bonaparte",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/waterloo-1815",
+      "to": "person-napoleon-bonaparte",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-entity:article:history/waterloo-1815:person-duke-of-wellington",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/waterloo-1815",
+      "to": "person-duke-of-wellington",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-entity:article:history/waterloo-1815:place-waterloo",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/waterloo-1815",
+      "to": "place-waterloo",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-entity:article:history/waterloo-1815:polity-france",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/waterloo-1815",
+      "to": "polity-france",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-entity:article:history/waterloo-1815:polity-britain",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/waterloo-1815",
+      "to": "polity-britain",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "article-entity:article:history/waterloo-1815:polity-prussia",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:history/waterloo-1815",
+      "to": "polity-prussia",
+      "article": "article:history/waterloo-1815"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-duke-of-wellington:person-napoleon-bonaparte",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-duke-of-wellington",
+      "to": "person-napoleon-bonaparte",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-duke-of-wellington:place-waterloo",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-duke-of-wellington",
+      "to": "place-waterloo",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-duke-of-wellington:polity-britain",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-duke-of-wellington",
+      "to": "polity-britain",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-duke-of-wellington:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-duke-of-wellington",
+      "to": "polity-france",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-duke-of-wellington:polity-prussia",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-duke-of-wellington",
+      "to": "polity-prussia",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-napoleon-bonaparte:place-waterloo",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "place-waterloo",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-napoleon-bonaparte:polity-britain",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "polity-britain",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-napoleon-bonaparte:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "polity-france",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:person-napoleon-bonaparte:polity-prussia",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "person-napoleon-bonaparte",
+      "to": "polity-prussia",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:place-waterloo:polity-britain",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-waterloo",
+      "to": "polity-britain",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:place-waterloo:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-waterloo",
+      "to": "polity-france",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:place-waterloo:polity-prussia",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "place-waterloo",
+      "to": "polity-prussia",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:polity-britain:polity-france",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "polity-britain",
+      "to": "polity-france",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:polity-britain:polity-prussia",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "polity-britain",
+      "to": "polity-prussia",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "context:article:history/waterloo-1815:polity-france:polity-prussia",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "polity-france",
+      "to": "polity-prussia",
+      "article": "article:history/waterloo-1815",
+      "contextual": true,
+      "evidence": "src/content/history/waterloo-1815.md"
+    },
+    {
+      "id": "article-entity:article:science/dinosaurs:planet-earth",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:science/dinosaurs",
+      "to": "planet-earth",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-entity:article:science/dinosaurs:group-dinosaurs",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:science/dinosaurs",
+      "to": "group-dinosaurs",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-entity:article:science/dinosaurs:group-mammals",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:science/dinosaurs",
+      "to": "group-mammals",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-entity:article:science/dinosaurs:group-primates",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:science/dinosaurs",
+      "to": "group-primates",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "article-entity:article:science/dinosaurs:group-humanity",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:science/dinosaurs",
+      "to": "group-humanity",
+      "article": "article:science/dinosaurs"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-dinosaurs:group-humanity",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-dinosaurs",
+      "to": "group-humanity",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-dinosaurs:group-mammals",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-dinosaurs",
+      "to": "group-mammals",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-dinosaurs:group-primates",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-dinosaurs",
+      "to": "group-primates",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-dinosaurs:planet-earth",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-dinosaurs",
+      "to": "planet-earth",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-humanity:group-mammals",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-humanity",
+      "to": "group-mammals",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-humanity:group-primates",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-humanity",
+      "to": "group-primates",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-humanity:planet-earth",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-humanity",
+      "to": "planet-earth",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-mammals:group-primates",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-mammals",
+      "to": "group-primates",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-mammals:planet-earth",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-mammals",
+      "to": "planet-earth",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "context:article:science/dinosaurs:group-primates:planet-earth",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-primates",
+      "to": "planet-earth",
+      "article": "article:science/dinosaurs",
+      "contextual": true,
+      "evidence": "src/content/science/dinosaurs.md"
+    },
+    {
+      "id": "article-entity:article:space/mars:planet-mars",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:space/mars",
+      "to": "planet-mars",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-entity:article:space/mars:planet-earth",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:space/mars",
+      "to": "planet-earth",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-entity:article:space/mars:group-humanity",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:space/mars",
+      "to": "group-humanity",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-entity:article:space/mars:state-united-states",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:space/mars",
+      "to": "state-united-states",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-entity:article:space/mars:state-soviet-union",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:space/mars",
+      "to": "state-soviet-union",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "article-entity:article:space/mars:feature-ancient-oceans",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:space/mars",
+      "to": "feature-ancient-oceans",
+      "article": "article:space/mars"
+    },
+    {
+      "id": "context:article:space/mars:feature-ancient-oceans:group-humanity",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "feature-ancient-oceans",
+      "to": "group-humanity",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:feature-ancient-oceans:planet-earth",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "feature-ancient-oceans",
+      "to": "planet-earth",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:feature-ancient-oceans:planet-mars",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "feature-ancient-oceans",
+      "to": "planet-mars",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:feature-ancient-oceans:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "feature-ancient-oceans",
+      "to": "state-soviet-union",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:feature-ancient-oceans:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "feature-ancient-oceans",
+      "to": "state-united-states",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:group-humanity:planet-earth",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-humanity",
+      "to": "planet-earth",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:group-humanity:planet-mars",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-humanity",
+      "to": "planet-mars",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:group-humanity:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-humanity",
+      "to": "state-soviet-union",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:group-humanity:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-humanity",
+      "to": "state-united-states",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:planet-earth:planet-mars",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "planet-earth",
+      "to": "planet-mars",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:planet-earth:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "planet-earth",
+      "to": "state-soviet-union",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:planet-earth:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "planet-earth",
+      "to": "state-united-states",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:planet-mars:state-soviet-union",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "planet-mars",
+      "to": "state-soviet-union",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:planet-mars:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "planet-mars",
+      "to": "state-united-states",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "context:article:space/mars:state-soviet-union:state-united-states",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "state-soviet-union",
+      "to": "state-united-states",
+      "article": "article:space/mars",
+      "contextual": true,
+      "evidence": "src/content/space/mars.md"
+    },
+    {
+      "id": "article-entity:article:society/internet:technology-world-wide-web",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:society/internet",
+      "to": "technology-world-wide-web",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-entity:article:society/internet:technology-commercial-online-networks",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:society/internet",
+      "to": "technology-commercial-online-networks",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-entity:article:society/internet:institution-universities-and-research-institutions",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:society/internet",
+      "to": "institution-universities-and-research-institutions",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "article-entity:article:society/internet:group-digital-communities-and-independent-publishers",
+      "type": "MENTIONS_ENTITY",
+      "from": "article:society/internet",
+      "to": "group-digital-communities-and-independent-publishers",
+      "article": "article:society/internet"
+    },
+    {
+      "id": "context:article:society/internet:group-digital-communities-and-independent-publishers:institution-universities-and-research-institutions",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-digital-communities-and-independent-publishers",
+      "to": "institution-universities-and-research-institutions",
+      "article": "article:society/internet",
+      "contextual": true,
+      "evidence": "src/content/society/internet.md"
+    },
+    {
+      "id": "context:article:society/internet:group-digital-communities-and-independent-publishers:technology-commercial-online-networks",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-digital-communities-and-independent-publishers",
+      "to": "technology-commercial-online-networks",
+      "article": "article:society/internet",
+      "contextual": true,
+      "evidence": "src/content/society/internet.md"
+    },
+    {
+      "id": "context:article:society/internet:group-digital-communities-and-independent-publishers:technology-world-wide-web",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "group-digital-communities-and-independent-publishers",
+      "to": "technology-world-wide-web",
+      "article": "article:society/internet",
+      "contextual": true,
+      "evidence": "src/content/society/internet.md"
+    },
+    {
+      "id": "context:article:society/internet:institution-universities-and-research-institutions:technology-commercial-online-networks",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "institution-universities-and-research-institutions",
+      "to": "technology-commercial-online-networks",
+      "article": "article:society/internet",
+      "contextual": true,
+      "evidence": "src/content/society/internet.md"
+    },
+    {
+      "id": "context:article:society/internet:institution-universities-and-research-institutions:technology-world-wide-web",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "institution-universities-and-research-institutions",
+      "to": "technology-world-wide-web",
+      "article": "article:society/internet",
+      "contextual": true,
+      "evidence": "src/content/society/internet.md"
+    },
+    {
+      "id": "context:article:society/internet:technology-commercial-online-networks:technology-world-wide-web",
+      "type": "CO_MENTIONED_IN_ARTICLE",
+      "from": "technology-commercial-online-networks",
+      "to": "technology-world-wide-web",
+      "article": "article:society/internet",
+      "contextual": true,
+      "evidence": "src/content/society/internet.md"
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

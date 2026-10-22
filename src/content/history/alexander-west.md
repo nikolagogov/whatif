@@ -1,10 +1,100 @@
 ---
-title: "What If Alexander the Great Had Not Died at 32?"
-description: "What if the fever in Babylon had broken — and Alexander had turned west? A decade-by-decade journey through a world that might have been."
-image: "/images/articles/history/alexander-west/alexander-west.jpg"
-pubDate: 2026-02-15
-featured: true
-tags: ["alexander", "rome", "carthage", "ancient", "empire"]
+
+title: What If Alexander the Great Had Not Died at 32?
+
+description: What if the fever in Babylon had broken — and Alexander had turned west? A decade-by-decade journey through a world that might have been.
+
+image: /images/articles/history/alexander-west/alexander-west.jpg
+
+tags:
+  - alexander
+  - rome
+  - carthage
+  - ancient
+  - empire
+
+topics:
+  - ancient-world
+  - empires
+
+coverTitleLines:
+  - What If
+  - Alexander the Great
+  - Had Not Died at 32?
+
+world:
+  id: world-alexander-west
+  name: A Greek Mediterranean
+
+divergence:
+  id: divergence-alexander-survives
+  type: EVENT_OUTCOME
+  title: Alexander survives his illness in Babylon
+  date: 323 BC
+  referenceOutcome: Alexander dies, and his empire fragments among his successors.
+  alternateOutcome: Alexander survives, consolidates his empire, and launches campaigns into the western Mediterranean.
+
+timeline:
+  - id: alexander-survives-323-bc
+    date: 323 BC
+    title: The Fever Breaks
+    headingId: 323-bc-the-fever-breaks
+    description: Alexander recovers from his illness and secures his existing empire.
+  - id: arabian-campaign-322-bc
+    date: 322 BC
+    title: The Arabian Campaign
+    headingId: 322-bc-the-arabian-campaign
+    description: Alexander secures coastal routes and strengthens his position.
+  - id: western-fleet-320-bc
+    date: 321–320 BC
+    title: Building the Fleet
+    headingId: 321-320-bc-building-the-fleet
+    description: A fleet is assembled to challenge Carthage.
+  - id: war-carthage-318-bc
+    date: 318–315 BC
+    title: The War at Sea
+    headingId: 318-315-bc-the-war-at-sea
+    description: The struggle for control of the western Mediterranean begins.
+  - id: mediterranean-transformed
+    date: 3rd–2nd centuries BC
+    title: A Different Mediterranean
+    headingId: the-3rd-and-2nd-centuries-bc-a-different-mediterranean
+    description: Greek influence expands westward while Rome follows a different political path.
+
+entities:
+  - id: entity-alexander
+    type: PERSON
+    name: Alexander the Great
+  - id: polity-roman-republic
+    type: POLITY
+    name: Roman Republic
+  - id: entity-macedon
+    type: STATE
+    name: Macedonian Empire
+  - id: place-greek-mediterranean
+    type: REGION
+    name: Greek Mediterranean
+  - id: entity-carthage
+    type: POLITY
+    name: Carthage
+
+relationships:
+  - type: ALLIANCE
+    from: entity-macedon
+    to: place-greek-mediterranean
+    label: Imperial expansion shapes the Mediterranean
+  - type: RIVALRY
+    from: entity-macedon
+    to: entity-carthage
+    label: Competition for western influence
+  - type: results_in
+    from: alexander-survives-323-bc
+    to: arabian-campaign-322-bc
+    label: Alexander's survival enables the Arabian campaign
+  - type: causes
+    from: divergence-alexander-survives
+    to: alexander-survives-323-bc
+    label: Alexander's survival begins the alternate timeline
 ---
 
 In June 323 BC, in the city of Babylon, Alexander the Great fell ill with a fever. In our timeline, it killed him in ten days. He was 32 years old, and his empire — from Greece to Egypt, from Persia to the borders of India — dissolved into half a century of war.
@@ -15,9 +105,11 @@ But imagine that the fever broke. Imagine the physicians succeeding, Alexander r
 
 The answer is not a single empire that lasted forever. It is a world that moved west, and then slowly came apart — but along different seams, and at a different speed.
 
-## 323–322 BC: The Fever Breaks
+## 323 BC: The Fever Breaks
 
 Alexander recovers in Babylon, but he does not march immediately. The mutiny at Opis the year before has left its mark: his Macedonian veterans are tired, rich, and unwilling to campaign forever. He needs time — and he needs a target close enough to secure before he turns west.
+
+## 322 BC: The Arabian Campaign
 
 That target is Arabia. In our timeline it was his next objective when he died. Here, he completes it — a full campaign season down the eastern coast, securing key coastal routes and establishing a foothold in the incense trade, and giving his veterans a victory they can actually enjoy.
 
@@ -25,22 +117,27 @@ By the winter of 322 BC, Alexander is back in Babylon, and the question has chan
 
 ## 321–320 BC: Building the Fleet
 
+<figure class="article-figure float-right">
+  <img src="/images/articles/history/alexander-west/alexander-west-map.jpg" alt="Alexander's empire" />
+  <figcaption>The empire Alexander left behind — and the fleet he was building to leave it.</figcaption>
+</figure>
+
 The west means the sea, and the sea means Carthage.
 
 Alexander controls the Phoenician cities, Cyprus, and Egypt — and with them, the shipyards and the sailors of the former Persian navy. He begins to build: not a thousand ships, as the old plans claimed, but enough to challenge Carthage in the western Mediterranean.
 
 With Alexander alive, the succession crisis that had led to the deaths of Perdiccas and Craterus never unfolded in quite the same way. Both commanders remained in his service — Perdiccas taking a fleet toward the Aegean and the Ionian Sea, Craterus moving to Cilicia to assemble transports and supplies. Neither could be trusted to leave the empire unattended for long, but both were loyal enough to serve.
 
-<figure class="article-figure float-right">
-  <img src="/images/articles/history/alexander-west/alexander-west-map.jpg" alt="Alexander's empire" />
-  <figcaption>The empire Alexander left behind — and the fleet he was building to leave it.</figcaption>
-</figure>
-
 Meanwhile, Alexander himself remains in Babylon, managing the empire he already has — because he knows that the moment he leaves, the satraps will start to test their chains. In Macedonia, Antipater holds the Greek cities in line, as he has for a decade — but Athens and Sparta watch every dispatch from the east, waiting for a sign of weakness.
 
 By 320 BC, the fleet is ready. Alexander leaves Babylon in the spring and rides for the Phoenician coast, where the ships are waiting.
 
 ## 318–315 BC: The War at Sea
+
+<figure class="article-figure float-right">
+  <img src="/images/articles/history/alexander-west/alexander-west-carthage.jpg" alt="Carthage and Rome" />
+  <figcaption>Carthage — humbled at sea, but not destroyed.</figcaption>
+</figure>
 
 Carthage does not wait to be attacked.
 
@@ -54,16 +151,16 @@ The battle is not a clean Macedonian victory. The Carthaginians are better sailo
 
 The war lasts three years. By 315 BC, Alexander controls Sicily, Sardinia, and the western Mediterranean routes. Carthage itself is not taken — Alexander does not have the strength or the time to besiege it properly — but it is forced into a treaty that limits its fleet and opens its ports to Greek trade.
 
-<figure class="article-figure float-right">
-  <img src="/images/articles/history/alexander-west/alexander-west-carthage.jpg" alt="Carthage and Rome" />
-  <figcaption>Carthage — humbled at sea, but not destroyed.</figcaption>
-</figure>
-
 The Mediterranean is no longer a Carthaginian lake — but neither is it an unquestioned Greek sea. The treaty had changed the balance of power, but it had not settled it. Everyone knew the peace would not last.
 
 The question now was not whether Carthage would recover — it was when. And what Alexander would do with the time he had bought.
 
 ## 310s BC: Italy and Rome
+
+<figure class="article-figure float-right">
+  <img src="/images/articles/history/alexander-west/alexander-west-legion.jpg" alt="Greek and Roman armies" />
+  <figcaption>Rome and Alexander — a treaty, not a conquest.</figcaption>
+</figure>
 
 With Carthage contained, Alexander turns to Italy.
 
@@ -77,14 +174,14 @@ The Romans do not want a war with Alexander. They have enough problems with the 
 
 In the end, they sign.
 
-<figure class="article-figure float-right">
-  <img src="/images/articles/history/alexander-west/alexander-west-legion.jpg" alt="Greek and Roman armies" />
-  <figcaption>Rome and Alexander — a treaty, not a conquest.</figcaption>
-</figure>
-
 It is not a humiliation. Rome keeps its laws, its army, its institutions. It pays no tribute. But it has been reduced, quietly, from a rising power in Italy to one of several regional states — and it knows it. The treaty bought Rome peace — but at the cost of its ambitions. For the first time in its history, the Republic had chosen security over expansion.
 
 ## 300s–290s BC: The Empire Waits
+
+<figure class="article-figure float-right">
+  <img src="/images/articles/history/alexander-west/alexander-west-portrait.jpg" alt="Alexander the Great" />
+  <figcaption>Alexander at 60 — an empire held together by one man.</figcaption>
+</figure>
 
 Alexander returns to Babylon in 308 BC, at the age of 48. He has done what no Greek had ever done: he has crossed the western sea, humbled Carthage, and brought Italy into his orbit.
 
@@ -93,11 +190,6 @@ But the empire he returns to is not the empire he left.
 While he was in the west, the satraps of the east have been governing themselves. Some have grown rich. Some have raised their own troops. Some have married into local dynasties and started to think of their provinces as theirs, not his.
 
 And Alexander is older now. The wounds have accumulated. He does not march as easily as he once did.
-
-<figure class="article-figure float-right">
-  <img src="/images/articles/history/alexander-west/alexander-west-portrait.jpg" alt="Alexander the Great" />
-  <figcaption>Alexander at 60 — an empire held together by one man.</figcaption>
-</figure>
 
 Roxana's son — Alexander IV, born in 323 BC, the child she was carrying when Alexander nearly died in Babylon — is now a boy of fifteen. He has grown up in the palace, educated by Aristotle's students, trained in arms by Macedonian officers. But he has never commanded an army. He has never been tested.
 
@@ -127,6 +219,11 @@ It is not a collapse. It is a slow unraveling — the same seams, pulled apart m
 
 ## The 3rd and 2nd Centuries BC: A Different Mediterranean
 
+<figure class="article-figure float-right">
+  <img src="/images/articles/history/alexander-west/alexander-west-world.jpg" alt="Alternate world" />
+  <figcaption>A plural Mediterranean — no single empire, no single language.</figcaption>
+</figure>
+
 In our timeline, Rome destroyed Carthage in 146 BC and became the master of the Mediterranean.
 
 In this world, things would have been far less certain.
@@ -136,11 +233,6 @@ Without the Punic Wars that shaped our timeline, Rome never becomes the Mediterr
 Sicily and Magna Graecia remain under Greek influence. Carthage survives, rebuilds its navy, and continues to compete for control of western trade. The eastern Mediterranean remains divided among kingdoms that refuse to accept a single master.
 
 Rome is still powerful. But it is one power among many — not the master of the Mediterranean.
-
-<figure class="article-figure float-right">
-  <img src="/images/articles/history/alexander-west/alexander-west-world.jpg" alt="Alternate world" />
-  <figcaption>A plural Mediterranean — no single empire, no single language.</figcaption>
-</figure>
 
 The political and cultural balance of the Mediterranean is transformed. Greek learning remains influential across the eastern and central Mediterranean, while Latin and the languages of the western and northern peoples develop along different paths. Trade routes shift. Cities that were once secondary become important. The old certainties of power are gone, replaced by something more fluid — and less predictable.
 

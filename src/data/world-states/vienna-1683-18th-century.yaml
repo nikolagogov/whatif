@@ -1,0 +1,17 @@
+id: world-state-vienna-1683-18th-century
+name: Ottoman Influence Extends Deeper into Europe
+schemaVersion: 1
+worldId: world-ottoman-vienna
+divergenceId: divergence-vienna-falls
+status: SIMULATED
+time:
+  label: 18th century
+  year: 1750
+  precision: period
+description: >-
+  The Ottoman Empire extends its influence deeper into Europe.
+  France seeks advantage in the altered continental balance.
+variables: []
+causedBy:
+  - vienna-1683-timeline-3
+evidence: []

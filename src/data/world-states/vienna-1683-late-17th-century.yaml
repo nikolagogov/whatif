@@ -1,0 +1,17 @@
+id: world-state-vienna-1683-late-17th-century
+name: Vienna Falls Under Ottoman Control
+schemaVersion: 1
+worldId: world-ottoman-vienna
+divergenceId: divergence-vienna-falls
+status: SIMULATED
+time:
+  label: Late 17th century
+  year: 1690
+  precision: period
+description: >-
+  Vienna falls under Ottoman control. The Habsburg Monarchy loses
+  its capital and strategic position.
+variables: []
+causedBy:
+  - vienna-1683-timeline-2
+evidence: []

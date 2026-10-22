@@ -1,0 +1,300 @@
+
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sortPosts } from '../../lib/sorting';
+
+export async function getStaticPaths() {
+  const sectorInfo: Record<string, { exploreTiles: { slug: string }[] }> = {
+    history: {
+      exploreTiles: [
+        { slug: 'ancient-world' },
+        { slug: 'empires' },
+        { slug: 'wars' },
+      ],
+    },
+    science: {
+      exploreTiles: [
+        { slug: 'evolution' },
+        { slug: 'biology' },
+        { slug: 'discoveries' },
+        { slug: 'earth' },
+        { slug: 'human-body' },
+      ],
+    },
+    space: {
+      exploreTiles: [
+        { slug: 'mars-worlds' },
+        { slug: 'earth-moon' },
+        { slug: 'planets' },
+        { slug: 'cosmic-events' },
+        { slug: 'universe' },
+      ],
+    },
+    society: {
+      exploreTiles: [
+        { slug: 'technology' },
+        { slug: 'politics' },
+        { slug: 'culture' },
+        { slug: 'economics' },
+        { slug: 'civilization' },
+      ],
+    },
+  };
+
+  const paths: { params: { sector: string; topic: string } }[] = [];
+
+  for (const sector of Object.keys(sectorInfo)) {
+    for (const tile of sectorInfo[sector].exploreTiles) {
+      paths.push({
+        params: { sector, topic: tile.slug },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { sector, topic } = Astro.params;
+
+// Конфигурация на секциите
+const sectorInfo: Record<string, any> = {
+  history: {
+    title: 'History',
+    emoji: '🏛️',
+    intro: 'Empires, wars, and decisions that could have gone another way.',
+    image: '/images/sectors/history.jpg',
+    exploreTiles: [
+      {
+        slug: 'ancient-world',
+        emoji: '🏛️',
+        title: 'Ancient World',
+        subtitle: 'Alexander, Alexandria, and the ancient Mediterranean.',
+      },
+      {
+        slug: 'empires',
+        emoji: '👑',
+        title: 'Empires',
+        subtitle: 'Rome, Persia, and empires that might have followed.',
+      },
+      {
+        slug: 'wars',
+        emoji: '⚔️',
+        title: 'Wars & Conflicts',
+        subtitle: 'Battles and crises that changed the course of history.',
+      },
+    ],
+  },
+  science: {
+    title: 'Science',
+    emoji: '🧪',
+    intro: 'Evolution, biology, and discoveries that could have changed the natural world.',
+    image: '/images/sectors/science.jpg',
+    exploreTiles: [
+      {
+        slug: 'evolution',
+        emoji: '🦕',
+        title: 'Evolution & Deep Time',
+        subtitle: 'Deep time and the paths life might have taken.',
+      },
+      {
+        slug: 'biology',
+        emoji: '🧬',
+        title: 'Biology & Life',
+        subtitle: 'Life, cells, and the rules of the natural world.',
+      },
+      {
+        slug: 'discoveries',
+        emoji: '🔬',
+        title: 'Discoveries & Inventions',
+        subtitle: 'Inventions and insights that arrived early — or never.',
+      },
+      {
+        slug: 'earth',
+        emoji: '🌍',
+        title: 'Earth & Environment',
+        subtitle: 'The planet as it was — and as it might have been.',
+      },
+      {
+        slug: 'human-body',
+        emoji: '🧠',
+        title: 'Human Body & Mind',
+        subtitle: 'The body and mind as they could have evolved.',
+      },
+    ],
+  },
+  space: {
+    title: 'Space',
+    emoji: '🌌',
+    intro: 'Altered worlds and different paths through the universe.',
+    image: '/images/sectors/space.jpg',
+    exploreTiles: [
+      {
+        slug: 'mars-worlds',
+        emoji: '🔴',
+        title: 'Mars & Its Lost Oceans',
+        subtitle: 'The Red Planet and the oceans it might have kept.',
+      },
+      {
+        slug: 'earth-moon',
+        emoji: '🌙',
+        title: 'Earth & Moon',
+        subtitle: 'Our own planet and the worlds closest to it.',
+      },
+      {
+        slug: 'planets',
+        emoji: '🪐',
+        title: 'Planets & Moons',
+        subtitle: 'Worlds that might have taken a different shape.',
+      },
+      {
+        slug: 'cosmic-events',
+        emoji: '☄️',
+        title: 'Cosmic Events',
+        subtitle: 'Impacts, collisions, and other turning points.',
+      },
+      {
+        slug: 'universe',
+        emoji: '✨',
+        title: 'Stars & Universe',
+        subtitle: 'The cosmos at scales we can barely imagine.',
+      },
+    ],
+  },
+  society: {
+    title: 'Society',
+    emoji: '🌍',
+    intro: 'Systems, technologies, and cultures that might have shaped a different world.',
+    image: '/images/sectors/society.jpg',
+    exploreTiles: [
+      {
+        slug: 'technology',
+        emoji: '💡',
+        title: 'Technology & Innovation',
+        subtitle: 'Inventions and systems that might have changed us.',
+      },
+      {
+        slug: 'politics',
+        emoji: '🏛️',
+        title: 'Politics & Power',
+        subtitle: 'Power, governance, and different social orders.',
+      },
+      {
+        slug: 'culture',
+        emoji: '🎭',
+        title: 'Culture & Ideas',
+        subtitle: 'Ideas, beliefs, and the paths they might have taken.',
+      },
+      {
+        slug: 'economics',
+        emoji: '💰',
+        title: 'Economics & Trade',
+        subtitle: 'Trade, wealth, and alternative economic worlds.',
+      },
+      {
+        slug: 'civilization',
+        emoji: '🏙️',
+        title: 'Civilization & Collapse',
+        subtitle: 'Rise, fall, and the roads not taken.',
+      },
+    ],
+  },
+};
+
+const info = sectorInfo[sector ?? ''];
+const tile = info?.exploreTiles.find(
+  (t: { slug: string }) => t.slug === topic
+);
+
+if (!info || !tile) {
+  throw new Error(`Topic "${topic}" not found in sector "${sector}"`);
+}
+
+// Вземаме статиите от съответната секция
+const posts = await getCollection(
+  sector as 'history' | 'science' | 'space' | 'society'
+);
+
+// Теми, които използват различни slug-ове в навигацията и frontmatter
+const topicAliases: Record<string, string[]> = {
+  'mars-worlds': ['mars', 'planets'],
+};
+
+const acceptedTopics = topicAliases[topic ?? ''] ?? [topic ?? ''];
+
+const topicPosts = sortPosts(
+  posts.filter((post) => {
+    const topics = post.data.topics ?? [];
+
+    return topics.some((value) =>
+      acceptedTopics.includes(value.toLowerCase())
+    );
+  })
+);
+---
+
+<BaseLayout
+  title={`${tile.title} | ${info.title} | Had It Gone`}
+  description={tile.subtitle}
+  image={info.image}
+  url={`https://haditgone.com/${sector}/${topic}`}
+  type="website"
+>
+  <div class="section-container">
+    <!-- TOPIC HERO -->
+    <section class="topic-hero">
+      <a href={`/${sector}`} class="topic-back">
+        ← Back to {info.title}
+      </a>
+
+      <h1 class="topic-title">
+        <span class="topic-emoji">{tile.emoji}</span>
+        {tile.title}
+      </h1>
+
+      <p class="topic-subtitle">{tile.subtitle}</p>
+    </section>
+
+    <!-- ARTICLES -->
+    {
+      topicPosts.length === 0 ? (
+        <div class="no-articles">
+          No articles in this topic yet.
+        </div>
+      ) : (
+        <section class="section-block">
+          <h2 class="section-heading">
+            {topicPosts.length}{' '}
+            {topicPosts.length === 1 ? 'scenario' : 'scenarios'}
+          </h2>
+
+          <div class="archive-grid">
+            {topicPosts.map((post) => (
+              <a
+                href={`/${sector}/${post.id}`}
+                class="archive-card"
+              >
+                <div
+                  class="archive-img"
+                  style={`background-image: url('${post.data.image}');`}
+                />
+
+                <div class="archive-body">
+                  <h4>{post.data.title}</h4>
+                  <p>{post.data.description}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- BACK -->
+    <div class="archive-back">
+      <a href={`/${sector}`} class="back-link">
+        ← All {info.title}
+      </a>
+    </div>
+  </div>
+</BaseLayout>

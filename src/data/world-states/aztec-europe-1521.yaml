@@ -1,0 +1,25 @@
+schemaVersion: 1
+id: world-state-aztec-europe-1521
+name: Aztec-Europe Contacts Reshape the Atlantic
+worldId: world-aztec-atlantic
+divergenceId: divergence-aztecs-discover-europe
+time:
+  label: "1521"
+  year: 1521
+  precision: year
+status: SIMULATED
+description: >-
+  Transatlantic diplomatic and commercial contacts begin, the Aztec Empire
+  develops a new strategic interest in the Atlantic, and European powers
+  compete politically and militarily over these new contacts.
+variables:
+  - key: diplomatic_influence
+    value: 60
+    status: SIMULATED
+  - key: territorial_control
+    value:
+      aztec_empire: "A new strategic interest in the Atlantic Ocean"
+      europe: "Political and military competition over new contacts"
+    status: SIMULATED
+causedBy: []
+evidence: []

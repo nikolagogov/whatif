@@ -1,0 +1,22 @@
+id: world-state-internet-present-day
+name: A World Without the Web
+schemaVersion: 1
+worldId: world-disconnected-world
+divergenceId: divergence-web-never-invented
+status: SIMULATED
+time:
+  label: Present day
+  year: 2026
+  precision: year
+description: >-
+  Global communication is slower and more dependent on telephone,
+  broadcast, and private networks. Access to knowledge depends more
+  on libraries, institutions, geography, and wealth. Without a universal
+  Web-based commerce and publishing ecosystem, the digital economy
+  develops differently. Political discourse remains contested but is
+  shaped more by traditional media and local organisations. International
+  scientific research continues, but sharing and coordination are less
+  immediate.
+variables: []
+causedBy: []
+evidence: []

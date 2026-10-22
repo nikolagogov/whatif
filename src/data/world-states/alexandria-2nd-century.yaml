@@ -1,0 +1,20 @@
+schemaVersion: 1
+id: world-state-alexandria-2nd-century
+name: Alexandria Sustains Its Scholarly Tradition
+worldId: world-alexandria-survives
+divergenceId: divergence-alexandria-library-survives
+time:
+  label: "2nd century AD"
+  year: 150
+  precision: period
+status: SIMULATED
+description: >-
+  Alexandria remains a continuous scholarly centre, with scientific
+  knowledge accumulating across generations.
+variables:
+  - key: institutional_continuity
+    value: 90
+    status: SIMULATED
+causedBy:
+  - alexandria-timeline-2
+evidence: []

@@ -1,0 +1,16 @@
+id: world-state-mars-present-day
+name: Mars Preserves Signs of a Habitable Past
+schemaVersion: 1
+worldId: world-living-mars
+divergenceId: divergence-mars-keeps-oceans
+status: SIMULATED
+time:
+  label: Present day
+  precision: period
+description: >-
+  Mars may retain evidence of a longer habitable past. Space exploration
+  places greater emphasis on Martian life and habitability.
+variables: []
+causedBy:
+  - event-mars-space-race
+evidence: []

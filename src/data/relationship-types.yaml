@@ -1,0 +1,176 @@
+schemaVersion: 1
+
+relationships:
+  - id: HAS_WORLD
+    category: structural
+    description: Connects an article to its world.
+    from: [article]
+    to: [world]
+
+  - id: HAS_DIVERGENCE
+    category: structural
+    description: Connects an article to its point of divergence.
+    from: [article]
+    to: [divergence]
+
+  - id: HAS_TIMELINE_EVENT
+    category: structural
+    description: Connects an article to an event on its timeline.
+    from: [article]
+    to: [timeline-event]
+
+  - id: MENTIONS_ENTITY
+    category: structural
+    description: Connects an article to an entity it references.
+    from: [article]
+    to: [entity]
+
+  - id: RELATED_ARTICLE
+    category: editorial
+    description: Connects related articles.
+    from: [article]
+    to: [article]
+
+  - id: ALLIANCE
+    category: political
+    description: Alliance or formal cooperation between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: CONFLICT
+    category: political
+    description: Conflict between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: RIVALRY
+    category: political
+    description: Competition or rivalry between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: diplomatic-contact
+    category: diplomatic
+    description: Diplomatic contact between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: located-in
+    category: spatial
+    description: Spatial or administrative location relationship.
+    from: [entity]
+    to: [entity]
+
+  - id: POLITICAL_CONTINUITY
+    category: political
+    description: Continuity of political institutions or authority.
+    from: [entity]
+    to: [entity]
+
+  - id: POLITICAL_INFLUENCE
+    category: political
+    description: Political influence between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: SHIFT_OF_POWER
+    category: political
+    description: Change in relative power between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: INSTITUTIONAL_INFLUENCE
+    category: institutional
+    description: Influence between institutions or entities.
+    from: [entity]
+    to: [entity]
+
+  - id: STRATEGIC_PRESSURE
+    category: strategic
+    description: Strategic pressure exerted between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: KNOWLEDGE_EXCHANGE
+    category: knowledge
+    description: Exchange or transmission of knowledge.
+    from: [entity]
+    to: [entity]
+
+  - id: SCIENTIFIC_DISCOVERY
+    category: scientific
+    description: Relationship describing a scientific discovery.
+    from: [entity]
+    to: [entity]
+
+  - id: ECOLOGICAL_PRESSURE
+    category: ecological
+    description: Ecological pressure affecting an entity.
+    from: [entity]
+    to: [entity]
+
+  - id: EVOLUTIONARY_CHANGE
+    category: evolutionary
+    description: Evolutionary change associated with an entity.
+    from: [entity]
+    to: [entity]
+
+  - id: PLANETARY_CHANGE
+    category: planetary
+    description: Planetary change associated with an entity.
+    from: [entity]
+    to: [entity]
+
+  - id: causes
+    category: causal
+    description: Connects a divergence to an event it causes.
+    from: [divergence]
+    to: [timeline-event]
+
+  - id: results_in
+    category: causal
+    description: Connects an event to a resulting event.
+    from: [timeline-event]
+    to: [timeline-event]
+
+  - id: involves
+    category: participation
+    description: Connects an event to an involved entity.
+    from: [timeline-event]
+    to: [entity]
+
+  - id: STATE_OF_WORLD
+    category: structural
+    description: Connects a world state to its world.
+    from: [world-state]
+    to: [world]
+
+  - id: STATE_OF_DIVERGENCE
+    category: structural
+    description: Connects a world state to its point of divergence.
+    from: [world-state]
+    to: [divergence]
+
+  - id: TRANSITION_FROM_STATE
+    category: structural
+    description: Connects a world transition to its source state.
+    from: [world-transition]
+    to: [world-state]
+
+  - id: TRANSITION_TO_STATE
+    category: structural
+    description: Connects a world transition to its resulting state.
+    from: [world-transition]
+    to: [world-state]
+
+  - id: TRANSITION_TRIGGERED_BY
+    category: structural
+    description: Connects a world transition to its triggering timeline event.
+    from: [world-transition]
+    to: [timeline-event]
+
+  - id: CO_MENTIONED_IN_ARTICLE
+    category: contextual
+    description: Entities co-mentioned in the same article; this indicates shared context, not a direct factual relationship.
+    from: [entity]
+    to: [entity]

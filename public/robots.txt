@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://haditgone.com/sitemap-index.xml

@@ -1,0 +1,85 @@
+Folder PATH listing for volume Acer
+Volume serial number is 8C80-8B66
+C:\USERS\NIKOL\DESKTOP\WHAT IF\HADITGONE\SRC
+|   content.config.ts
+|
++---content
+|   +---history
+|   |       alexander-west.md
+|   |       alexandria.md
+|   |       aztec-europe.md
+|   |       cuban-crisis.md
+|   |       islamic-europe.md
+|   |       napoleon-egypt.md
+|   |       rome-never-fell.md
+|   |       spanish-armada.md
+|   |       vienna-1683.md
+|   |       waterloo-1815.md
+|   |
+|   +---science
+|   |       dinosaurs.md
+|   |
+|   +---society
+|   |       internet.md
+|   |
+|   \---space
+|           mars.md
+|
++---data
+|   |   content-graph.json
+|   |   entities.yaml
+|   |   entities.yaml.bak
+|   |   relationship-types.yaml
+|   |   spotlight.json
+|   |   world-transitions.yaml
+|   |   world-variable-definitions.yaml
+|   |
+|   \---world-states
+|           alexander-west.yaml
+|           alexandria-2nd-century.yaml
+|           alexandria-medieval-period.yaml
+|           aztec-europe-1521.yaml
+|           cuban-crisis-global-order.yaml
+|           cuban-crisis-human-survival.yaml
+|           dinosaurs-alternate-intelligence.yaml
+|           dinosaurs-cenozoic.yaml
+|           internet-present-day.yaml
+|           islamic-europe-medieval-period.yaml
+|           islamic-europe-present-day.yaml
+|           mars-ancient-environment.yaml
+|           mars-present-day.yaml
+|           napoleon-egypt-1810.yaml
+|           rome-never-fell-1500.yaml
+|           rome-never-fell-6th-century.yaml
+|           spanish-armada-late-16th-century.yaml
+|           spanish-armada-modern-era.yaml
+|           vienna-1683-18th-century.yaml
+|           vienna-1683-late-17th-century.yaml
+|           waterloo-1815-1820.yaml
+|           world-state-alexander-west-after-arabian-campaign.yaml
+|           world-state-alexander-west-balance-of-power.yaml
+|
++---layouts
+|       BaseLayout.astro
+|
++---lib
+|       sorting.ts
+|
++---pages
+|   |   404.astro
+|   |   about.astro
+|   |   bookmarks.astro
+|   |   continue.astro
+|   |   index.astro
+|   |   latest.astro
+|   |   privacy.astro
+|   |   rss.xml.js
+|   |   search.astro
+|   |   [sector].astro
+|   |
+|   \---[sector]
+|           [id].astro
+|           [topic].astro
+|
+\---styles
+        global.css

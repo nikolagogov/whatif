@@ -1,0 +1,3206 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import contentGraph from '../data/content-graph.json';
+
+const graphPayload = JSON.stringify(contentGraph)
+  .replace(/</g, '\\u003c')
+  .replace(/>/g, '\\u003e')
+  .replace(/&/g, '\\u0026');
+---
+<BaseLayout
+  title="World Graph Explorer"
+  description="Explore alternate worlds, divergences, timelines and their connections."
+>
+  <main class="wg-page">
+    <section class="wg-shell" aria-label="Interactive knowledge graph explorer">      
+      <section class="wg-graph-panel" aria-label="Graph canvas">
+        <div class="wg-search-bar">
+          <label class="wg-search-label" for="wg-search">
+            Find a world or event
+          </label>
+          <input
+            id="wg-search"
+            class="wg-search"
+            type="search"
+            placeholder="Search the graph…"
+            autocomplete="off"
+          />
+          <button id="wg-reset" class="wg-reset" type="button">
+            Reset
+          </button>
+        </div>
+        <div class="wg-canvas-top">
+          <span><i class="live-dot"></i> LIVE KNOWLEDGE GRAPH</span>
+          <span id="wg-stats">Loading graph…</span>
+        </div>
+<canvas id="wg-canvas" aria-label="Interactive graph of alternate worlds and related events"></canvas>
+        <div id="wg-empty" class="wg-empty" hidden>
+          No nodes match these filters. Try enabling more node types.
+        </div>
+
+        
+<div class="wg-zoom-controls" aria-label="Graph navigation controls">
+  <button type="button" id="wg-zoom-in" aria-label="Увеличи" title="Увеличи">+</button>
+  <button type="button" id="wg-zoom-out" aria-label="Намали" title="Намали">−</button>
+  <span class="wg-control-divider" aria-hidden="true"></span>
+  <button type="button" id="wg-back" aria-label="Назад" title="Предишна стъпка">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/><path d="M9 12h11"/></svg>
+  </button>
+  <button type="button" id="wg-home" aria-label="Начало" title="Начален изглед">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-7h5v7"/></svg>
+  </button>
+</div>
+
+      </section>
+
+      <aside class="wg-inspector" id="wg-inspector">
+        <div class="wg-inspector-head">
+          <span>WORLD EXPLORER</span>
+          <button id="wg-clear-selection" type="button" aria-label="Clear selection">×</button>
+        </div>
+        <div id="wg-inspector-content" class="wg-inspector-content" aria-live="polite">
+          <div class="wg-inspector-empty">
+            <div class="wg-empty-orbit">◎</div>
+            <h2>Explore the connections</h2>
+            <p>
+              Select any node in the graph to see its details, connected events
+              and related story.
+            </p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+  </main>
+
+  <script type="application/json" id="wg-data" is:inline set:html={graphPayload}></script>
+  <script>
+    type GraphNode = {
+      id: string;
+      kind: string;
+      type?: string;
+      label: string;
+      date?: string | null;
+      sector?: string;
+      articleId?: string;
+      articleUrl?: string | null;
+      articles?: string[];
+      x?: number;
+      y?: number;
+      vx?: number;
+      vy?: number;
+      radius?: number;
+    };
+
+    type GraphEdge = {
+      id: string;
+      type: string;
+      from: string;
+      to: string;
+      article?: string;
+
+      // Contextual relationships: entities mentioned in the same article.
+      contextual?: boolean;
+      evidence?: string;
+    };
+
+    const dataElement = document.querySelector<HTMLScriptElement>('#wg-data');
+    const canvasElement = document.querySelector<HTMLCanvasElement>('#wg-canvas');
+
+    if (!dataElement || !canvasElement) {
+      throw new Error(
+        'World Graph initialization failed: required DOM elements are missing.'
+      );
+    }
+
+    const canvas: HTMLCanvasElement = canvasElement;
+
+    const payload = JSON.parse(dataElement.textContent || '{}') as {
+      nodes: GraphNode[];
+      edges: GraphEdge[];
+      stats?: { nodes: number; edges: number };
+    };
+
+    const allNodes = Array.isArray(payload.nodes) ? payload.nodes : [];
+    const rawEdges = Array.isArray(payload.edges) ? payload.edges : [];
+
+    const allEdges: GraphEdge[] = rawEdges
+      .map((edge: any, i: number) => ({
+        id: String(edge.id ?? `edge-${i}`),
+        type: String(edge.type ?? edge.label ?? 'RELATED'),
+        from: String(edge.from ?? edge.source ?? ''),
+        to: String(edge.to ?? edge.target ?? ''),
+        article: edge.article,
+
+        contextual:
+          edge.contextual === true ||
+          String(edge.type ?? '').toUpperCase() ===
+            'CO_MENTIONED_IN_ARTICLE',
+
+        evidence: edge.evidence,
+      }))
+      .filter((edge) => edge.from && edge.to);
+
+    const nodeById = new Map(allNodes.map((n) => [n.id, n]));
+
+    const palette: Record<string, string> = {
+      world: '#f5bd55',
+      divergence: '#ff5265',
+      'timeline-event': '#39a9ff',
+      article: '#a777ff',
+      entity: '#35dcb1',
+      'world-state': '#38c6cf',
+      'world-transition': '#ff914d',
+    };
+
+    const kindLabels: Record<string, string> = {
+      world: 'Alternate world',
+      divergence: 'Point of divergence',
+      'timeline-event': 'Timeline event',
+      article: 'Story',
+      entity: 'Entity',
+      'world-state': 'World state',
+      'world-transition': 'World transition',
+    };
+
+    const worldImageByLabel: Record<string, string> = {
+      "Napoleonic Europe": "/images/world-graph/napoleonic-europe.webp",
+      "A Catholic England": "/images/world-graph/catholic-england.webp",
+      "An Aztec Atlantic World": "/images/world-graph/aztec-atlantic.webp",
+      "An Islamic Europe": "/images/world-graph/islamic-europe.webp",
+      "A Greek Mediterranean": "/images/world-graph/greek-mediterranean.webp",
+      "A World After Nuclear War": "/images/world-graph/nuclear-world.webp",
+      "A Divided Europe": "/images/world-graph/divided-europe.webp",
+      "A World Ruled by Dinosaurs": "/images/world-graph/dinosaur-world.webp",
+      "Living Mars": "/images/world-graph/living-mars.webp",
+      "The Unbroken Roman Empire": "/images/world-graph/roman-empire.webp",
+      "The Disconnected World": "/images/world-graph/disconnected-world.webp",
+      "The Unbroken Chain of Knowledge": "/images/world-graph/chain-of-knowledge.webp",
+    };
+
+    const worldImages = new Map<string, HTMLImageElement>();
+
+    function loadWorldImage(node: GraphNode): void {
+      if (node.kind !== 'world') return;
+
+      const src = worldImageByLabel[node.label];
+      if (!src || worldImages.has(node.id)) return;
+
+      const img = new Image();
+      worldImages.set(node.id, img);
+
+      img.onload = () => draw();
+      img.onerror = () => {
+        worldImages.delete(node.id);
+        console.warn(`World Graph image not found: ${src}`);
+        draw();
+      };
+
+      img.src = src;
+    }
+
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      throw new Error(
+        'World Graph initialization failed: no 2D canvas context.'
+      );
+    }
+
+    const ctx: CanvasRenderingContext2D = context;
+
+    const search = document.querySelector<HTMLInputElement>('#wg-search')!;
+    const inspector = document.querySelector<HTMLDivElement>('#wg-inspector-content')!;
+    const stats = document.querySelector<HTMLSpanElement>('#wg-stats')!;
+    const empty = document.querySelector<HTMLDivElement>('#wg-empty')!;
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let zoom = 1;
+    let panX = 0;
+    let panY = 0;
+    let selectedId: string | null = null;
+    let hoverId: string | null = null;
+    let dragging: GraphNode | null = null;
+    let panning = false;
+    let moved = false;
+    let lastX = 0;
+    let lastY = 0;
+    let simTicks = 0;
+        
+    let focusMode = false;
+    let expansionDepth = 1;
+
+    type GraphLevel = 'overview' | 'world' | 'node';
+    let viewLevel: GraphLevel = 'overview';
+
+    type GraphViewState = {
+  selectedId: string | null;
+  focusMode: boolean;
+  expansionDepth: number;
+  viewLevel: GraphLevel;
+  zoom: number;
+  panX: number;
+  panY: number;
+  positions: Map<string, { x: number; y: number }>;
+};
+
+const viewHistory: GraphViewState[] = [];
+const MAX_HISTORY = 50;
+
+function saveView(): void {
+  viewHistory.push({
+    selectedId,
+    focusMode,
+    expansionDepth,
+    viewLevel,
+    zoom,
+    panX,
+    panY,
+    positions: new Map(
+      nodes.map((n) => [n.id, { x: n.x ?? 0, y: n.y ?? 0 }])
+    ),
+  });
+
+  if (viewHistory.length > MAX_HISTORY) {
+    viewHistory.shift();
+  }
+}
+
+function restorePreviousView(): void {
+  const previous = viewHistory.pop();
+  if (!previous) return;
+
+  selectedId = previous.selectedId;
+  focusMode = previous.focusMode;
+  expansionDepth = previous.expansionDepth;
+  viewLevel = previous.viewLevel;
+  document.querySelector('.wg-shell')?.classList.toggle('has-selection', !!selectedId);
+
+  for (const n of nodes) {
+    const position = previous.positions.get(n.id);
+    if (position) {
+      n.x = position.x;
+      n.y = position.y;
+      n.vx = 0;
+      n.vy = 0;
+    }
+  }
+
+  rebuild();
+
+  zoom = previous.zoom;
+  panX = previous.panX;
+  panY = previous.panY;
+  simTicks = 0;
+  draw();
+}
+    let visibleNodes: GraphNode[] = [];
+    let visibleEdges: GraphEdge[] = [];
+    let raf = 0;
+
+    const nodes: GraphNode[] = allNodes.map((n, i) => ({
+      ...n,
+      x: Math.cos(i * 2.399) * Math.sqrt(i + 1) * 82,
+      y: Math.sin(i * 2.399) * Math.sqrt(i + 1) * 66,
+      vx: 0,
+      vy: 0,
+      radius:
+        n.kind === 'world' ? 36 :
+        n.kind === 'divergence' ? 12 :
+        n.kind === 'article' ? 9 :
+        n.kind === 'timeline-event' ? 7 : 7,
+    }));
+
+    const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+
+    // Persist the selected graph element in the URL so refresh opens the same view.
+    function syncSelectedNodeInUrl(id: string | null): void {
+      const url = new URL(window.location.href);
+      if (id) url.searchParams.set('node', id);
+      else url.searchParams.delete('node');
+      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+    }
+
+    for (const node of nodes) {
+      loadWorldImage(node);
+    }
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+
+      if (rect.width < 10 || rect.height < 10) {
+        return;
+      }
+
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width;
+      height = rect.height;
+
+      canvas.width = Math.max(1, Math.floor(width * dpr));
+      canvas.height = Math.max(1, Math.floor(height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw();
+    }
+
+    function worldPoint(x: number, y: number) {
+      return {
+        x: (x - width / 2 - panX) / zoom,
+        y: (y - height / 2 - panY) / zoom,
+      };
+    }
+
+    function screenPoint(n: GraphNode) {
+      return {
+        x: width / 2 + panX + (n.x || 0) * zoom,
+        y: height / 2 + panY + (n.y || 0) * zoom,
+      };
+    }
+    
+    
+    function arrangeWorlds(worlds: GraphNode[]) {
+      if (!worlds.length) return;
+
+      // Stable, compact grid: the camera fits the grid to the available canvas.
+      const columns = Math.min(4, Math.max(1, Math.ceil(Math.sqrt(worlds.length))));
+      const rows = Math.ceil(worlds.length / columns);
+      const gapX = 360;
+      const gapY = 218;
+      const totalWidth = (columns - 1) * gapX;
+      const totalHeight = (rows - 1) * gapY;
+
+      worlds.forEach((world, index) => {
+        const col = index % columns;
+        const row = Math.floor(index / columns);
+        world.x = col * gapX - totalWidth / 2;
+        world.y = row * gapY - totalHeight / 2;
+        world.vx = 0;
+        world.vy = 0;
+      });
+    }
+
+    arrangeWorlds(visibleNodes.filter((n) => n.kind === 'world'));
+    
+    function rebuild() {
+      const q = search.value.trim().toLowerCase();
+      const selected = selectedId ? nodeMap.get(selectedId) : null;
+      const targetIds = new Set<string>();
+
+      // Search is a temporary result view; each result includes its real direct neighbours.
+      if (q) {
+        for (const node of nodes) {
+          const haystack = `${node.label} ${node.date || ''} ${node.kind} ${node.id}`.toLowerCase();
+          if (haystack.includes(q)) {
+            targetIds.add(node.id);
+            for (const edge of allEdges) {
+              if (edge.from === node.id) targetIds.add(edge.to);
+              if (edge.to === node.id) targetIds.add(edge.from);
+            }
+          }
+        }
+      } else if (viewLevel === 'overview' || !selected) {
+        viewLevel = 'overview';
+        selectedId = null;
+
+        // Всички алтернативни светове.
+        for (const node of nodes) {
+          if (node.kind === 'world') {
+            targetIds.add(node.id);
+          }
+        }
+        
+      
+      
+      } else if (selected.kind === 'world') {
+  // The selected world defines the scenario but is not a visible node.
+  // Its illustration will be used as the canvas background.
+
+        const scenarioArticleIds = new Set<string>();
+
+        for (const edge of allEdges) {
+          if (edge.type !== 'HAS_WORLD') continue;
+
+          if (edge.from === selected.id) {
+            scenarioArticleIds.add(edge.to);
+          } else if (edge.to === selected.id) {
+            scenarioArticleIds.add(edge.from);
+          }
+        }
+
+        for (const articleId of scenarioArticleIds) {
+          if (nodeMap.has(articleId)) {
+            targetIds.add(articleId);
+          }
+
+          for (const edge of allEdges) {
+            if (edge.article !== articleId) continue;
+
+            if (
+              edge.type !== 'HAS_DIVERGENCE' &&
+              edge.type !== 'HAS_TIMELINE_EVENT'
+            ) {
+              continue;
+            }
+
+            targetIds.add(edge.from);
+            targetIds.add(edge.to);
+          }
+        }
+      } else {
+        // Node exploration is intentionally local: show the selected node and
+        // its immediate real neighbours only. The user explores the graph by
+        // selecting one of those neighbours, rather than seeing the entire
+        // connected component at once.
+        targetIds.add(selected.id);
+
+        for (const edge of allEdges) {
+          if (edge.from === selected.id) targetIds.add(edge.to);
+          if (edge.to === selected.id) targetIds.add(edge.from);
+        }
+      }
+
+      // World cards belong only to the opening overview. After entering a world
+      // or selecting any connected node, explore the scenario through its
+      // articles, divergences, timeline events and other graph nodes only.
+      visibleNodes = nodes.filter((node) =>
+        targetIds.has(node.id) &&
+        (viewLevel === 'overview' && !q || node.kind !== 'world')
+      );
+      const visibleIds = new Set(visibleNodes.map((node) => node.id));
+      visibleEdges = allEdges.filter((edge) => visibleIds.has(edge.from) && visibleIds.has(edge.to));
+
+      if (viewLevel === 'overview' && !q) {
+        arrangeWorlds(visibleNodes.filter((n) => n.kind === 'world'));
+        // Keep the overview deliberately clean. Neighbours are shown on selection/expand.
+        simTicks = 0;
+      
+      } else {
+        const center = selectedId ? nodeMap.get(selectedId) : null;
+
+        if (center && visibleNodes.length) {
+          const place = (node: GraphNode, x: number, y: number) => {
+            node.x = x;
+            node.y = y;
+            node.vx = 0;
+            node.vy = 0;
+          };
+
+          
+          // Arrange the visible connected component by graph distance from the
+          // selected node. This keeps related nodes together while giving image
+          // nodes enough room and avoiding the crowded, type-based rings.
+          place(center, 0, 0);
+
+          const layoutIds = new Set(visibleNodes.map((node) => node.id));
+          layoutIds.add(center.id);
+          const distanceById = new Map<string, number>([[center.id, 0]]);
+          const queue: string[] = [center.id];
+          while (queue.length) {
+            const currentId = queue.shift()!;
+            const distance = distanceById.get(currentId)!;
+            // Use the source graph here because a selected world is a virtual
+            // hub in this view and intentionally isn't drawn as a node.
+            for (const edge of allEdges) {
+              const neighbourId = edge.from === currentId
+                ? edge.to
+                : edge.to === currentId
+                  ? edge.from
+                  : null;
+              if (
+                neighbourId && layoutIds.has(neighbourId) &&
+                !distanceById.has(neighbourId)
+              ) {
+                distanceById.set(neighbourId, distance + 1);
+                queue.push(neighbourId);
+              }
+            }
+          }
+
+          const rings = new Map<number, GraphNode[]>();
+          for (const node of visibleNodes) {
+            if (node.id === center.id) continue;
+            const distance = distanceById.get(node.id) ?? 1;
+            if (!rings.has(distance)) rings.set(distance, []);
+            rings.get(distance)!.push(node);
+          }
+
+          for (const [distance, ring] of [...rings.entries()].sort((a, b) => a[0] - b[0])) {
+            ring.sort((a, b) => {
+              const kindOrder = (a.kind || '').localeCompare(b.kind || '');
+              return kindOrder || a.label.localeCompare(b.label);
+            });
+
+            // Wider rings for image-bearing worlds and enough circumference for
+            // readable spacing. The golden-angle offset avoids radial spokes.
+            const imageNodes = ring.filter((node) => node.kind === 'world').length;
+            const minimumCircumference = ring.length * 118 + imageNodes * 92;
+            const radius = Math.max(
+              220 + (distance - 1) * 185,
+              minimumCircumference / (Math.PI * 2)
+            );
+            const startAngle = -Math.PI / 2 + distance * 0.47;
+
+            ring.forEach((node, index) => {
+              const angle = startAngle + (Math.PI * 2 * index) / ring.length;
+              const stagger = index % 2 === 0 ? 1 : 1.035;
+              place(
+                node,
+                Math.cos(angle) * radius * stagger,
+                Math.sin(angle) * radius * (index % 3 === 0 ? 1.025 : 1)
+              );
+            });
+          }
+        }
+      }
+
+      empty.hidden = visibleNodes.length > 0;
+      stats.textContent = q
+        ? `${visibleNodes.length} matching/connected items · ${visibleEdges.length} connections`
+        : viewLevel === 'overview'
+          ? `${visibleNodes.length} worlds`
+          : `${visibleNodes.length} connected items · ${visibleEdges.length} connections`;
+
+      draw();
+      
+    if (viewLevel === 'overview' && !q) {
+      requestAnimationFrame(() => fit());
+    }
+  }
+
+    function draw() {
+      // Do not let a transient invalid canvas size break rendering. Keep this
+      // guard non-destructive: invalid frames are skipped, not cleared to blank.
+      if (
+        !Number.isFinite(width) || !Number.isFinite(height) ||
+        width <= 0 || height <= 0
+      ) return;
+
+      const gradientX = width * 0.48;
+      const gradientY = height * 0.45;
+      const gradientRadius = Math.max(width, height) * 0.8;
+      if (
+        !Number.isFinite(gradientX) || !Number.isFinite(gradientY) ||
+        !Number.isFinite(gradientRadius) || gradientRadius <= 0
+      ) return;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const bg = ctx.createRadialGradient(
+        gradientX,
+        gradientY,
+        0,
+        gradientX,
+        gradientY,
+        gradientRadius
+      );
+      bg.addColorStop(0, '#101b27');
+      bg.addColorStop(1, '#070b11');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+      // Use the same clean graph background for every selected node type.
+
+      for (let i = 0; i < 95; i++) {
+        const x = ((i * 127.1 + 31.7) % width + width) % width;
+        const y = ((i * 269.5 + 17.3) % height + height) % height;
+        const radius = i % 11 === 0 ? 1.15 : 0.55;
+        const alpha = i % 7 === 0 ? 0.35 : 0.14;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(174, 201, 226, ${alpha})`;
+        ctx.fill();
+      }
+
+      const active = selectedId
+        ? new Set([
+            selectedId,
+            ...visibleEdges
+              .filter((e) => e.from === selectedId || e.to === selectedId)
+              .flatMap((e) => [e.from, e.to]),
+          ])
+        : null;
+
+      // In Overview, show only *indirect* world-to-world paths that are
+      // grounded in the graph: both worlds share a real intermediary node.
+      // These are dashed and subdued so they cannot be mistaken for direct edges.
+      if (viewLevel === 'overview' && !selectedId) {
+        const worlds = visibleNodes.filter((n) => n.kind === 'world');
+        const adjacency = new Map<string, Set<string>>();
+        for (const edge of allEdges) {
+          if (!adjacency.has(edge.from)) adjacency.set(edge.from, new Set());
+          if (!adjacency.has(edge.to)) adjacency.set(edge.to, new Set());
+          adjacency.get(edge.from)!.add(edge.to);
+          adjacency.get(edge.to)!.add(edge.from);
+        }
+
+        const drawnPairs = new Set<string>();
+        for (let i = 0; i < worlds.length; i++) {
+          for (let j = i + 1; j < worlds.length; j++) {
+            const a = worlds[i];
+            const b = worlds[j];
+            const aNeighbours = adjacency.get(a.id) ?? new Set<string>();
+            const bNeighbours = adjacency.get(b.id) ?? new Set<string>();
+            const shared = [...aNeighbours].filter((id) =>
+              bNeighbours.has(id) && nodeMap.get(id)?.kind !== 'world'
+            );
+            if (!shared.length) continue;
+
+            const pairKey = `${a.id}::${b.id}`;
+            if (drawnPairs.has(pairKey)) continue;
+            drawnPairs.add(pairKey);
+
+            const p = screenPoint(a);
+            const q = screenPoint(b);
+            const dx = q.x - p.x;
+            const dy = q.y - p.y;
+            const distance = Math.hypot(dx, dy) || 1;
+            const bend = Math.min(42, distance * 0.12) * (i % 2 ? 1 : -1);
+            const cx = (p.x + q.x) / 2 - (dy / distance) * bend;
+            const cy = (p.y + q.y) / 2 + (dx / distance) * bend;
+            const emphasized = hoverId === a.id || hoverId === b.id;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.quadraticCurveTo(cx, cy, q.x, q.y);
+            ctx.setLineDash([4, 6]);
+            ctx.strokeStyle = emphasized
+              ? 'rgba(102,190,232,0.82)'
+              : 'rgba(91,145,180,0.28)';
+            ctx.lineWidth = emphasized ? 1.8 : 1.05;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.restore();
+          }
+        }
+      }
+
+      // In a selected-world view, the article is context, not the branching hub.
+      // Re-route article-scoped containment links visually through the registered
+      // divergence when the graph provides one for that same article.
+      const scenarioDivergenceByArticle = new Map<string, GraphNode>();
+      if (viewLevel === 'world') {
+        for (const edge of allEdges) {
+          if (edge.type !== 'HAS_DIVERGENCE' || !edge.article) continue;
+          const from = nodeMap.get(edge.from);
+          const to = nodeMap.get(edge.to);
+          const divergence = from?.kind === 'divergence' ? from : to?.kind === 'divergence' ? to : null;
+          if (divergence) scenarioDivergenceByArticle.set(edge.article, divergence);
+        }
+      }
+
+      // Draw real Content Graph edges in the selected/expanded view.
+      for (const e of visibleEdges) {
+        const a = nodeMap.get(e.from);
+        const b = nodeMap.get(e.to);
+        if (!a || !b) continue;
+
+        if (viewLevel === 'world' && e.article && scenarioDivergenceByArticle.has(e.article)) {
+          const articleNode = a.kind === 'article' ? a : b.kind === 'article' ? b : null;
+          const scenarioNode = articleNode ? (a.id === articleNode.id ? b : a) : null;
+          // Keep the article-to-divergence connection visible: it explains which
+          // point of divergence belongs to this story. Only article-to-event spokes
+          // are replaced by the cleaner branches drawn from the divergence below.
+          if (articleNode && scenarioNode && scenarioNode.kind === 'timeline-event') {
+            continue;
+          }
+        }
+
+        const p = screenPoint(a);
+        const q = screenPoint(b);
+
+        // In a selected-world view, show the scenario's real internal relationships
+        // at full strength. The world itself is contextual and is not a visible canvas node.
+        const focused =
+          viewLevel === 'world' || !active || active.has(a.id) || active.has(b.id);
+
+        const dx = q.x - p.x;
+        const dy = q.y - p.y;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        // Curve the line without changing the underlying graph relation.
+        // Alternate curve directions so parallel connections remain distinguishable.
+        const edgeIndex = visibleEdges.indexOf(e);
+        const direction = edgeIndex % 2 === 0 ? 1 : -1;
+        const bend = Math.min(76, distance * 0.22) * direction;
+
+        const cx = (p.x + q.x) / 2 - (dy / distance) * bend;
+        const cy = (p.y + q.y) / 2 + (dx / distance) * bend;
+
+        const relationType = e.type.trim().toLowerCase().replaceAll('_', '-');
+        const causal = ['causes', 'results-in', 'leads-to'].includes(relationType);
+        const chronology = ['precedes', 'follows', 'occurs-before', 'occurs-after', 'chronological-next'].includes(relationType);
+        const structural = ['has-world', 'state-of-world', 'has-state', 'has-event', 'has-timeline', 'part-of', 'belongs-to'].includes(relationType);
+        const relationColor = causal
+          ? 'rgba(255,196,92,0.95)'
+          : chronology
+            ? 'rgba(85,200,232,0.9)'
+            : structural
+              ? 'rgba(85,214,165,0.82)'
+              : 'rgba(167,139,250,0.78)';
+        const contextual =
+          e.contextual ||
+          relationType === 'co-mentioned-in-article';
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.quadraticCurveTo(cx, cy, q.x, q.y);
+
+        // Contextual links are dashed and subdued so they are not
+        // mistaken for direct factual or causal relationships.
+        ctx.setLineDash(
+          contextual
+            ? [5, 5]
+            : focused && chronology
+              ? [7, 5]
+              : focused && structural
+                ? [2, 5]
+                : []
+        );
+
+        ctx.lineCap = 'round';
+
+        ctx.strokeStyle = contextual
+        ? (focused
+            ? 'rgba(70,220,245,0.95)'
+            : 'rgba(70,220,245,0.42)')
+        : !focused
+          ? 'rgba(89,111,133,0.18)'
+          : relationColor;
+
+        ctx.lineWidth =
+          (causal ? 2.4 : contextual ? 2.2 : 1.7) *
+          Math.min(zoom, 1.5);
+
+        if (focused && !contextual) {
+          ctx.save();
+          ctx.shadowColor = relationColor;
+          ctx.shadowBlur = causal ? 7 : 3;
+          ctx.stroke();
+          ctx.restore();
+        } else {
+          ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+
+        // Direction markers are reserved for relations whose type explicitly implies direction.
+        if ((causal || chronology) && focused) {
+          const t = 0.72;
+          const ax = (1 - t) * (1 - t) * p.x + 2 * (1 - t) * t * cx + t * t * q.x;
+          const ay = (1 - t) * (1 - t) * p.y + 2 * (1 - t) * t * cy + t * t * q.y;
+          const tx = 2 * (1 - t) * (cx - p.x) + 2 * t * (q.x - cx);
+          const ty = 2 * (1 - t) * (cy - p.y) + 2 * t * (q.y - cy);
+          const angle = Math.atan2(ty, tx);
+          const arrowSize = causal ? 8 : 6;
+          ctx.save();
+          ctx.translate(ax, ay);
+          ctx.rotate(angle);
+          ctx.beginPath();
+          ctx.moveTo(arrowSize, 0);
+          ctx.lineTo(-arrowSize * 0.7, -arrowSize * 0.65);
+          ctx.lineTo(-arrowSize * 0.7, arrowSize * 0.65);
+          ctx.closePath();
+          ctx.fillStyle = relationColor;
+          ctx.shadowColor = relationColor;
+          ctx.shadowBlur = 5;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Subtle luminous point on causal connections.
+        if (causal && focused) {
+          const t = 0.5;
+          const mx =
+            (1 - t) * (1 - t) * p.x +
+            2 * (1 - t) * t * cx +
+            t * t * q.x;
+          const my =
+            (1 - t) * (1 - t) * p.y +
+            2 * (1 - t) * t * cy +
+            t * t * q.y;
+
+          ctx.beginPath();
+          ctx.arc(mx, my, 2, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,205,112,0.95)';
+          ctx.fill();
+        }
+
+      }
+
+      // Scenario branches: connect each timeline event to the divergence registered
+      // under the same article. These are neutral structural branches, not causal arrows.
+      if (viewLevel === 'world' && scenarioDivergenceByArticle.size) {
+        const divergenceEventPairs = new Set<string>();
+        for (const edge of allEdges) {
+          if (edge.type !== 'HAS_TIMELINE_EVENT' || !edge.article) continue;
+          const divergence = scenarioDivergenceByArticle.get(edge.article);
+          if (!divergence) continue;
+          const from = nodeMap.get(edge.from);
+          const to = nodeMap.get(edge.to);
+          const event = from?.kind === 'timeline-event' ? from : to?.kind === 'timeline-event' ? to : null;
+          if (!event || !visibleNodes.some((n) => n.id === event.id)) continue;
+          const pairKey = `${divergence.id}::${event.id}`;
+          if (divergenceEventPairs.has(pairKey)) continue;
+          divergenceEventPairs.add(pairKey);
+
+          const p = screenPoint(divergence);
+          const q = screenPoint(event);
+          const dx = q.x - p.x;
+          const dy = q.y - p.y;
+          const distance = Math.hypot(dx, dy) || 1;
+          const bend = Math.min(34, distance * 0.08) * (q.x < p.x ? -1 : 1);
+          const cx = (p.x + q.x) / 2 - (dy / distance) * bend;
+          const cy = (p.y + q.y) / 2 + (dx / distance) * bend;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.quadraticCurveTo(cx, cy, q.x, q.y);
+          ctx.strokeStyle = 'rgba(105, 205, 245, 0.94)';
+          ctx.lineWidth = 2.6;
+          ctx.shadowColor = 'rgba(57, 169, 255, 0.62)';
+          ctx.shadowBlur = 6;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      for (const n of visibleNodes) {
+        const p = screenPoint(n);
+        if (p.x < -80 || p.x > width + 80 || p.y < -50 || p.y > height + 50) continue;
+
+        const baseRadius =
+          n.kind === 'world' ? 54 :
+          n.kind === 'divergence' ? 9 :
+          n.kind === 'timeline-event' ? 6 :
+          n.kind === 'article' ? 7 :
+          n.kind === 'world-state' ? 5 :
+          n.kind === 'world-transition' ? 6 : 5;
+
+        // Node size is independent of camera zoom.
+        // Selected/hovered nodes are slightly enlarged.
+        const r =
+          baseRadius *
+          (selectedId === n.id || hoverId === n.id ? 1.12 : 1);
+
+        const color = palette[n.kind] || '#9aa9b9';
+        const focused = !active || active.has(n.id);
+        const selected = n.id === selectedId;
+        const hovered = n.id === hoverId;
+
+        if (selected || hovered) {
+          if (
+            !Number.isFinite(p.x) || !Number.isFinite(p.y) ||
+            !Number.isFinite(r) || r <= 0
+          ) continue;
+          const glow = ctx.createRadialGradient(
+            p.x, p.y, r * 0.5,
+            p.x, p.y, r * 2.1
+          );
+          glow.addColorStop(0, color + '55');
+          glow.addColorStop(1, color + '00');
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r * 2.1, 0, Math.PI * 2);
+          ctx.fillStyle = glow;
+          ctx.fill();
+        }
+
+        const image =
+          n.kind === 'world' ? worldImages.get(n.id) : undefined;
+
+        if (image?.complete && image.naturalWidth > 0) {
+          ctx.save();
+
+          // Warm atmospheric halo.
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r + 6, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(245,189,85,0.09)';
+          ctx.fill();
+
+          // Clip the image into a circle.
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.clip();
+
+          const side = Math.min(image.naturalWidth, image.naturalHeight);
+          const sx = (image.naturalWidth - side) / 2;
+          const sy = (image.naturalHeight - side) / 2;
+
+          ctx.drawImage(
+            image,
+            sx, sy, side, side,
+            p.x - r, p.y - r, r * 2, r * 2
+          );
+
+          // Slightly darken the image to maintain visual consistency.
+          ctx.fillStyle = 'rgba(5,10,18,0.10)';
+          ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
+
+          ctx.restore();
+
+          // Gold border.
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.strokeStyle = selected ? '#ffffff' : '#f5bd55';
+          ctx.lineWidth = selected ? 2.8 : hovered ? 2.4 : 1.7;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r + 4, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(245,189,85,0.25)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        } else {
+          // Ignore invalid transient node coordinates instead of passing NaN or
+          // Infinity to CanvasGradient. The next simulation frame can recover.
+          if (
+            !Number.isFinite(p.x) || !Number.isFinite(p.y) ||
+            !Number.isFinite(r) || r <= 0
+          ) continue;
+          // Attractive fallback until the illustration is available.
+          const sphere = ctx.createRadialGradient(
+            p.x - r * 0.34,
+            p.y - r * 0.38,
+            1,
+            p.x,
+            p.y,
+            r
+          );
+
+          sphere.addColorStop(0, '#ffe2a0');
+          sphere.addColorStop(0.35, color);
+          sphere.addColorStop(1, '#332716');
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.fillStyle = sphere;
+          ctx.fill();
+
+          ctx.strokeStyle = selected ? '#ffffff' : color;
+          ctx.lineWidth = selected ? 2.8 : 1.5;
+          ctx.stroke();
+
+          if (n.kind === 'world') {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, r + 5, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(245,189,85,0.28)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+
+
+        // In a selected-node view, label the selected node and its immediate
+        // neighbours. Keep distant nodes unlabeled to avoid visual clutter.
+        const showLabel =
+          n.id === selectedId ||
+          n.id === hoverId ||
+          (!!active && active.has(n.id)) ||
+          (viewLevel === 'overview' && n.kind === 'world') ||
+          (viewLevel === 'world' && ['timeline-event', 'divergence', 'article'].includes(n.kind));
+
+        if (showLabel) {
+          const important =
+            n.kind === 'world' ||
+            n.kind === 'divergence' ||
+            n.id === selectedId ||
+            n.id === hoverId;
+          // Keep connected-world labels readable at every camera zoom level.
+          // Only the node positions zoom; text stays at a comfortable screen size.
+          const fontSize = n.id === selectedId ? 15 : n.kind === 'world' ? 17 : n.kind === 'divergence' ? 14 : 13;
+
+          ctx.font = `${important ? '650 ' : '500 '}${fontSize}px Inter, system-ui, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+
+          // Keep canvas labels compact: at most two centered lines.
+          // The full title remains available in the World Explorer panel.
+          const maxChars =
+            n.kind === 'world' ? 30 :
+            n.kind === 'timeline-event' ? 26 : 34;
+          const fullLabel =
+            n.kind === 'timeline-event' && viewLevel === 'world'
+              ? `${n.date ? `${n.date} — ` : ''}${displayNodeLabel(n)}`
+              : displayNodeLabel(n);
+          const words = fullLabel.split(/\s+/).filter(Boolean);
+          const labelLines: string[] = [];
+          let currentLine = '';
+
+          for (const word of words) {
+            const candidate = currentLine ? `${currentLine} ${word}` : word;
+            if (candidate.length <= maxChars || !currentLine) {
+              currentLine = candidate;
+            } else {
+              labelLines.push(currentLine);
+              currentLine = word;
+              if (labelLines.length === 2) break;
+            }
+          }
+          if (currentLine && labelLines.length < 2) labelLines.push(currentLine);
+
+          const allWordsUsed = labelLines.join(' ').split(/\s+/).length >= words.length;
+          if (!allWordsUsed && labelLines.length) {
+            const last = labelLines.length - 1;
+            const shortened = labelLines[last].replace(/[.,;:!?…]*$/, '');
+            labelLines[last] = shortened.length >= maxChars - 1
+              ? `${shortened.slice(0, maxChars - 2)}…`
+              : `${shortened}…`;
+          }
+
+          const lineHeight = fontSize + 3;
+          const textWidth = Math.max(...labelLines.map((line) => ctx.measureText(line).width));
+          const textHeight = labelLines.length * lineHeight;
+
+          // In exploration views, place labels on the outside of the radial
+          // layout instead of stacking every label underneath its node.
+          // Overview world cards keep their familiar centered captions.
+          let labelX = p.x;
+          let labelY = p.y + r + (n.kind === 'world' ? 13 : important ? 8 : 6);
+          if (viewLevel !== 'overview' && selectedId && n.id !== selectedId) {
+            const selectedNode = nodeMap.get(selectedId);
+            if (selectedNode) {
+              const origin = screenPoint(selectedNode);
+              const vx = p.x - origin.x;
+              const vy = p.y - origin.y;
+              const length = Math.hypot(vx, vy) || 1;
+              const ux = vx / length;
+              const uy = vy / length;
+              labelX = p.x + ux * (r + 12);
+              labelY = p.y + uy * (r + 12) - textHeight / 2;
+              ctx.textAlign = ux > 0.35 ? 'left' : ux < -0.35 ? 'right' : 'center';
+            } else {
+              ctx.textAlign = 'center';
+            }
+          } else {
+            ctx.textAlign = 'center';
+          }
+
+          // World names are rendered directly on the canvas, without rectangular backdrops.
+
+          ctx.fillStyle = focused
+            ? '#ffffff'
+            : important
+            ? '#e0e9f5'
+            : '#c0cede';
+          ctx.save();
+          ctx.lineJoin = 'round';
+          ctx.miterLimit = 2;
+          ctx.lineWidth = important ? 5.5 : 4.5;
+          ctx.strokeStyle = 'rgba(5, 10, 17, 0.94)';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
+          ctx.shadowBlur = important ? 7 : 4;
+          labelLines.forEach((line, index) => {
+            const lineY = labelY + index * lineHeight;
+            ctx.strokeText(line, labelX, lineY);
+            ctx.fillText(line, labelX, lineY);
+          });
+          ctx.restore();
+        }
+      }
+    }
+
+    function tick() {
+      if (simTicks > 0) {
+        for (let i = 0; i < visibleNodes.length; i++) {
+          const a = visibleNodes[i];
+          for (let j = i + 1; j < visibleNodes.length; j++) {
+            const b = visibleNodes[j];
+            const dx = (a.x || 0) - (b.x || 0);
+            const dy = (a.y || 0) - (b.y || 0);
+            
+            
+            const d2 = dx * dx + dy * dy + 20;
+            const involvesWorld = a.kind === 'world' || b.kind === 'world';
+
+            if (d2 < (involvesWorld ? 100000 : 42000)) {
+              const force = (involvesWorld ? 1300 : 520) / d2;
+
+              if (a.id !== dragging?.id) {
+                a.vx = (a.vx || 0) + dx * force;
+                a.vy = (a.vy || 0) + dy * force;
+              }
+              if (b.id !== dragging?.id) {
+                b.vx = (b.vx || 0) - dx * force;
+                b.vy = (b.vy || 0) - dy * force;
+              }
+            }
+          }
+        }
+
+        for (const e of visibleEdges) {
+          const a = nodeMap.get(e.from);
+          const b = nodeMap.get(e.to);
+          if (!a || !b) continue;
+
+          const dx = (b.x || 0) - (a.x || 0);
+          const dy = (b.y || 0) - (a.y || 0);
+          const d = Math.sqrt(dx * dx + dy * dy) || 1;
+          const desired = a.kind === 'world' || b.kind === 'world' ? 380 : 190;
+          const f = (d - desired) * 0.0009;
+
+          if (a.id !== dragging?.id) {
+            a.vx = (a.vx || 0) + dx * f;
+            a.vy = (a.vy || 0) + dy * f;
+          }
+          if (b.id !== dragging?.id) {
+            b.vx = (b.vx || 0) - dx * f;
+            b.vy = (b.vy || 0) - dy * f;
+          }
+        }
+
+        for (const n of visibleNodes) {
+          if (n === dragging) continue;
+          n.vx = ((n.vx || 0) + (-(n.x || 0) * 0.0008)) * 0.88;
+          n.vy = ((n.vy || 0) + (-(n.y || 0) * 0.0008)) * 0.88;
+          n.x = (n.x || 0) + (n.vx || 0);
+          n.y = (n.y || 0) + (n.vy || 0);
+        }
+
+        simTicks--;
+        draw();
+      }
+
+      raf = requestAnimationFrame(tick);
+    }
+
+    function selectNode(n: GraphNode | null) {
+      const nextId = n?.id || null;
+      if (nextId !== selectedId || (!n && viewLevel !== 'overview')) saveView();
+
+      selectedId = nextId;
+      syncSelectedNodeInUrl(nextId);
+      focusMode = !!n;
+      expansionDepth = 1;
+      viewLevel = !n ? 'overview' : n.kind === 'world' ? 'world' : 'node';
+
+      document.querySelector('.wg-shell')?.classList.toggle('has-selection', !!n);
+      rebuild();
+
+      if (n) {
+        // Fit the selected node and its real neighbours together; centering at a
+        // fixed zoom clipped connected nodes on smaller screens.
+        simTicks = 0;
+        requestAnimationFrame(() => fit());
+      }
+
+      if (!n) {
+        inspector.innerHTML =
+          '<div class="wg-inspector-empty"><div class="wg-empty-orbit">◎</div><h2>Explore the connections</h2><p>Select any node in the graph to see its details, connected events and related story.</p></div>';
+        return;
+      }
+
+      const relatedEdges = allEdges.filter((e) => e.from === n.id || e.to === n.id);
+
+      
+      if (n.kind === 'world') {
+        const worldArticleIds = new Set<string>();
+
+        for (const edge of allEdges) {
+          if (edge.type !== 'HAS_WORLD') continue;
+
+          if (edge.from === n.id) worldArticleIds.add(edge.to);
+          if (edge.to === n.id) worldArticleIds.add(edge.from);
+        }
+
+        const scenarioArticles = [...worldArticleIds]
+          .map((id) => nodeMap.get(id))
+          .filter((node): node is GraphNode => node?.kind === 'article');
+
+        const articleIds = new Set(scenarioArticles.map((article) => article.id));
+
+        const scenarioEdges = allEdges.filter(
+          (edge) => articleIds.has(edge.article || '')
+        );
+
+        const divergences = new Map<string, GraphNode>();
+        const events = new Map<string, GraphNode>();
+
+        for (const edge of scenarioEdges) {
+          const from = nodeMap.get(edge.from);
+          const to = nodeMap.get(edge.to);
+
+          if (edge.type === 'HAS_DIVERGENCE') {
+            if (from?.kind === 'divergence') divergences.set(from.id, from);
+            if (to?.kind === 'divergence') divergences.set(to.id, to);
+          }
+
+          if (edge.type === 'HAS_TIMELINE_EVENT') {
+            if (from?.kind === 'timeline-event') events.set(from.id, from);
+            if (to?.kind === 'timeline-event') events.set(to.id, to);
+          }
+        }
+
+        const sortedEvents = [...events.values()].sort((a, b) =>
+          (a.date || '').localeCompare(b.date || '')
+        );
+
+        const storyLinks = scenarioArticles
+          .map((article) => {
+            const url =
+              article.articleUrl ||
+              (article.articles?.[0] ? articlePath(article.articles[0]) : null);
+
+            return url
+              ? `<a class="wg-story-link" href="${escapeAttr(url)}">
+                   Read the original story <span>↗</span>
+                 </a>`
+              : '';
+          })
+          .join('');
+
+        const scenarioItem = (node: GraphNode, relation: string) => `
+          <button class="wg-related-item" data-node="${escapeAttr(node.id)}">
+            <i style="--node-color:${palette[node.kind] || '#8da4b8'}"></i>
+            <span>
+              ${escapeHtml(displayNodeLabel(node))}
+              <small>${escapeHtml(node.date || relation)}</small>
+            </span>
+            <b>↗</b>
+          </button>
+        `;
+
+        inspector.innerHTML = `
+          <div class="wg-kind" style="--node-color:${palette.world}">
+            <i></i>Alternate world
+          </div>
+          <h2>${escapeHtml(displayNodeLabel(n))}</h2>
+          <p class="wg-node-description">
+            Explore this scenario's point of divergence, timeline and original story.
+          </p>
+
+          <div class="wg-related-title">POINT OF DIVERGENCE · ${divergences.size}</div>
+          ${
+            divergences.size
+              ? `<div class="wg-related-list">
+                  ${[...divergences.values()]
+                    .map((node) => scenarioItem(node, 'Point of divergence'))
+                    .join('')}
+                </div>`
+              : '<p class="wg-no-links">No divergence is registered for this world.</p>'
+          }
+
+          <div class="wg-related-title" style="margin-top:16px">
+            TIMELINE · ${sortedEvents.length} EVENTS
+          </div>
+          ${
+            sortedEvents.length
+              ? `<div class="wg-related-list">
+                  ${sortedEvents
+                    .map((node) => scenarioItem(node, 'Timeline event'))
+                    .join('')}
+                </div>`
+              : '<p class="wg-no-links">No timeline events are registered for this world.</p>'
+          }
+
+          ${storyLinks}
+        `;
+
+        inspector
+          .querySelectorAll<HTMLButtonElement>('[data-node]')
+          .forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const next = nodeMap.get(btn.dataset.node || '');
+              if (next) selectNode(next);
+            });
+          });
+
+        return;
+      }
+
+      const relatedNodes = relatedEdges
+        .map((e) => ({
+          edge: e,
+          node: nodeById.get(e.from === n.id ? e.to : e.from),
+        }))
+        .filter((x) => x.node);
+
+      const uniq = new Map<string, { edge: GraphEdge; node: GraphNode }>();
+      relatedNodes.forEach((x) => {
+        if (x.node) uniq.set(x.node.id, x as { edge: GraphEdge; node: GraphNode });
+      });
+
+      // Keep every direct relationship available in the inspector. The list scrolls
+      // independently; the canvas focuses on spatial readability instead of hiding data.
+      const linked = [...uniq.values()].sort((a, b) =>
+        a.edge.type.localeCompare(b.edge.type) || a.node.label.localeCompare(b.node.label)
+      );
+      const url =
+        n.articleUrl || (n.articles?.[0] ? articlePath(n.articles[0]) : null);
+
+      inspector.innerHTML = `
+        <div class="wg-kind" style="--node-color:${palette[n.kind] || '#8da4b8'}">
+          <i></i>${escapeHtml(kindLabels[n.kind] || n.kind)}
+        </div>
+        <h2>${escapeHtml(displayNodeLabel(n))}</h2>
+        ${fullNodeDescription(n) ? `<p class="wg-node-description">${escapeHtml(fullNodeDescription(n))}</p>` : ''}
+        ${n.date ? `<div class="wg-date">${escapeHtml(n.date)}</div>` : ''}
+        <p class="wg-node-id">${escapeHtml(n.type || n.id)}</p>
+        <div class="wg-detail-stats">
+          <div><strong>${relatedEdges.length}</strong><span>direct connections</span></div>
+          <div><strong>${Math.min(linked.length, 10)}</strong><span>listed below</span></div>
+        </div>
+        <div class="wg-related-title">CONNECTED WORLDS & EVENTS · ${linked.length}</div>
+        ${linked.length > 10 ? `<p class="wg-no-links">Showing 10 of ${linked.length} connections. Select a connected item to continue exploring.</p>` : ''}
+        ${
+          linked.length
+            ? `<div class="wg-related-list">${linked.slice(0, 10)
+                .map(
+                  (x) => `
+                  <button class="wg-related-item" data-node="${escapeAttr(x.node.id)}">
+                    <i style="--node-color:${palette[x.node.kind] || '#8da4b8'}"></i>
+                    <span>
+                      ${escapeHtml(displayNodeLabel(x.node))}
+                      <small>${escapeHtml(x.edge.type.replaceAll('_', ' ').toLowerCase())}</small>
+                    </span>
+                    <b>↗</b>
+                  </button>`
+                )
+                .join('')}</div>`
+            : '<p class="wg-no-links">No direct connections are registered for this node.</p>'
+        }
+        ${
+          url
+            ? `<a class="wg-story-link" href="${escapeAttr(url)}">Read the related story <span>↗</span></a>`
+            : ''
+        }
+      `;
+
+      inspector
+        .querySelectorAll<HTMLButtonElement>('[data-node]')
+        .forEach((btn) =>
+          btn.addEventListener('click', () => {
+            const next = nodeMap.get(btn.dataset.node || '');
+            if (next) {
+              selectNode(next);
+              centerNode(next);
+            }
+          })
+        );
+    }
+
+    
+function fullNodeDescription(node: GraphNode): string {
+  const raw = (node.label || '').trim();
+  if (!raw || raw === node.id) return '';
+  // Only show a separate description when it adds information beyond the short label.
+  return raw === displayNodeLabel(node) ? '' : raw;
+}
+
+function displayNodeLabel(node: GraphNode): string {
+  const raw = (node.label || node.id || '').trim().replaceAll('_', ' ');
+  const lower = raw.toLowerCase();
+
+  // Articles must remain distinguishable from events and divergences.
+  if (node.kind === 'article') {
+    return raw
+      .replace(/^what if\s+/i, '')
+      .replace(/[.!?]+$/, '')
+      .trim();
+  }
+
+  // Preserve the actual labels of worlds and divergences.
+  if (node.kind === 'world' || node.kind === 'divergence') {
+    return raw;
+  }
+
+  // Timeline events have short, meaningful labels in the source data.
+  if (node.kind === 'timeline-event' || node.kind === 'world-transition') {
+    return raw;
+  }
+
+  // Keep concise labels intact.
+  if (raw.length <= 38) return raw;
+
+  // Shorten other long labels without changing their meaning unnecessarily.
+  const cleaned = raw
+    .replace(/^what if\s+/i, '')
+    .replace(/[.!?].*$/, '')
+    .trim();
+
+  if (cleaned.length <= 38) return cleaned;
+
+  return `${cleaned.slice(0, 35).trimEnd()}…`;
+}
+
+function articlePath(path: string): string | null {
+  const clean = path
+    .replaceAll('\\', '/')
+    .replace(/^src\/content\//, '')
+    .replace(/\.md$/, '');
+  const bits = clean.split('/');
+  return bits.length >= 2 ? `/${bits[0]}/${bits.slice(1).join('/')}/` : null;
+}
+
+function escapeHtml(v: string): string {
+  return v.replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c)
+  );
+}
+
+function escapeAttr(v: string): string {
+  return escapeHtml(v);
+}
+
+let cameraAnimationFrame = 0;
+
+function animateCamera(
+  targetZoom: number,
+  targetPanX: number,
+  targetPanY: number,
+  duration = 650
+) {
+  cancelAnimationFrame(cameraAnimationFrame);
+
+  const startZoom = zoom;
+  const startPanX = panX;
+  const startPanY = panY;
+
+  let startTime: number | null = null;
+
+  function tick(time: number) {
+    if (startTime === null) startTime = time;
+
+    const progress = Math.min(1, (time - startTime) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+
+    zoom = startZoom + (targetZoom - startZoom) * eased;
+    panX = startPanX + (targetPanX - startPanX) * eased;
+    panY = startPanY + (targetPanY - startPanY) * eased;
+
+    draw();
+
+    if (progress < 1) {
+      cameraAnimationFrame = requestAnimationFrame(tick);
+    } else {
+      cameraAnimationFrame = 0;
+    }
+  }
+
+  cameraAnimationFrame = requestAnimationFrame(tick);
+}
+
+function centerNode(n: GraphNode, targetZoom = 1.65) {
+  const x = n.x ?? 0;
+  const y = n.y ?? 0;
+
+  animateCamera(
+    targetZoom,
+    -x * targetZoom,
+    -y * targetZoom
+  );
+}
+    
+  function fit() {
+    if (!visibleNodes.length || width <= 0 || height <= 0) return;
+
+    const padding = 34;
+    const bounds = visibleNodes.map((n) => {
+      const r = n.kind === 'world' ? 58 : n.kind === 'divergence' ? 12 : 8;
+      const labelIsVisible =
+        n.id === selectedId ||
+        n.id === hoverId ||
+        (viewLevel === 'overview' && n.kind === 'world') ||
+        (viewLevel === 'world' && ['timeline-event', 'divergence', 'article'].includes(n.kind));
+      const labelWidth = labelIsVisible
+        ? Math.min(220, Math.max(70, (n.label?.length ?? 10) * 6.2))
+        : r * 2;
+      return {
+        left: (n.x ?? 0) - Math.max(r, labelWidth / 2),
+        right: (n.x ?? 0) + Math.max(r, labelWidth / 2),
+        top: (n.y ?? 0) - r - 4,
+        bottom: (n.y ?? 0) + r + (n.kind === 'world' ? 30 : 20),
+      };
+    });
+
+    const minX = Math.min(...bounds.map((b) => b.left));
+    const maxX = Math.max(...bounds.map((b) => b.right));
+    const minY = Math.min(...bounds.map((b) => b.top));
+    const maxY = Math.max(...bounds.map((b) => b.bottom));
+    const graphWidth = Math.max(1, maxX - minX);
+    const graphHeight = Math.max(1, maxY - minY);
+    const availableWidth = Math.max(1, width - padding * 2);
+    const availableHeight = Math.max(1, height - padding * 2);
+
+    zoom = Math.min(1.15, availableWidth / graphWidth, availableHeight / graphHeight);
+    panX = -((minX + maxX) / 2) * zoom;
+    panY = -((minY + maxY) / 2) * zoom;
+    draw();
+  }
+
+    function hit(x: number, y: number): GraphNode | null {
+  for (let i = visibleNodes.length - 1; i >= 0; i--) {
+    const n = visibleNodes[i];
+    const p = screenPoint(n);
+
+    const baseRadius =
+      n.kind === 'world' ? 54 :
+      n.kind === 'divergence' ? 9 :
+      n.kind === 'timeline-event' ? 6 :
+      n.kind === 'article' ? 7 :
+      n.kind === 'world-state' ? 5 :
+      n.kind === 'world-transition' ? 6 : 5;
+
+    const visualRadius = baseRadius * (
+      selectedId === n.id || hoverId === n.id ? 1.1 : 1
+    );
+
+    // Keep a comfortable click target without changing visual size.
+    const hitRadius = Math.max(12, visualRadius + 5);
+
+    if (Math.hypot(x - p.x, y - p.y) < hitRadius) {
+      return n;
+    }
+  }
+
+  return null;
+}
+
+    
+canvas.addEventListener('pointerdown', (e) => {
+  const r = canvas.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+
+  lastX = x;
+  lastY = y;
+  moved = false;
+
+  // Възлите могат да се избират, но не и да се влачат.
+  dragging = null;
+  panning = !hit(x, y);
+
+  canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  const r = canvas.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+
+  if (panning) {
+    const dx = x - lastX;
+    const dy = y - lastY;
+
+    panX += dx;
+    panY += dy;
+
+    if (Math.abs(dx) + Math.abs(dy) > 2) {
+      moved = true;
+    }
+
+    draw();
+  } else {
+    const n = hit(x, y);
+    hoverId = n?.id || null;
+    canvas.style.cursor = n ? 'pointer' : 'grab';
+    draw();
+  }
+
+  lastX = x;
+  lastY = y;
+});
+
+canvas.addEventListener('pointerup', (e) => {
+  const r = canvas.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+
+  // Избирай възел само при клик, а не при влачене.
+  if (!moved && !panning) {
+    const n = hit(x, y);
+    if (n) selectNode(n);
+  }
+
+  dragging = null;
+  panning = false;
+  moved = false;
+
+  if (canvas.hasPointerCapture(e.pointerId)) {
+    canvas.releasePointerCapture(e.pointerId);
+  }
+});
+
+canvas.addEventListener('pointercancel', (e) => {
+  dragging = null;
+  panning = false;
+  moved = false;
+
+  if (canvas.hasPointerCapture(e.pointerId)) {
+    canvas.releasePointerCapture(e.pointerId);
+  }
+});
+
+    canvas.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        const r = canvas.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        const before = worldPoint(x, y);
+        zoom = Math.max(0.22, Math.min(2.5, zoom * (e.deltaY < 0 ? 1.1 : 0.91)));
+        panX = x - width / 2 - before.x * zoom;
+        panY = y - height / 2 - before.y * zoom;
+        draw();
+      },
+      { passive: false }
+    );
+
+    search.addEventListener('input', () => {
+      rebuild();
+      simTicks = 12;
+    });
+
+    document.querySelector('#wg-zoom-in')?.addEventListener('click', () => {
+  zoom = Math.min(2.5, zoom * 1.2);
+  draw();
+});
+
+document.querySelector('#wg-zoom-out')?.addEventListener('click', () => {
+  zoom = Math.max(0.22, zoom / 1.2);
+  draw();
+});
+
+document.querySelector('#wg-back')?.addEventListener('click', () => {
+  restorePreviousView();
+});
+
+document.querySelector('#wg-home')?.addEventListener('click', () => {
+  search.value = '';
+  selectedId = null;
+  syncSelectedNodeInUrl(null);
+  focusMode = false;
+  viewLevel = 'overview';
+  expansionDepth = 1;
+  viewHistory.length = 0;
+  document.querySelector('.wg-shell')?.classList.remove('has-selection');
+
+  panX = 0;
+  panY = 0;
+  zoom = 1;
+
+  rebuild();
+  simTicks = 0;
+  requestAnimationFrame(() => fit());
+});
+
+    document.querySelector('#wg-clear-selection')?.addEventListener('click', () =>
+      selectNode(null)
+    );
+
+    
+document.querySelector('#wg-reset')?.addEventListener('click', () => {
+  cancelAnimationFrame(cameraAnimationFrame);
+
+  const previousZoom = zoom;
+  const previousPanX = panX;
+  const previousPanY = panY;
+
+  search.value = '';
+  selectedId = null;
+  focusMode = false;
+  viewLevel = 'overview';
+  expansionDepth = 1;
+
+  rebuild();
+  fit();
+
+  const targetZoom = zoom;
+  const targetPanX = panX;
+  const targetPanY = panY;
+
+  zoom = previousZoom;
+  panX = previousPanX;
+  panY = previousPanY;
+
+  selectNode(null);
+
+  animateCamera(targetZoom, targetPanX, targetPanY, 650);
+  simTicks = 0;
+});
+
+    const initialNodeId = new URLSearchParams(window.location.search).get('node');
+    const initialNode = initialNodeId ? nodeMap.get(initialNodeId) : undefined;
+
+    if (initialNode) {
+      // Reconstruct the selected world/event view, inspector and connected layer.
+      selectNode(initialNode);
+    } else {
+      if (initialNodeId) syncSelectedNodeInUrl(null);
+      rebuild();
+    }
+
+requestAnimationFrame(() => {
+  resize();
+  simTicks = 0;
+  fit();
+});
+
+    const graphResizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(() => {
+        resize();
+        if (selectedId) fit();
+      });
+    });
+    graphResizeObserver.observe(canvas);
+
+    window.addEventListener('resize', () => {
+      requestAnimationFrame(() => {
+        resize();
+        fit();
+      });
+    });
+  </script>
+</BaseLayout>
+
+<style is:global>
+  /* =========================================================================
+     World Graph: fit between the global site header and footer
+     ========================================================================= */
+
+  html:has(.wg-page),
+  body:has(.wg-page) {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  body:has(.wg-page) {
+    margin: 0;
+    overflow: hidden;
+    background: #080c12;
+  }
+
+  /* Graph page occupies only the space between fixed bars */
+  body:has(.wg-page) > .page-frame {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    max-width: none;
+    margin: 0;
+    padding: var(--site-header-height) 0 var(--site-footer-height);
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .wg-page {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    color: #e8edf5;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  /* The internal topbar duplicates the global navigation, hide it. */
+  .wg-topbar {
+    display: none;
+  }
+
+  /* ---------- Main shell ---------- */
+  .wg-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;    flex: 1 1 0;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    overflow: hidden;
+    background: #080c12;
+    box-shadow: none;
+  }
+
+  .wg-sidebar,
+  .wg-inspector {
+    background: #0e1520;
+    padding: 18px 15px;
+    min-width: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .wg-sidebar::-webkit-scrollbar,
+  .wg-inspector::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wg-sidebar { border-right: 1px solid #253241; }
+  .wg-inspector { border-left: 1px solid #253241; }
+  
+  /* World Graph uses the full canvas; details open on demand. */
+  .wg-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wg-inspector {
+    display: none;
+  }
+
+  /* ---------- Sidebar controls ---------- */
+  .wg-search-label,
+  .wg-select-label {
+    display: block;
+    font-size: 11px;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+  }
+  .wg-search,
+  .wg-select {
+    width: 100%;
+    background: #080d14;
+    border: 1px solid #2d3a49;
+    border-radius: 8px;
+    padding: 11px 12px;
+    color: #e9eef5;
+    font: inherit;
+    font-size: 12px;
+    outline: none;
+  }
+  .wg-search:focus,
+  .wg-select:focus {
+    border-color: #f5bd55;
+    box-shadow: 0 0 0 3px #f5bd551c;
+  }
+  .wg-section-title {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    color: #8798ac;
+    font-weight: 800;
+    margin: 25px 0 12px;
+  }
+
+  .wg-search-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 10px;
+  align-items: end;
+  padding: 12px 16px;
+  border-bottom: 1px solid #253241;
+  background: #0e1520;
+  }
+
+  .wg-search-bar .wg-search-label {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  .wg-search-bar .wg-search {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .wg-search-bar .wg-reset {
+    width: auto;
+    margin: 0;
+    padding: 11px 14px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Dots ---------- */
+  .dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+  }
+  .dot.world { background: #f5bd55; }
+  .dot.divergence { background: #ff5265; }
+  .dot.timeline-event { background: #39a9ff; }
+  .dot.article { background: #a777ff; }
+  .dot.entity { background: #35dcb1; }
+  .dot.world-state { background: #38c6cf; }
+
+  /* ---------- Reset button + hint ---------- */
+  .wg-reset {
+    width: 100%;
+    margin-top: 24px;
+    padding: 10px;
+    border: 1px solid #2a3949;
+    border-radius: 8px;
+    background: #15202d;
+    color: #c9d4e1;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .wg-reset:hover {
+    border-color: #f5bd55;
+    color: #f5bd55;
+  }
+  .wg-hint {
+    font-size: 11px;
+    line-height: 1.6;
+    color: #718298;
+    margin-top: 16px;
+  }
+
+  /* ---------- Graph panel ---------- */
+  .wg-graph-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #080c12;
+  }
+  .wg-canvas-top {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 17px;
+    background: #080c12;
+    border-bottom: 1px solid #253241;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #95a8bc;
+  }
+  .wg-canvas-top > span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  } 
+  .live-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #39dca7;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #39dca7;
+  }
+  .wg-canvas-top #wg-stats {
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  /* ---------- Canvas ---------- */
+  #wg-canvas {
+    display: block;
+    flex: 1 1 0;
+    width: 100%;
+    height: 0;
+    min-width: 0;
+    min-height: 0;
+    cursor: grab;
+    touch-action: none;
+  }
+  #wg-canvas:active {
+    cursor: grabbing;
+  }
+
+  /* ---------- Focus controls ---------- */
+  
+  .wg-focus-controls {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 2;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #080c12;
+    border-bottom: 1px solid #253241;
+  }
+
+  .wg-focus-controls button {
+    border: 1px solid #334256;
+    background: #101925;
+    color: #aab8c9;
+    border-radius: 8px;
+    padding: 8px 11px;
+    font: 600 11px Inter, system-ui, sans-serif;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .wg-focus-controls button:hover,
+  .wg-focus-controls button.active {
+    background: #263444;
+    border-color: #f5bd55;
+    color: #fff;
+  }
+
+  
+  /* ---------- Graph navigation controls ---------- */
+  .wg-zoom-controls {
+    position: absolute;
+    z-index: 5;
+    left: 14px;
+    bottom: 20px;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px;
+    border: 1px solid rgba(245, 189, 85, 0.24);
+    border-radius: 16px;
+    background: rgba(9, 15, 24, 0.90);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px);
+  }
+
+  .wg-zoom-controls button {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.045);
+    color: #e8edf5;
+    font: 500 23px/1 Inter, system-ui, sans-serif;
+    cursor: pointer;
+    transition:
+      background 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .wg-zoom-controls button:hover {
+    background: rgba(245, 189, 85, 0.13);
+    border-color: rgba(245, 189, 85, 0.5);
+    color: #ffd58a;
+    transform: translateY(-1px);
+  }
+
+  .wg-zoom-controls button:focus-visible {
+    outline: 2px solid #f5bd55;
+    outline-offset: 2px;
+  }
+
+  .wg-zoom-controls button svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .wg-control-divider {
+    flex: 0 0 1px;
+    width: 1px;
+    height: 22px;
+    margin: 0 2px;
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  @media (max-width: 700px) {
+    .wg-zoom-controls {
+      bottom: 12px;
+      gap: 5px;
+      padding: 5px;
+    }
+
+    .wg-zoom-controls button {
+      flex-basis: 35px;
+      width: 35px;
+      height: 35px;
+    }
+  }
+
+  /* ---------- Legend + empty ---------- */
+  .wg-legend {
+    display: none !important;
+  }
+  .wg-empty {
+    position: absolute;
+    top: 45%;
+    left: 10%;
+    right: 10%;
+    text-align: center;
+    color: #9baabd;
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  /* ---------- Inspector ---------- */
+  .wg-inspector-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #273443;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #91a2b6;
+    font-weight: 800;
+  }
+  .wg-inspector-head button {
+    border: 0;
+    background: transparent;
+    color: #93a3b6;
+    font-size: 23px;
+    cursor: pointer;
+  }
+  .wg-inspector-content { padding-top: 20px; }
+  .wg-inspector-empty {
+    text-align: center;
+    padding: 70px 8px;
+    color: #8999ad;
+  }
+  .wg-empty-orbit {
+    font-size: 42px;
+    color: #53667a;
+    margin-bottom: 20px;
+  }
+  .wg-inspector-empty h2 {
+    font-size: 17px;
+    color: #dce5ef;
+    margin: 0 0 10px;
+  }
+  .wg-inspector-empty p {
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .wg-kind {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--node-color);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-weight: 800;
+  }
+  .wg-kind i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--node-color);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--node-color), transparent 50%);
+  }
+  .wg-inspector-content h2 {
+    font-size: 22px;
+    line-height: 1.3;
+    margin: 12px 0 8px;
+    color: #f3f6fa;
+  }
+  .wg-node-description {
+    margin: 0 0 12px;
+    color: #aab8c8;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .wg-date {
+    font-size: 12px;
+    color: #f5bd55;
+    margin-bottom: 14px;
+  }
+  .wg-node-id {
+    font-size: 10px;
+    line-height: 1.5;
+    color: #66798e;
+    overflow-wrap: anywhere;
+    margin: 0 0 18px;
+  }
+  .wg-detail-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid #263342;
+    border-bottom: 1px solid #263342;
+    padding: 15px 0;
+    margin: 15px 0 22px;
+  }
+  .wg-detail-stats div { display: grid; gap: 4px; }
+  .wg-detail-stats strong {
+    font-size: 22px;
+    color: #f1f4f8;
+  }
+  .wg-detail-stats span {
+    font-size: 10px;
+    color: #8596aa;
+  }
+  .wg-inspector-actions {
+    display: flex;
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .wg-inspector-actions button {
+    flex: 1;
+    border: 1px solid #34465a;
+    background: #172333;
+    color: #e8edf5;
+    border-radius: 8px;
+    padding: 10px 9px;
+    font: 600 11px Inter, system-ui, sans-serif;
+    cursor: pointer;
+  }
+  .wg-inspector-actions button:hover {
+    border-color: #f5bd55;
+    color: #f5bd55;
+  }
+  .wg-related-title {
+    font-size: 10px;
+    letter-spacing: 1.3px;
+    color: #91a2b6;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .wg-related-list { display: grid; gap: 5px; }
+  .wg-related-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 8px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: #121c28;
+    color: #e1e8f0;
+    cursor: pointer;
+  }
+  .wg-related-item:hover {
+    border-color: #3b4a5d;
+    background: #172433;
+  }
+  .wg-related-item > i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--node-color);
+    flex: none;
+  }
+  .wg-related-item span {
+    font-size: 11px;
+    line-height: 1.35;
+    flex: 1;
+  }
+  .wg-related-item small {
+    display: block;
+    color: #8293a8;
+    font-size: 9px;
+    margin-top: 4px;
+  }
+  .wg-related-item b {
+    color: #8ea2b8;
+    font-weight: 400;
+  }
+  .wg-no-links {
+    font-size: 12px;
+    color: #8b9cb0;
+    line-height: 1.6;
+  }
+  .wg-story-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 13px 14px;
+    border-radius: 8px;
+    background: #f5bd55;
+    color: #17130b;
+    text-decoration: none;
+    font-weight: 750;
+    font-size: 12px;
+  }
+  .wg-story-link:hover { background: #ffd17a; }
+
+  /* ---------- Footer ---------- */
+  .wg-footer {
+    flex: 0 0 18px;
+    height: 18px;
+    min-height: 18px;
+    margin: 0;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    overflow: hidden;
+    color: #8192a7;
+    font-size: 9px;
+    line-height: 1.4;
+    letter-spacing: .4px;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1150px) {
+    .wg-shell { grid-template-columns: 190px minmax(0, 1fr); }
+    .wg-inspector { display: none; }
+  }
+
+  @media (max-width: 700px) {
+    .wg-page {
+      width: calc(100% - 16px);
+      height: calc(100dvh - var(--site-header-height, 76px));
+      max-height: calc(100dvh - var(--site-header-height, 76px));
+      padding: 6px 0 4px;
+      gap: 6px;
+    }
+
+    .wg-shell {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
+      min-height: 0;
+      height: auto;
+      overflow: hidden;
+    }
+    
+    .wg-graph-panel {
+      flex: 1 1 0;
+      height: auto;
+      min-height: 0;
+    }
+
+    #wg-canvas {
+      flex: 1 1 0;
+      height: 0;
+      min-height: 0;
+    }
+
+    .wg-inspector {
+      display: none;
+    }
+
+    .wg-footer {
+      flex-basis: 18px;
+      height: 18px;
+      min-height: 18px;
+      flex-direction: row;
+      font-size: 8px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wg-page * { scroll-behavior: auto !important; }
+  }
+  
+  
+  /* Скриваме дублиращите се контроли над графиката. */
+  .wg-canvas-top,
+  .wg-focus-controls {
+    display: none !important;
+  }
+
+  /* Страницата заема ограничено пространство под глобалната навигация. */
+  .wg-page {
+    width: 100%;
+    height: calc(100dvh - var(--site-header-height, 76px) - 28px);
+    max-height: calc(100dvh - var(--site-header-height, 76px) - 28px);
+    min-height: 0;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  /* Графиката заема свободното място, без да избутва футъра. */
+  .wg-shell {
+    flex: 1 1 0;
+    height: 0;
+    min-height: 0;
+    max-height: none;
+    overflow: hidden;
+  }
+
+  .wg-graph-panel {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #wg-canvas {
+    flex: 1 1 0;
+    height: 0;
+    min-height: 0;
+  }
+
+  /* Футърът остава в долната част на графичната страница. */
+  .wg-footer {
+    flex: 0 0 18px;
+    height: 18px;
+    min-height: 18px;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  @media (max-width: 700px) {
+    .wg-page {
+      width: calc(100% - 16px);
+      height: calc(100dvh - var(--site-header-height, 76px) - 12px);
+      max-height: calc(100dvh - var(--site-header-height, 76px) - 12px);
+      padding: 6px 0 4px;
+      gap: 6px;
+    }
+
+    .wg-shell {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
+      height: 0;
+      min-height: 0;
+    }
+
+    .wg-graph-panel {
+      flex: 1 1 0;
+      height: 0;
+      min-height: 0;
+    }
+
+    #wg-canvas {
+      flex: 1 1 0;
+      height: 0;
+      min-height: 0;
+    }
+
+    .wg-footer {
+      flex: 0 0 18px;
+      height: 18px;
+      min-height: 18px;
+      font-size: 8px;
+    }
+  }
+  
+/* Search bar */
+.wg-search-label {
+  display: block !important;
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.wg-search::placeholder {
+  color: #718298 !important;
+}
+
+/* Graph page: reserve space for the global site footer */
+html:has(.wg-page) {
+  height: auto;
+  min-height: 100%;
+}
+
+body:has(.wg-page) {
+  height: auto;
+  min-height: 100dvh;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #080c12;
+}
+
+.wg-page {
+  width: min(calc(100% - 32px), 1800px);
+  height: calc(100dvh - var(--site-header-height, 76px) - 76px);
+  min-height: 440px;
+  max-height: none;
+  margin: 0 auto;
+  padding: 8px 0 6px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: visible;
+  color: #e8edf5;
+}
+
+/* The graph takes the available space */
+.wg-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  border: 1px solid #253241;
+  border-radius: 13px;
+  overflow: hidden;
+  background: #080c12;
+  box-shadow: 0 25px 80px #0005;
+}
+
+.wg-graph-panel {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#wg-canvas {
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Keep the details panel available on demand */
+.wg-inspector {
+  display: none;
+}
+
+.wg-shell.has-selection .wg-inspector {
+  display: block;
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(400px, 38%);
+  box-sizing: border-box;
+  border-left: 1px solid #35465a;
+  background: rgba(14, 21, 32, 0.97);
+  box-shadow: -18px 0 45px rgba(0, 0, 0, 0.3);
+  overflow-x: hidden;
+  overflow-y: auto;
+  backdrop-filter: blur(14px);
+}
+
+/* Graph footer: always visible beneath the canvas */
+.wg-footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  min-height: 24px;
+  height: auto;
+  margin: 0;
+  padding: 4px 2px;
+  box-sizing: border-box;
+  overflow: visible;
+  color: #8192a7;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: .3px;
+}
+
+@media (max-width: 700px) {
+  .wg-page {
+    width: calc(100% - 16px);
+    height: auto;
+    min-height: 0;
+    padding: 6px 0 12px;
+    overflow: visible;
+  }
+
+  .wg-shell {
+    flex: 0 0 auto;
+    height: 70dvh;
+    min-height: 420px;
+    max-height: 720px;
+  }
+
+  .wg-graph-panel {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .wg-shell.has-selection .wg-inspector {
+    width: min(340px, 88%);
+  }
+
+  .wg-footer {
+    font-size: 9px;
+  }
+}
+
+
+
+  /* FINAL OVERRIDES — World Graph: stable viewport, visible shared chrome, larger illustrated worlds. */
+  html:has(.wg-page) {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body:has(.wg-page) {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #080c12;
+  }
+
+  /* The shared site header is owned by BaseLayout, not by this page. */
+  body:has(.wg-page) > .site-nav {
+    position: fixed !important;
+    inset: 0 0 auto 0 !important;
+    z-index: 3000 !important;
+  }
+
+  body:has(.wg-page) > .page-frame {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    max-width: none;
+    margin: 0;
+    padding: var(--site-header-height, 72px) 0 var(--site-footer-height, 58px);
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* Keep the shared site footer visible; never substitute the graph's old mini-footer. */
+  body:has(.wg-page) > .site-footer {
+    display: flex !important;
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    z-index: 3000 !important;
+    width: 100% !important;
+    min-height: var(--site-footer-height, 58px);
+    margin: 0 !important;
+    box-sizing: border-box;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  body:has(.wg-page) > .page-frame > .wg-page {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    margin: 0;
+    padding: 8px 18px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  body:has(.wg-page) .wg-shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    flex: 1 1 0;
+    width: 100%;
+    height: 0;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  body:has(.wg-page) .wg-graph-panel {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* View controls stay available without taking a full extra toolbar row. */
+  body:has(.wg-page) .wg-focus-controls {
+    display: flex !important;
+    position: absolute;
+    top: 72px;
+    right: 14px;
+    z-index: 8;
+    gap: 6px;
+    padding: 5px;
+    border: 1px solid rgba(89, 112, 137, 0.5);
+    border-radius: 10px;
+    background: rgba(8, 13, 20, 0.88);
+    backdrop-filter: blur(10px);
+  }
+
+  body:has(.wg-page) .wg-focus-controls button {
+    min-height: 32px;
+    padding: 7px 10px;
+    border: 1px solid #2c3b4c;
+    border-radius: 7px;
+    background: #121d29;
+    color: #cbd6e3;
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  body:has(.wg-page) .wg-focus-controls button.active,
+  body:has(.wg-page) .wg-focus-controls button:hover {
+    border-color: #f5bd55;
+    color: #ffe0a0;
+  }
+
+  /* Search label, input and Reset share one row on desktop. */
+  body:has(.wg-page) .wg-search-bar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+
+  body:has(.wg-page) .wg-search-label {
+    display: block !important;
+    grid-column: auto !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  body:has(.wg-page) .wg-search {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  body:has(.wg-page) .wg-reset {
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  body:has(.wg-page) #wg-canvas {
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 0;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* The inspector opens only when a node is selected. */
+  body:has(.wg-page) .wg-inspector {
+    display: none;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+    display: block;
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(400px, 38%);
+    box-sizing: border-box;
+    border-left: 1px solid #35465a;
+    background: rgba(14, 21, 32, 0.97);
+    box-shadow: -18px 0 45px rgba(0, 0, 0, 0.3);
+    overflow-x: hidden;
+    overflow-y: auto;
+    backdrop-filter: blur(14px);
+  }
+
+  /* No duplicate graph footer: the shared BaseLayout footer is the only footer. */
+  body:has(.wg-page) .wg-footer {
+    display: none !important;
+  }
+
+  @media (max-width: 700px) {
+    :root {
+      --site-header-height: 60px;
+      --site-footer-height: 62px;
+    }
+
+    body:has(.wg-page) > .page-frame > .wg-page {
+      padding: 6px 8px;
+    }
+
+    body:has(.wg-page) .wg-focus-controls {
+      top: 68px;
+      right: 8px;
+      max-width: calc(100% - 16px);
+    }
+
+    body:has(.wg-page) .wg-focus-controls button {
+      padding: 6px 8px;
+      font-size: 10px;
+    }
+
+    body:has(.wg-page) .wg-search-bar {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    body:has(.wg-page) .wg-search-label {
+      grid-column: 1 / -1 !important;
+      white-space: normal;
+    }
+
+    body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+      width: min(340px, 88%);
+    }
+
+    body:has(.wg-page) > .site-footer {
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 10px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:has(.wg-page) * { scroll-behavior: auto !important; }
+  }
+
+
+  /* Selected-node layout: reserve space for the inspector instead of covering the graph. */
+  body:has(.wg-page) .wg-shell.has-selection {
+    grid-template-columns: minmax(0, 1fr) 340px !important;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-graph-panel {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+    display: block !important;
+    position: relative !important;
+    inset: auto !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    padding: 18px 16px !important;
+    box-sizing: border-box !important;
+    border-left: 1px solid #2c3b4d !important;
+    background: #0e1520 !important;
+    box-shadow: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Mobile: the inspector becomes a full overlay with a close control. */
+  @media (max-width: 900px) {
+    body:has(.wg-page) .wg-shell.has-selection {
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 36%) !important;
+    }
+  }
+
+  @media (max-width: 700px) {
+    body:has(.wg-page) .wg-shell.has-selection {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 30 !important;
+      width: 100% !important;
+      height: 100% !important;
+      border: 0 !important;
+    }
+  }
+
+
+  /* Compact inspector: fit within the visible viewport without its own scrollbar. */
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: clamp(8px, 1.2vh, 14px) clamp(10px, 1vw, 16px) !important;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector-head {
+    padding-bottom: clamp(7px, 1vh, 12px);
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector-content {
+    padding-top: clamp(8px, 1.2vh, 14px);
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector-content h2 {
+    font-size: clamp(16px, 1.15vw, 21px);
+    line-height: 1.2;
+    margin: 7px 0 5px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-node-id {
+    display: none;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-detail-stats {
+    padding: 8px 0;
+    margin: 8px 0 12px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-detail-stats strong {
+    font-size: 19px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-title {
+    margin-bottom: 6px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-list {
+    gap: 4px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-item {
+    min-height: 0;
+    padding: 6px 7px;
+    gap: 7px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-item span {
+    font-size: 13px;
+    min-width: 0;
+    font-size: 10px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-item small {
+    display: none;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-story-link {
+    margin-top: 10px;
+    padding: 10px 11px;
+    font-size: 11px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-no-links {
+    margin: 6px 0;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  @media (max-height: 800px) and (min-width: 701px) {
+    body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+    }
+    body:has(.wg-page) .wg-shell.has-selection .wg-inspector-content {
+      padding-top: 8px;
+    }
+    body:has(.wg-page) .wg-shell.has-selection .wg-detail-stats {
+      padding: 6px 0;
+      margin: 6px 0 8px;
+    }
+    body:has(.wg-page) .wg-shell.has-selection .wg-related-item {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+  }
+
+
+  /* Final viewport polish: readable world labels and a compact, non-scrolling inspector. */
+  body:has(.wg-page) .wg-shell.has-selection {
+    grid-template-columns: minmax(0, 1fr) minmax(310px, 360px) !important;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+    display: flex !important;
+    flex-direction: column;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: clamp(10px, 1.2vh, 16px) clamp(12px, 1vw, 17px) !important;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector-head {
+    flex: 0 0 auto;
+    padding-bottom: 8px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-inspector-content {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: visible;
+    padding-top: 8px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-item {
+    flex: 0 1 auto;
+    min-height: 0;
+    padding: 5px 7px;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-related-item span {
+    font-size: 13px;
+    line-height: 1.35;
+    min-width: 0;
+    flex: 1 1 auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+  }
+
+  body:has(.wg-page) .wg-shell.has-selection .wg-story-link {
+    flex: 0 0 auto;
+    margin-top: 8px;
+    padding: 8px 10px;
+  }
+
+  @media (max-height: 800px) and (min-width: 701px) {
+    body:has(.wg-page) .wg-shell.has-selection .wg-inspector-content h2 {
+      font-size: 16px;
+      margin: 5px 0 4px;
+    }
+
+    body:has(.wg-page) .wg-shell.has-selection .wg-detail-stats {
+      padding: 5px 0;
+      margin: 5px 0 7px;
+    }
+
+    body:has(.wg-page) .wg-shell.has-selection .wg-related-title {
+      margin-bottom: 4px;
+    }
+
+    body:has(.wg-page) .wg-shell.has-selection .wg-related-item {
+      padding-top: 3px;
+      padding-bottom: 3px;
+    }
+    body:has(.wg-page) .wg-shell.has-selection .wg-related-item span {
+      font-size: 12px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  @media (max-width: 900px) {
+    body:has(.wg-page) .wg-shell.has-selection {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 30 !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+
+  /* Final layout override: let the graph use the full viewport width, without a surrounding card frame. */
+  body:has(.wg-page) > .page-frame > .wg-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  body:has(.wg-page) .wg-shell {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  body:has(.wg-page) .wg-graph-panel {
+    border-radius: 0 !important;
+  }
+
+  /* Search is integrated into the graph area but reserves its own row,
+     so it never covers a world, its title, or a connection. */
+  body:has(.wg-page) .wg-search-bar {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 8 !important;
+    flex: 0 0 auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(180px, 340px) auto !important;
+    align-items: center !important;
+    justify-content: end !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    padding: 10px 18px !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(43, 57, 73, .55) !important;
+    border-radius: 0 !important;
+    background: rgba(8, 12, 18, .72) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(10px);
+  }
+
+  body:has(.wg-page) .wg-search-label {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  body:has(.wg-page) .wg-search-bar .wg-search {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    padding: 9px 12px !important;
+    border-radius: 8px !important;
+    background: #080d14 !important;
+  }
+
+  body:has(.wg-page) .wg-search-bar .wg-reset {
+    height: 40px !important;
+    padding: 0 14px !important;
+    border-radius: 8px !important;
+  }
+
+  @media (max-width: 700px) {
+    body:has(.wg-page) .wg-search-bar {
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      padding: 8px 10px !important;
+    }
+  }
+
+</style>

@@ -1,0 +1,22 @@
+schemaVersion: 1
+id: world-state-alexander-west-after-arabian-campaign
+name: Alexander Advances into Arabia
+worldId: world-alexander-west
+divergenceId: divergence-alexander-survives
+time:
+  label: 322 BC
+  year: -322
+  precision: year
+status: SIMULATED
+description: Alexander launches the Arabian expedition that had been prepared before his illness. Macedonian forces begin securing strategic coastal positions and maritime routes in the Persian Gulf.
+
+variables:
+  - key: territorial_control
+    value:
+      macedonian_empire: Survives under Alexander
+      arabian_coast: Arabian expedition underway
+      western_mediterranean: Future campaign objective
+    status: SIMULATED
+causedBy:
+  - arabian-campaign-322-bc
+evidence: []

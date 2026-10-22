@@ -1,0 +1,17 @@
+id: world-state-spanish-armada-modern-era
+name: A World Without the Familiar British Empire
+schemaVersion: 1
+worldId: world-spanish-armada-victory
+divergenceId: divergence-spanish-armada-lands
+status: SIMULATED
+time:
+  label: Modern era
+  year: 2000
+  precision: period
+description: >-
+  The British Empire does not emerge in its familiar form.
+  Global trade develops along a different path.
+variables: []
+causedBy:
+  - spanish-armada-timeline-4
+evidence: []

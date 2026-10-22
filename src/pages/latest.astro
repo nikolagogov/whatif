@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+
+import { sortPosts } from '../lib/sorting';
+
+const [historyPosts, sciencePosts, spacePosts, societyPosts] =
+  await Promise.all([
+    getCollection('history'),
+    getCollection('science'),
+    getCollection('space'),
+    getCollection('society'),
+  ]);
+
+const allPosts = [
+  ...historyPosts.map(p => ({ ...p, sector: 'History', sectorSlug: 'history' })),
+  ...sciencePosts.map(p => ({ ...p, sector: 'Science', sectorSlug: 'science' })),
+  ...spacePosts.map(p => ({ ...p, sector: 'Space', sectorSlug: 'space' })),
+  ...societyPosts.map(p => ({ ...p, sector: 'Society', sectorSlug: 'society' })),
+];
+
+const sortedPosts = sortPosts(allPosts);
+---
+
+<BaseLayout
+  title="Latest | Had It Gone"
+  description="All articles on Had It Gone, sorted by date."
+  url="https://haditgone.com/latest"
+  type="website"
+>
+  <div class="section-container">
+    <section class="topic-hero">
+      <a href="/" class="topic-back">← Back to Homepage</a>
+      <h1 class="topic-title">
+        <span class="topic-emoji">🕐</span>
+        Latest
+      </h1>
+      <p class="topic-subtitle">
+  {sortedPosts.length} {sortedPosts.length === 1 ? 'scenario' : 'scenarios'} — newest first.
+</p>
+    </section>
+
+    <section class="section-block">
+      <div class="archive-grid">
+        {sortedPosts.map(post => (
+          <a
+            href={`/${post.sectorSlug}/${post.id}`}
+            class="archive-card"
+          >
+            <div
+              class="archive-img"
+              style={`background-image: url('${post.data.image}');`}
+            ></div>
+            <div class="archive-body">
+              <span class="home-latest-sector">{post.sector}</span>
+              <h4>{post.data.title}</h4>
+              <p>{post.data.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>

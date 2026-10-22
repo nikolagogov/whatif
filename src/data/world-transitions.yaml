@@ -1,0 +1,25 @@
+schemaVersion: 1
+
+transitions:
+  - id: transition-arabian-campaign-322-bc
+    label: "Alexander's Arabian Campaign"
+    worldId: world-alexander-west
+    fromStateId: world-state-alexander-west-initial
+    toStateId: world-state-alexander-west-after-arabian-campaign
+    eventId: arabian-campaign-322-bc
+
+    changes:
+      - key: territorial_control
+        from:
+          macedonian_empire: "Survives under Alexander"
+          western_mediterranean: "Emerging strategic frontier"
+        to:
+          macedonian_empire: "Survives under Alexander"
+          arabian_coast: "Arabian expedition underway"
+          western_mediterranean: "Future campaign objective"
+        status: SIMULATED
+
+    time:
+      label: "322 BC"
+      year: -322
+      precision: year

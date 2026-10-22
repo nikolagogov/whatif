@@ -1,0 +1,18 @@
+schemaVersion: 1
+id: world-state-cuban-crisis-human-survival
+name: Nuclear War Devastates the Northern Hemisphere
+worldId: world-nuclear-war-1962
+divergenceId: divergence-cuban-crisis-escalates
+time:
+  label: "1962–1965"
+  year: 1963
+  precision: period
+status: SIMULATED
+description: >-
+  The Northern Hemisphere is devastated by nuclear war and climatic
+  disruption. The Southern Hemisphere is less directly affected,
+  though it remains vulnerable.
+variables: []
+causedBy:
+  - nuclear-winter
+evidence: []

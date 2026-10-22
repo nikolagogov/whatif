@@ -1,0 +1,174 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const historyPosts = await getCollection('history');
+const sciencePosts = await getCollection('science');
+const spacePosts = await getCollection('space');
+const societyPosts = await getCollection('society');
+
+const allPosts = [
+  ...historyPosts.map(p => ({ ...p, sector: 'History', sectorSlug: 'history' })),
+  ...sciencePosts.map(p => ({ ...p, sector: 'Science', sectorSlug: 'science' })),
+  ...spacePosts.map(p => ({ ...p, sector: 'Space', sectorSlug: 'space' })),
+  ...societyPosts.map(p => ({ ...p, sector: 'Society', sectorSlug: 'society' })),
+];
+
+const articlesData = allPosts.map(p => ({
+  id: p.id,
+  title: p.data.title,
+  description: p.data.description,
+  sector: p.sector,
+  url: `/${p.sectorSlug}/${p.id}`,
+}));
+---
+
+<BaseLayout
+  title="Continue Reading | Had It Gone"
+  description="Articles you have started but not finished."
+  url="https://haditgone.com/continue"
+  type="website"
+>
+  <div class="section-container">
+    <section class="topic-hero">
+      <a href="/" class="topic-back">← Back to Homepage</a>
+      <h1 class="topic-title">
+        <span class="topic-emoji">📖</span>
+        Continue Reading
+      </h1>
+      <p class="topic-subtitle" id="continueCount">
+        Articles you have started but not finished.
+      </p>
+    </section>
+
+    <section class="section-block" id="continueBlock" style="display: none;">
+      <div class="continue-grid" id="continueGrid"></div>
+    </section>
+
+    <section class="section-block" id="emptyBlock">
+      <div class="no-articles">
+        You haven't started any articles yet.<br />
+        Open any article and it will appear here while you're reading it.
+      </div>
+    </section>
+  </div>
+  <script is:inline define:vars={{ articlesData }}>
+// @ts-nocheck
+(function () {
+  var KEY = 'hig_continue';
+
+  var grid = document.getElementById('continueGrid');
+  var block = document.getElementById('continueBlock');
+  var empty = document.getElementById('emptyBlock');
+  var count = document.getElementById('continueCount');
+
+  function render() {
+    var data = [];
+
+    try {
+      var parsed = JSON.parse(localStorage.getItem(KEY) || '[]');
+      data = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      data = [];
+    }
+
+    var seen = new Set();
+
+    var articles = data
+      .filter(function (item) {
+        return item && item.id && item.sector &&
+          Number(item.progress) < 90;
+      })
+      .filter(function (item) {
+        var key = item.sector.toLowerCase() + '/' + item.id;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map(function (item) {
+        var article = articlesData.find(function (a) {
+          return a.id === item.id &&
+            a.sector.toLowerCase() === item.sector.toLowerCase();
+        });
+
+        if (!article) return null;
+
+        return {
+          id: item.id,
+          sector: article.sector,
+          url: article.url,
+          title: article.title,
+          description: article.description || '',
+          progress: Math.max(0, Math.min(100, Number(item.progress) || 0)),
+          scrollY: Math.max(0, Number(item.scrollY) || 0),
+          ts: Number(item.ts) || 0
+        };
+      })
+      .filter(Boolean)
+      .sort(function (a, b) {
+        return b.ts - a.ts;
+      });
+
+    if (grid) {
+      grid.innerHTML = articles.map(function (a) {
+        return '<div class="continue-card">' +
+          '<a href="' + a.url +
+          '?from=continue&scrollY=' + a.scrollY +
+          '" class="continue-card-link">' +
+          '<span class="continue-card-sector">' + a.sector + '</span>' +
+          '<h4>' + a.title + '</h4>' +
+          '<p>' + a.description + '</p>' +
+          '<div class="personal-progress"><div class="personal-progress-bar" style="width:' +
+          a.progress + '%"></div></div>' +
+          '<span class="personal-progress-text">' +
+          Math.round(a.progress) + '% read</span>' +
+          '</a>' +
+          '<button class="continue-remove" data-article-id="' +
+          a.id + '" data-article-sector="' + a.sector.toLowerCase() +
+          '">✕ Remove</button></div>';
+      }).join('');
+
+      grid.querySelectorAll('.continue-remove').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-article-id');
+          var sector = btn.getAttribute('data-article-sector');
+
+          var current = [];
+          try {
+            current = JSON.parse(localStorage.getItem(KEY) || '[]');
+            if (!Array.isArray(current)) current = [];
+          } catch (e) {
+            current = [];
+          }
+
+          current = current.filter(function (item) {
+            return !(item && item.id === id &&
+              String(item.sector).toLowerCase() === sector);
+          });
+
+          localStorage.setItem(KEY, JSON.stringify(current));
+          render();
+        });
+      });
+    }
+
+    if (block) block.style.display = articles.length ? 'block' : 'none';
+    if (empty) empty.style.display = articles.length ? 'none' : 'block';
+
+    if (count) {
+      count.textContent = articles.length
+        ? articles.length + (articles.length === 1
+          ? ' article in progress'
+          : ' articles in progress')
+        : "You haven't started any articles yet.";
+    }
+  }
+
+  render();
+  window.addEventListener('pageshow', render);
+  window.addEventListener('storage', function (e) {
+    if (e.key === KEY || e.key === null) render();
+  });
+})();
+</script>
+</BaseLayout>

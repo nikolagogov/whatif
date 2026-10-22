@@ -1,0 +1,235 @@
+entities:
+  - id: entity-alexander
+    type: PERSON
+    name: Alexander the Great
+    aliases: []
+  - id: entity-alexandrian-scholars
+    type: GROUP
+    name: Alexandrian scholars
+    aliases: []
+  - id: entity-battle-of-tours
+    type: EVENT
+    name: Battle of Tours
+    aliases: []
+  - id: entity-brazil
+    type: STATE
+    name: Brazil
+    aliases: []
+  - id: entity-c-rdoba
+    type: CITY
+    name: Córdoba
+    aliases: []
+  - id: entity-charles-martel
+    type: PERSON
+    name: Charles Martel
+    aliases: []
+  - id: entity-christianity
+    type: RELIGION
+    name: Christianity
+    aliases: []
+  - id: entity-cuba
+    type: STATE
+    name: Cuba
+    aliases: []
+  - id: entity-duke-parma
+    type: PERSON
+    name: Duke of Parma
+    aliases: []
+  - id: entity-elizabeth-i
+    type: PERSON
+    name: Elizabeth I
+    aliases: []
+  - id: entity-england
+    type: STATE
+    name: England
+    aliases: []
+  - id: entity-habsburg-monarchy
+    type: STATE
+    name: Habsburg Monarchy
+    aliases: []
+  - id: entity-islam
+    type: RELIGION
+    name: Islam
+    aliases: []
+  - id: entity-islamic-golden-age
+    type: CONCEPT
+    name: Islamic Golden Age
+    aliases: []
+  - id: entity-islamic-scholarly-world
+    type: GROUP
+    name: Scholars of the Islamic world
+    aliases: []
+  - id: entity-kara-mustafa
+    type: PERSON
+    name: Kara Mustafa Pasha
+    aliases: []
+  - id: entity-library-alexandria
+    type: INSTITUTION
+    name: Library of Alexandria
+    aliases: []
+  - id: entity-macedon
+    type: STATE
+    name: Macedonian Empire
+    aliases: []
+  - id: entity-nigeria
+    type: STATE
+    name: Nigeria
+    aliases: []
+  - id: entity-philip-ii
+    type: PERSON
+    name: Philip II of Spain
+    aliases: []
+  - id: entity-ravenna
+    type: PLACE
+    name: Ravenna
+    aliases: []
+  - id: entity-roman-empire
+    type: STATE
+    name: Roman Empire
+    aliases: []
+  - id: entity-south-africa
+    type: STATE
+    name: South Africa
+    aliases: []
+  - id: entity-spanish-empire
+    type: STATE
+    name: Spanish Empire
+    aliases: []
+  - id: entity-umayyad-caliphate
+    type: STATE
+    name: Umayyad Caliphate
+    aliases: []
+  - id: entity-vienna
+    type: PLACE
+    name: Vienna
+    aliases: []
+  - id: entity-western-roman-empire
+    type: STATE
+    name: Western Roman Empire
+    aliases: []
+  - id: feature-ancient-oceans
+    type: ENVIRONMENT
+    name: Ancient oceans
+    aliases: []
+  - id: group-digital-communities-and-independent-publishers
+    type: GROUP
+    name: Digital communities and independent publishers
+    aliases: []
+  - id: group-dinosaurs
+    type: CLADE
+    name: Dinosaurs
+    aliases: []
+  - id: group-humanity
+    type: SPECIES
+    name: Humanity
+    aliases: []
+  - id: group-mammals
+    type: CLADE
+    name: Mammals
+    aliases: []
+  - id: group-primates
+    type: CLADE
+    name: Primates
+    aliases: []
+  - id: institution-universities-and-research-institutions
+    type: INSTITUTION
+    name: Universities and research institutions
+    aliases: []
+  - id: person-duke-of-wellington
+    type: PERSON
+    name: Duke of Wellington
+    aliases: []
+  - id: person-hern-n-cort-s
+    type: historical-figure
+    name: Hernán Cortés
+    aliases: []
+  - id: person-napoleon-bonaparte
+    type: PERSON
+    name: Napoleon Bonaparte
+    aliases: []
+  - id: place-egypt
+    type: PLACE
+    name: Egypt
+    aliases: []
+  - id: place-greek-mediterranean
+    type: REGION
+    name: Greek Mediterranean
+    aliases: []
+  - id: place-levant
+    type: PLACE
+    name: The Levant
+    aliases: []
+  - id: place-rome
+    type: PLACE
+    name: Rome
+    aliases:
+      - Roma
+  - id: place-tenochtitlan
+    type: place
+    name: Tenochtitlan
+    aliases: []
+  - id: place-waterloo
+    type: PLACE
+    name: Waterloo
+    aliases: []
+  - id: planet-earth
+    type: PLANET
+    name: Earth
+    aliases: []
+  - id: planet-mars
+    type: PLANET
+    name: Mars
+    aliases: []
+  - id: polity-aztec-empire
+    type: civilization
+    name: Aztec Empire
+    aliases: []
+  - id: polity-britain
+    type: POLITY
+    name: Britain
+    aliases: []
+  - id: polity-france
+    type: POLITY
+    name: France
+    aliases: []
+  - id: polity-ottoman-empire
+    type: POLITY
+    name: Ottoman Empire
+    aliases: []
+  - id: polity-portugal
+    type: country
+    name: Portugal
+    aliases: []
+  - id: polity-prussia
+    type: POLITY
+    name: Prussia
+    aliases: []
+  - id: polity-roman-republic
+    type: POLITY
+    name: Roman Republic
+    aliases: []
+  - id: region-northern-hemisphere
+    type: REGION
+    name: Northern Hemisphere
+    aliases: []
+  - id: region-southern-hemisphere
+    type: REGION
+    name: Southern Hemisphere
+    aliases: []
+  - id: state-soviet-union
+    type: POLITY
+    name: Soviet Union
+    aliases: []
+  - id: state-united-states
+    type: POLITY
+    name: United States
+    aliases:
+      - USA
+  - id: technology-commercial-online-networks
+    type: TECHNOLOGY
+    name: Commercial online networks
+    aliases: []
+  - id: technology-world-wide-web
+    type: TECHNOLOGY
+    name: World Wide Web
+    aliases: []

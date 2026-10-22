@@ -1,0 +1,20 @@
+schemaVersion: 1
+id: world-state-islamic-europe-medieval-period
+name: Islamic Influence Reshapes Medieval Europe
+worldId: world-islamic-europe
+divergenceId: divergence-umayyads-win-tours
+time:
+  label: "Medieval period"
+  year: 1000
+  precision: period
+status: SIMULATED
+description: >-
+  Some regions adopt Islam over time, while Christian and Jewish communities
+  may continue to exist. Arabic becomes a major language of learning in parts
+  of Europe, connecting scholars with wider intellectual networks. Dynastic
+  struggles, regional resistance, and competing centres of authority remain
+  possible. The boundaries between European and Islamic civilizational
+  identities become less distinct.
+variables: []
+causedBy: []
+evidence: []

@@ -1,0 +1,17 @@
+id: world-state-spanish-armada-late-16th-century
+name: Spain Attempts to Restore Catholic Rule in England
+schemaVersion: 1
+worldId: world-spanish-armada-victory
+divergenceId: divergence-spanish-armada-lands
+status: SIMULATED
+time:
+  label: Late 16th century
+  year: 1590
+  precision: period
+description: >-
+  Catholic restoration is attempted in England amid resistance.
+  The Spanish Empire gains influence but inherits a costly occupation.
+variables: []
+causedBy:
+  - spanish-armada-timeline-2
+evidence: []
