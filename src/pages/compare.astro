@@ -1,0 +1,152 @@
+---
+import { articleRoute, worldRoute, ROUTES } from '../lib/routes';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { getCollection } from 'astro:content';
+import contentGraph from '../data/content-graph.json';
+import YAML from 'yaml';
+
+const collectionNames = ['history', 'science', 'space', 'society'] as const;
+const collections = await Promise.all(collectionNames.map((name) => getCollection(name)));
+const articles = collections
+  .flat()
+  .map((entry) => ({
+    id: `${entry.collection}/${entry.id}`,
+    slug: entry.id,
+    sector: entry.collection,
+    title: entry.data.title,
+    description: entry.data.description ?? '',
+    world: entry.data.world,
+    divergence: entry.data.divergence,
+    timeline: entry.data.timeline ?? [],
+  }))
+  .filter(
+    (article): article is typeof article & {
+      world: NonNullable<typeof article.world>;
+      divergence: NonNullable<typeof article.divergence>;
+    } => Boolean(article.world && article.divergence)
+  );
+
+const stateModules = import.meta.glob('../data/world-states/*.yaml', { eager: true, query: '?raw', import: 'default' });
+const states = Object.entries(stateModules).map(([path, raw]) => {
+  try { return { path, ...(YAML.parse(raw as string) ?? {}) }; }
+  catch { return null; }
+}).filter((state): state is Record<string, any> => Boolean(state?.worldId));
+
+const scenarios = articles.map((article) => {
+  const worldStates = states.filter((state) => state.worldId === article.world.id)
+    .sort((a, b) => {
+      const yearA = Number(a.time?.year);
+      const yearB = Number(b.time?.year);
+      if (Number.isFinite(yearA) && Number.isFinite(yearB)) return yearA - yearB;
+      return String(a.time?.label ?? '').localeCompare(String(b.time?.label ?? ''));
+    });
+  const latestState = worldStates[worldStates.length - 1];
+  const variables = Array.isArray(latestState?.variables) ? latestState.variables : [];
+  const variableHistory = new Map<string, { key: string; values: { state: string; time: string; value: unknown }[] }>();
+  for (const state of worldStates) {
+    for (const variable of Array.isArray(state.variables) ? state.variables : []) {
+      const key = String(variable.key ?? variable.id ?? 'unknown');
+      if (!variableHistory.has(key)) variableHistory.set(key, { key, values: [] });
+      variableHistory.get(key)!.values.push({
+        state: String(state.name ?? state.id ?? 'World State'),
+        time: String(state.time?.label ?? 'Time not specified'),
+        value: variable.value
+      });
+    }
+  }
+  const variableTrajectories = [...variableHistory.values()];
+  return {
+    ...article,
+    url: articleRoute(article.sector, article.slug),
+    worldUrl: worldRoute(article.world.id),
+    worldStates,
+    variables,
+    variableTrajectories,
+    search: `${article.title} ${article.world.name} ${article.divergence.title} ${article.divergence.referenceOutcome} ${article.divergence.alternateOutcome}`.toLowerCase(),
+  };
+}).sort((a, b) => a.title.localeCompare(b.title));
+---
+
+<BaseLayout title="Compare Worlds | HAD IT GONE" description="Compare historical outcomes with alternate worlds using the existing HAD IT GONE scenario and World State data.">
+  <main class="compare-page">
+    <PageHeader title="World" highlight="Comparison" eyebrow="HAD IT GONE · INTERACTIVE EXPLORATION" />
+    <nav class="compare-mode-nav" aria-label="World Graph modes">
+      <a class="compare-mode-link" href={ROUTES.worldGraph}>Explore</a>
+      <a class="compare-mode-link" href={ROUTES.causality}>Causality</a>
+      <a class="compare-mode-link active" href={ROUTES.compare} aria-current="page">Compare</a>
+    </nav>
+
+    <header class="compare-hero">
+      <p class="compare-intro">Compare the historical outcome with an alternate path, then inspect the events and structured state recorded for that world. Missing data stays explicitly unknown.</p>
+      <div class="compare-stats"><div><strong>{scenarios.length}</strong><span>SCENARIOS</span></div><div><strong>{scenarios.reduce((n, s) => n + s.timeline.length, 0)}</strong><span>TIMELINE EVENTS</span></div><div><strong>{scenarios.reduce((n, s) => n + s.worldStates.length, 0)}</strong><span>WORLD STATES</span></div></div>
+    </header>
+
+    <section class="compare-controls" aria-label="Choose a scenario">
+      <label for="compare-search">Find a scenario<input id="compare-search" type="search" placeholder="Search scenario or alternate world…" /></label>
+      <label for="compare-scenario">What If scenario<select id="compare-scenario"><option value="all">All scenarios</option>{scenarios.map((scenario) => <option value={scenario.id}>{scenario.title}</option>)}</select></label>
+      <p id="compare-count" aria-live="polite">Showing {scenarios.length} comparisons</p>
+    </section>
+
+    <section class="compare-list" id="compare-list" aria-label="Scenario comparisons">
+      {scenarios.map((scenario) => <article class="comparison-card" data-scenario={scenario.id} data-search={scenario.search}>
+        <header class="comparison-heading"><div><p class="eyebrow">WHAT IF COMPARISON</p><h2>{scenario.title}</h2><p>{scenario.description}</p></div><a href={scenario.url}>Read scenario ↗</a></header>
+        <div class="outcome-grid">
+          <section class="outcome-panel historical"><p class="outcome-label">HISTORICAL REALITY</p><h3>What happened</h3><p>{scenario.divergence.referenceOutcome || 'A structured historical outcome is not recorded for this scenario.'}</p></section>
+          <section class="outcome-panel alternate"><p class="outcome-label">ALTERNATE WORLD</p><h3>{scenario.world.name}</h3><p>{scenario.divergence.alternateOutcome || 'A structured alternate outcome is not recorded for this scenario.'}</p><a href={scenario.worldUrl}>Explore this world ↗</a></section>
+        </div>
+        <details class="comparison-details">
+          <summary>Explore timeline and World State data <span>{scenario.timeline.length} events · {scenario.worldStates.length} states</span></summary>
+          <div class="detail-grid">
+            <section><h3>Key events in the alternate timeline</h3>{scenario.timeline.length ? <ol class="compare-events">{scenario.timeline.map((event) => <li><time>{event.date}</time><strong>{event.title}</strong><p>{event.description}</p></li>)}</ol> : <p class="unknown">No structured timeline events recorded.</p>}</section>
+            <section>
+              <h3>World State comparison</h3>
+              <p class="comparison-method">The historical outcome is summarized above. The structured variables below describe the alternate world only; no historical baseline is inferred where one is not recorded.</p>
+              {scenario.variableTrajectories.length ? <div class="trajectory-list">{scenario.variableTrajectories.map((trajectory) => <article class="trajectory-item">
+                <h4>{trajectory.key.replaceAll('_', ' ')}</h4>
+                <ol>{trajectory.values.map((entry) => <li><span class="trajectory-time">{entry.time}</span><span class="trajectory-value">{typeof entry.value === 'string' ? entry.value : JSON.stringify(entry.value)}</span></li>)}</ol>
+                {trajectory.values.length > 1 && <p class="trajectory-note">{trajectory.values.length} recorded observations across the alternate timeline</p>}
+              </article>)}</div> : <p class="unknown">No structured variables are recorded for this world. This is missing data, not evidence of no change.</p>}
+              {scenario.worldStates.length > 0 && <p class="state-note">Latest recorded state: <strong>{scenario.worldStates[scenario.worldStates.length - 1].name ?? scenario.worldStates[scenario.worldStates.length - 1].id}</strong>{scenario.worldStates[scenario.worldStates.length - 1].time?.label ? ` · ${scenario.worldStates[scenario.worldStates.length - 1].time.label}` : ''}</p>}
+            </section>
+          </div>
+        </details>
+      </article>)}
+      <p id="compare-empty" class="compare-empty" hidden>No scenarios match your search.</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+.compare-page{width:min(var(--hig-page-content-max),calc(100% - var(--hig-site-gutter) * 2));max-width:var(--hig-page-content-max);margin:0 auto;padding:0 0 5rem;color:var(--color-text, #222)}
+.compare-hero{padding:1rem 0 2rem;border-bottom:1px solid var(--color-border, #ddd)}
+.eyebrow{font-size:.65rem;letter-spacing:.13em;text-transform:uppercase;color:var(--color-accent, #b66a42);font-weight:700;margin:0 0 .65rem}
+h1{font-size:clamp(2.5rem,6vw,4.5rem);letter-spacing:-.055em;line-height:1;margin:0 0 1rem}h1 span{color:var(--color-accent, #b66a42)}
+.compare-intro{max-width:680px;line-height:1.7;color:var(--color-muted, #666)}
+.compare-stats{display:flex;gap:clamp(1.5rem,5vw,4rem);margin-top:2rem}.compare-stats div{display:grid;gap:.25rem}.compare-stats strong{font-size:1.8rem}.compare-stats span,.outcome-label{font-size:.62rem;letter-spacing:.1em;color:var(--color-muted, #777);text-transform:uppercase}
+.compare-controls{display:grid;grid-template-columns:minmax(200px,1fr) minmax(200px,1fr) auto;gap:1rem;align-items:end;padding:1rem;margin:1.5rem 0;border:1px solid var(--color-border, #ddd);border-radius:12px;background:var(--color-surface, #fff)}label{display:grid;gap:.45rem;font-size:.72rem;color:var(--color-muted, #666)}input,select{width:100%;min-width:0;border:1px solid var(--color-border, #ccc);border-radius:7px;padding:.75rem;background:var(--color-background, #fff);color:inherit;font:inherit}#compare-count{font-size:.72rem;white-space:nowrap;color:var(--color-muted, #777);margin:0 0 .7rem}
+.compare-list{display:grid;gap:1.25rem}.comparison-card{border:1px solid var(--color-border, #d8d8d8);border-radius:12px;overflow:hidden;background:var(--color-surface, #fff)}.comparison-heading{display:flex;justify-content:space-between;gap:1rem;align-items:start;padding:1.25rem 1.4rem}.comparison-heading h2{font-size:1.25rem;margin:0 0 .5rem}.comparison-heading p:not(.eyebrow){font-size:.85rem;line-height:1.55;color:var(--color-muted, #666);margin:.3rem 0}.comparison-heading>a,.outcome-panel>a{font-size:.75rem;color:var(--color-accent, #a75a32);white-space:nowrap}
+.outcome-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--color-border, #ddd)}.outcome-panel{padding:1.3rem 1.4rem;min-width:0}.outcome-panel+.outcome-panel{border-left:1px solid var(--color-border, #ddd)}.historical{background:color-mix(in srgb, var(--color-surface, #fff) 94%, #777 6%)}.alternate{background:color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-accent, #b66a42) 6%)}.outcome-label{margin:0 0 .6rem}.outcome-panel h3{font-size:1rem;margin:0 0 .65rem}.outcome-panel>p:not(.outcome-label){font-size:.9rem;line-height:1.65;margin:0 0 .7rem}.comparison-details{border-top:1px solid var(--color-border, #ddd)}.comparison-details summary{padding:1rem 1.4rem;cursor:pointer;font-weight:650;font-size:.85rem;display:flex;justify-content:space-between;gap:1rem}.comparison-details summary span{font-size:.72rem;font-weight:400;color:var(--color-muted, #777)}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;padding:0 1.4rem 1.4rem}.detail-grid h3{font-size:.95rem}.compare-events{padding-left:1.2rem}.compare-events li{padding:0 0 1rem .2rem}.compare-events time{display:block;font-size:.7rem;color:var(--color-accent, #a75a32);margin-bottom:.25rem}.compare-events strong{font-size:.85rem}.compare-events p{font-size:.8rem;line-height:1.5;color:var(--color-muted, #666);margin:.3rem 0}.variable-list{margin:0}.variable-list div{padding:.7rem 0;border-bottom:1px solid var(--color-border, #e3e3e3)}.variable-list dt{text-transform:capitalize;font-size:.75rem;font-weight:700;margin-bottom:.25rem}.variable-list dd{margin:0;font-size:.82rem;line-height:1.5;overflow-wrap:anywhere}.unknown,.state-note{font-size:.8rem;line-height:1.6;color:var(--color-muted, #777)}.compare-empty{padding:2rem;text-align:center;color:var(--color-muted, #777)}
+@media(max-width:700px){.compare-controls{grid-template-columns:1fr}.compare-stats{gap:1.5rem}.compare-stats strong{font-size:1.5rem}.comparison-heading{display:block}.comparison-heading>a{display:inline-block;margin-top:.6rem}.outcome-grid,.detail-grid{grid-template-columns:1fr}.outcome-panel+.outcome-panel{border-left:0;border-top:1px solid var(--color-border, #ddd)}.comparison-details summary{display:grid}.comparison-details summary span{white-space:normal}}
+</style>
+
+<script>
+const search = document.querySelector<HTMLInputElement>('#compare-search');
+const select = document.querySelector<HTMLSelectElement>('#compare-scenario');
+const cards = [...document.querySelectorAll<HTMLElement>('.comparison-card')];
+const count = document.querySelector<HTMLElement>('#compare-count');
+const empty = document.querySelector<HTMLElement>('#compare-empty');
+function updateComparisons() {
+  const query = (search?.value ?? '').trim().toLowerCase();
+  const scenario = select?.value ?? 'all';
+  let visible = 0;
+  for (const card of cards) {
+    const matches = (scenario === 'all' || card.dataset.scenario === scenario) && (card.dataset.search ?? '').includes(query);
+    card.hidden = !matches;
+    if (matches) visible++;
+  }
+  if (count) count.textContent = `Showing ${visible} comparison${visible === 1 ? '' : 's'}`;
+  if (empty) empty.hidden = visible > 0;
+}
+search?.addEventListener('input', updateComparisons);
+</script>

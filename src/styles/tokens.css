@@ -1,0 +1,47 @@
+/* Shared design tokens: initial palette and width aliases. */
+/* HAD IT GONE — shared design system
+   Loaded by BaseLayout so every page receives the same visual foundation. */
+:root {
+  /* One site-wide source of truth for page width and side margins. */
+  --hig-page-content-max: 1480px;
+  /* Canonical outer frame: consumed by page shell, header and footer. */
+  --hig-page-frame-width: min(var(--hig-page-content-max), calc(100% - (var(--hig-site-gutter) * 2)));
+  /* Shared outer gutters: a little more breathing room across the whole site. */
+  --hig-site-gutter: clamp(24px, 6.5vw, 120px);
+  /* Legacy aliases resolve to the same single source of truth. */
+  --hig-content-max: var(--hig-page-content-max);
+  --hig-content-gutter: var(--hig-site-gutter);
+  --hig-page-bg: #06101b;
+  --hig-card-bg: var(--hig-surface-primary);
+  --hig-card-border: var(--hig-surface-border);
+  --hig-card-radius: 16px;
+  --hig-card-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  --hig-card-shadow-hover: 0 14px 32px rgba(0, 0, 0, 0.38);
+  --hig-gold: #e9b65a;
+  --hig-gold-hover: #f2bd65;
+  --hig-heading: var(--hig-text-primary);
+  --hig-copy: var(--hig-text-secondary);
+  --hig-section-gap: 34px;
+
+  /* Article View surfaces: layered over the existing site background. */
+  --hig-article-surface: var(--hig-surface-primary);
+  --hig-article-panel: var(--hig-surface-secondary);
+  --hig-article-inset: var(--hig-surface-inset);
+  --hig-article-border: var(--hig-surface-border);
+  --hig-article-border-strong: rgba(224, 182, 110, .48);
+  --hig-article-text: var(--hig-text-primary);
+  --hig-article-muted: var(--hig-text-secondary);
+  --hig-article-gold: #e9b65a;
+  --hig-article-blue: #70b6d8;
+}
+
+
+
+
+
+/* Keep mobile content spacious without wasting the narrow viewport. */
+@media (max-width: 700px) {
+  :root {
+    --hig-site-gutter: 18px;
+  }
+}

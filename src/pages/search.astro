@@ -1,6 +1,8 @@
 ---
+import { articleRoute, ROUTES } from '../lib/routes';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 
 const historyPosts = await getCollection('history');
 const sciencePosts = await getCollection('science');
@@ -18,7 +20,8 @@ const searchData = allPosts.map(p => ({
   title: p.data.title,
   description: p.data.description,
   sector: p.sector,
-  url: `/${p.sectorSlug}/${p.id}`,
+  url: articleRoute(p.sectorSlug, p.id),
+  image: p.data.image || '',
   tags: p.data.tags || [],
   topics: p.data.topics || [],
 }));
@@ -27,11 +30,11 @@ const searchData = allPosts.map(p => ({
 <BaseLayout
   title="Search | Had It Gone"
   description="Search articles on Had It Gone."
-  url="/search"
+  url={ROUTES.search}
   type="website"
 >
-  <div class="search-page">
-    <h1 class="search-page-title">Search</h1>
+  <div class="section-container search-page search-page--compact">
+    <PageHeader title="Search" />
 
     <div class="search-box search-box-page">
       <span class="search-icon">🔍</span>
@@ -40,7 +43,7 @@ const searchData = allPosts.map(p => ({
 
     <div class="search-page-results" id="searchResults">
       <p class="search-page-info" id="searchInfo">Type to search articles...</p>
-      <div class="search-page-list" id="searchResultsList"></div>
+      <div class="search-page-list hig-card-grid" id="searchResultsList"></div>
     </div>
   </div>
 
@@ -83,11 +86,18 @@ const searchData = allPosts.map(p => ({
         list.innerHTML = '';
       } else {
         info.textContent = `${matches.length} ${matches.length === 1 ? 'result' : 'results'} for "${rawQuery}"`;
+        const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[char]);
         list.innerHTML = matches.map(post => `
-          <a href="${post.url}" class="search-page-item">
-            <span class="search-page-sector">${post.sector}</span>
-            <h3>${post.title}</h3>
-            <p>${post.description}</p>
+          <a href="${escapeHtml(post.url)}" class="hig-content-card" aria-label="${escapeHtml(post.title)}">
+            ${post.image ? `<img class="hig-content-card__image" src="${escapeHtml(post.image)}" alt="" loading="lazy" decoding="async">` : ''}
+            <span class="hig-content-card__shade" aria-hidden="true"></span>
+            <span class="hig-content-card__content">
+              <span class="hig-content-card__eyebrow">${escapeHtml(post.sector)}</span>
+              <span class="hig-content-card__title">${escapeHtml(post.title)}</span>
+              <span class="hig-content-card__description">${escapeHtml(post.description)}</span>
+            </span>
           </a>
         `).join('');
       }

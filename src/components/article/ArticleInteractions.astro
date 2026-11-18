@@ -1,0 +1,18 @@
+---
+// Composition point for independent article browser interactions.
+---
+<script>
+  import { initArticleToc } from '../../scripts/article/toc';
+  import { initArticleBookmarks } from '../../scripts/article/bookmarks';
+  import { initReadingProgress } from '../../scripts/article/reading-progress';
+  import { initContinueReading } from '../../scripts/article/continue-reading';
+  import { initScrollRestoration } from '../../scripts/article/scroll-restoration';
+  import { initArticleShare } from '../../scripts/article/share';
+
+  initArticleToc();
+  initReadingProgress();
+  initContinueReading();
+  initArticleShare();
+  initArticleBookmarks();
+  initScrollRestoration();
+</script>

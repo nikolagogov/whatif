@@ -1,0 +1,30 @@
+---
+interface Props {
+  href: string;
+  image?: string;
+  title: string;
+  description?: string;
+  eyebrow?: string;
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  image,
+  title,
+  description = '',
+  eyebrow,
+  ariaLabel = title,
+} = Astro.props;
+---
+
+<a href={href} class="hig-content-card" aria-label={ariaLabel}>
+  {image && <img class="hig-content-card__image" src={image} alt="" loading="lazy" decoding="async" />}
+  <span class="hig-content-card__shade" aria-hidden="true"></span>
+  <span class="hig-content-card__content">
+    {eyebrow && <span class="hig-content-card__eyebrow">{eyebrow}</span>}
+    <span class="hig-content-card__title">{title}</span>
+    {description && <span class="hig-content-card__description">{description}</span>}
+  </span>
+</a>
+

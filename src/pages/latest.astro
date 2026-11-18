@@ -1,6 +1,9 @@
 ---
+import { articleRoute, ROUTES } from '../lib/routes';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ArticleCard from '../components/ArticleCard.astro';
 
 
 import { sortPosts } from '../lib/sorting';
@@ -26,40 +29,26 @@ const sortedPosts = sortPosts(allPosts);
 <BaseLayout
   title="Latest | Had It Gone"
   description="All articles on Had It Gone, sorted by date."
-  url="/latest"
+  url={ROUTES.latest}
   type="website"
 >
-  <div class="section-container">
-    <section class="topic-hero">
-      <a href="/" class="topic-back">← Back to Homepage</a>
-      <h1 class="topic-title">
-        <span class="topic-emoji">🕐</span>
-        Latest
-      </h1>
-      <p class="topic-subtitle">
-  {sortedPosts.length} {sortedPosts.length === 1 ? 'scenario' : 'scenarios'} — newest first.
-</p>
-    </section>
+  <div class="section-container archive-page">
 
-    <section class="section-block">
+    <PageHeader title="Latest" />
+
+    <section class="section-block" data-role="archive">
       <div class="archive-grid">
         {sortedPosts.map(post => (
-          <a
-            href={`/${post.sectorSlug}/${post.id}`}
-            class="archive-card"
-          >
-            <div
-              class="archive-img"
-              style={`background-image: url('${post.data.image}');`}
-            ></div>
-            <div class="archive-body">
-              <span class="home-latest-sector">{post.sector}</span>
-              <h4>{post.data.title}</h4>
-              <p>{post.data.description}</p>
-            </div>
-          </a>
+          <ArticleCard
+            href={articleRoute(post.sectorSlug, post.id)}
+            image={post.data.image}
+            title={post.data.title}
+            description={post.data.description}
+            sector={post.sector}
+          />
         ))}
       </div>
     </section>
+
   </div>
 </BaseLayout>

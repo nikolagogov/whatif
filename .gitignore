@@ -22,3 +22,25 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# HAD IT GONE — local admin data and working archives
+.hig-admin-backups/
+.hig-admin-drafts/
+hig.zip
+hig1.zip
+public/images/HIG-page-title-and-width-ssot-changed-files.zip
+
+src/src/
+
+# Retired article navigation
+src/components/article/ArticlePagination.astro
+src/lib/article/navigation.ts
+
+# Temporary patch instructions
+NAVIGATION-REVISION*-APPLY.txt
+README-APPLY.txt
+REVISION*-APPLY.txt
+
+# Temporary patch documentation
+README.txt
+REMOVE_PREVIOUS_NEXT_README.txt

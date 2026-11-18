@@ -1,0 +1,23 @@
+---
+import Card from './Card.astro';
+
+interface Props {
+  href: string;
+  image?: string;
+  title: string;
+  description?: string;
+  sector?: string;
+  ariaLabel?: string;
+}
+
+const { href, image, title, description = '', sector, ariaLabel } = Astro.props;
+---
+
+<Card
+  href={href}
+  image={image}
+  title={title}
+  description={description}
+  eyebrow={sector}
+  ariaLabel={ariaLabel}
+/>

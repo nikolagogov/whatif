@@ -1,0 +1,89 @@
+/* Shared archive/latest cards and responsive grids. */
+/* Shared article-card appearance for sector Latest/Archive and the global Latest
+   page. Page markup may choose latest-card or archive-card, but not the design. */
+.section-container :is(.latest-card, .archive-card) {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: inherit;
+  background: var(--hig-card-bg);
+  border: 1px solid var(--hig-card-border);
+  border-radius: var(--hig-card-radius);
+  box-shadow: var(--hig-card-shadow);
+  text-decoration: none;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.section-container :is(.latest-card, .archive-card):hover {
+  transform: translateY(-4px);
+  border-color: var(--hig-gold);
+  box-shadow: var(--hig-card-shadow-hover);
+}
+.section-container :is(.latest-img, .archive-img) {
+  display: block;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+}
+.section-container :is(.latest-body, .archive-body) {
+  padding: 18px 20px 22px;
+  background: transparent;
+}
+.section-container .latest-body h3,
+.section-container .archive-body h4 {
+  color: #f5f7fa;
+  transition: color .2s ease;
+}
+.section-container :is(.latest-card, .archive-card):hover :is(.latest-body h3, .archive-body h4) {
+  color: var(--hig-gold-hover);
+}
+.section-container :is(.latest-body, .archive-body) p {
+  color: var(--hig-copy);
+}
+.section-container .home-latest-sector {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--hig-gold);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+/* Standard responsive grids */
+.section-container :is(.latest-grid, .archive-grid) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 20px;
+}
+.section-container .section-block {
+  margin-top: var(--hig-section-gap);
+  margin-bottom: 0;
+}
+.section-container .section-heading {
+  margin-bottom: 16px;
+  color: var(--hig-gold);
+  border-bottom-color: rgba(242, 189, 101, .32);
+}
+
+@media (max-width: 768px) {
+  .section-container :is(.latest-grid, .archive-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .section-container :is(.latest-body, .archive-body) {
+    padding: 16px;
+  }
+}
+@media (max-width: 620px) {
+  .section-container :is(.latest-grid, .archive-grid) {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .section-container :is(.latest-img, .archive-img) {
+    height: 190px;
+  }
+}
+

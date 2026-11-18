@@ -1,0 +1,126 @@
+---
+interface Props {
+  href: string;
+  sector: 'history' | 'science' | 'space' | 'society';
+  title: string;
+  description: string;
+}
+
+const { href, sector, title, description } = Astro.props;
+---
+
+<a class="archive-hub-card archive-hub-card--subject" href={href} data-sector={sector}>
+  <span class="archive-hub-icon" aria-hidden="true"></span>
+  <h2>{title}</h2>
+  <p>{description}</p>
+</a>
+
+<style>
+  .archive-hub-card {
+    --archive-accent: #e3b568;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-width: 0;
+    min-height: clamp(230px, 25vh, 300px);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: clamp(20px, 1.8vw, 28px);
+    overflow: hidden;
+    color: inherit;
+    text-align: left;
+    text-decoration: none;
+    border: 1px solid rgba(180,195,215,.2);
+    border-radius: 12px;
+    background: rgba(5,12,20,.28);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: var(--hig-card-shadow, 0 12px 30px rgba(0,0,0,.52));
+    transition:
+      transform 420ms cubic-bezier(.2,.7,.25,1),
+      border-color 320ms ease,
+      box-shadow 420ms ease;
+  }
+
+  .archive-hub-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+      url('/images/home/history.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: transform 900ms cubic-bezier(.2,.65,.3,1);
+    pointer-events: none;
+  }
+
+  .archive-hub-card[data-sector="history"]::before {
+    background-image: linear-gradient(180deg, rgba(5,12,20,.24), rgba(5,12,20,.72)), url('/images/home/history.jpg');
+  }
+  .archive-hub-card[data-sector="science"]::before {
+    background-image: linear-gradient(180deg, rgba(5,12,20,.24), rgba(5,12,20,.72)), url('/images/home/science.jpg');
+  }
+  .archive-hub-card[data-sector="space"]::before {
+    background-image: linear-gradient(180deg, rgba(5,12,20,.24), rgba(5,12,20,.72)), url('/images/home/space.jpg');
+  }
+  .archive-hub-card[data-sector="society"]::before {
+    background-image: linear-gradient(180deg, rgba(5,12,20,.24), rgba(5,12,20,.72)), url('/images/home/society.jpg');
+  }
+
+  .archive-hub-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(227,181,104,.62);
+    box-shadow: 0 12px 28px rgba(0,0,0,.24);
+  }
+
+  .archive-hub-card:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 3px;
+  }
+
+  .archive-hub-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .archive-hub-icon {
+    display: none;
+  }
+
+  .archive-hub-card h2 {
+    margin: 0 0 8px;
+    color: var(--hig-gold, #e9b65a);
+    font-size: 1.3rem;
+    font-weight: 750;
+    letter-spacing: -.015em;
+    text-shadow: 0 2px 5px rgba(0,0,0,.95), 0 0 14px rgba(0,0,0,.7);
+  }
+
+  .archive-hub-card p {
+    max-width: 30ch;
+    margin: 0;
+    color: rgba(255,255,255,.97);
+    font-size: .9rem;
+    font-weight: 500;
+    line-height: 1.55;
+    text-shadow: 0 1px 4px rgba(0,0,0,.98), 0 0 10px rgba(0,0,0,.85);
+  }
+
+  @media (max-width: 620px) {
+    .archive-hub-card {
+      min-height: 220px;
+      padding: 18px;
+    }
+    .archive-hub-card h2 { font-size: 1.1rem; }
+    .archive-hub-card p { font-size: .8rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .archive-hub-card, .archive-hub-card::before { transition: none; }
+  }
+</style>

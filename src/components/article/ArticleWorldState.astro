@@ -1,0 +1,20 @@
+---
+import type { ArticleWorldStateProps } from '../../types/article';
+
+type Props = ArticleWorldStateProps;
+const { states = [] } = Astro.props;
+---
+
+{states.length > 0 && (
+  <section class="world-state-section">
+    <div class="section-header-line"><h2>World State</h2></div>
+    {states.map((state) => (
+      <article class="world-state-snapshot">
+        <div class="world-state-header">
+          <span class="world-state-date">{state.date}</span>
+          <h3 class="world-state-label">{state.label}</h3>
+        </div>
+      </article>
+    ))}
+  </section>
+)}

@@ -1,0 +1,28 @@
+---
+import type { ArticleShareProps } from '../../types/article';
+type Props = ArticleShareProps;
+
+const { title, pageUrl } = Astro.props;
+---
+<div class="share-section">
+  <button class="share-trigger hig-article-action hig-article-action--primary" id="shareTrigger" aria-label="Share">🔗 Share</button>
+  <div class="share-modal" id="shareModal" style="display: none;">
+    <div class="share-modal-backdrop" id="shareModalBackdrop"></div>
+    <div class="share-modal-content">
+      <div class="share-modal-header">
+        <h3>Share</h3>
+        <button class="share-modal-close" id="shareModalClose" aria-label="Close">✕</button>
+      </div>
+      <div class="share-modal-grid">
+        <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">𝕏</span><span class="share-option-label">X</span></a>
+        <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">f</span><span class="share-option-label">Facebook</span></a>
+        <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">in</span><span class="share-option-label">LinkedIn</span></a>
+        <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + pageUrl)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">💬</span><span class="share-option-label">WhatsApp</span></a>
+        <a href={`https://t.me/share/url?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">✈</span><span class="share-option-label">Telegram</span></a>
+        <a href={`https://www.reddit.com/submit?url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" class="share-option"><span class="share-option-icon">r/</span><span class="share-option-label">Reddit</span></a>
+        <a href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('Read this: ' + pageUrl)}`} class="share-option"><span class="share-option-icon">✉️</span><span class="share-option-label">Email</span></a>
+        <button class="share-option" id="shareCopyOption" data-url={pageUrl}><span class="share-option-icon">📋</span><span class="share-option-label">Copy Link</span></button>
+      </div>
+    </div>
+  </div>
+</div>

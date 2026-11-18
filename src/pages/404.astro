@@ -1,61 +1,134 @@
 ---
+import { ROUTES } from '../lib/routes';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectorCard from '../components/SectorCard.astro';
 ---
 
 <BaseLayout
   title="404 — Page Not Found | Had It Gone"
-  description="The path you were looking for doesn't exist. But maybe another one does."
+  description="The page you were looking for doesn't exist — but there are plenty of other timelines to explore."
   url="/404"
   type="website"
 >
-  <div style="max-width: 750px; margin: 0 auto; padding: 20px 30px 30px; text-align: center;">
-
-    <div style="font-size: 4.5rem; font-weight: 900; line-height: 1; margin-bottom: 10px; background: linear-gradient(135deg, var(--neon-blue), var(--accent-pink)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-      404
-    </div>
-
-    <h1 style="font-size: 1.5rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-main);">
-      This path was never taken.
-    </h1>
-
-    <p style="font-size: 0.95rem; color: var(--text-muted); margin: 0 0 20px 0; line-height: 1.55;">
-      The page you were looking for doesn't exist — but there are plenty of other timelines to explore.
-    </p>
-
-    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px;">
-      <a href="/" class="explore-btn" style="font-size: 0.85rem; padding: 12px 26px;">
-        ← Back to Portal
-      </a>
-    </div>
-
-    <div style="padding-top: 20px; border-top: 2px solid var(--border);">
-      <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0 0 14px 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">
-        Or try one of these
+  <main class="section-container not-found-page">
+    <section class="not-found-intro" aria-labelledby="not-found-title">
+      <PageHeader title="This path was" highlight="never taken" showBack={false} />
+      <p class="not-found-description">
+        The page you were looking for doesn't exist — but there are plenty of other timelines to explore.
       </p>
+      <nav class="not-found-actions" aria-label="404 navigation">
+        <a href="/" class="not-found-primary">← Back to Portal</a>
+        <a href={ROUTES.content} class="not-found-secondary">Browse all articles →</a>
+      </nav>
+    </section>
 
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-        <a href="/history" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
-          <div class="subcard-body">
-            <div class="subcard-title" style="font-size: 0.85rem;">🏛️ History</div>
-          </div>
-        </a>
-        <a href="/science" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
-          <div class="subcard-body">
-            <div class="subcard-title" style="font-size: 0.85rem;">🧪 Science</div>
-          </div>
-        </a>
-        <a href="/space" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
-          <div class="subcard-body">
-            <div class="subcard-title" style="font-size: 0.85rem;">🌌 Space</div>
-          </div>
-        </a>
-        <a href="/society" class="subcard" style="justify-content: center; text-align: center; padding: 14px 8px;">
-          <div class="subcard-body">
-            <div class="subcard-title" style="font-size: 0.85rem;">🌍 Society</div>
-          </div>
-        </a>
+    <section class="not-found-explore" aria-labelledby="not-found-explore-title">
+      <h2 id="not-found-explore-title">Or explore another path</h2>
+      <div class="not-found-grid">
+        <SectorCard href={ROUTES.history} sector="history" title="History" description="Turning points in the world that was" />
+        <SectorCard href={ROUTES.science} sector="science" title="Science" description="Discoveries that could reshape our reality" />
+        <SectorCard href={ROUTES.space} sector="space" title="Space" description="Worlds beyond the limits of our imagination" />
+        <SectorCard href={ROUTES.society} sector="society" title="Society" description="Ideas, systems and the worlds we build" />
       </div>
-    </div>
-
-  </div>
+    </section>
+  </main>
 </BaseLayout>
+
+<style>
+  .not-found-page {
+    color: #f1eee8;
+  }
+
+  .not-found-intro {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+
+  .not-found-intro :global(.page-header),
+  .not-found-intro :global(.page-title-area) {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+
+
+  .not-found-description {
+    margin: var(--hig-page-content-gap) auto;
+    color: #d1d9e3;
+    font-size: clamp(1rem, 1.2vw, 1.12rem);
+    line-height: 1.5;
+  }
+
+  .not-found-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--hig-page-content-gap);
+    margin-bottom: var(--hig-page-section-gap);
+  }
+
+  .not-found-primary,
+  .not-found-secondary {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 18px;
+    border: 1px solid rgba(227,181,104,.5);
+    border-radius: 9px;
+    font-size: .92rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform .2s ease, background .2s ease, border-color .2s ease;
+  }
+
+  .not-found-primary {
+    background: #e9b65a;
+    color: #081522;
+  }
+
+  .not-found-secondary {
+    background: rgba(5,12,20,.48);
+    color: #f1eee8;
+  }
+
+  .not-found-primary:hover,
+  .not-found-secondary:hover {
+    transform: translateY(-2px);
+    border-color: #f2c979;
+  }
+
+  .not-found-explore {
+    padding-top: var(--hig-page-content-gap);
+    border-top: 1px solid rgba(205,218,232,.24);
+  }
+
+  .not-found-explore > h2 {
+    margin: 0 0 var(--hig-page-content-gap);
+    color: #e9b65a;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .not-found-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--hig-card-grid-gap);
+  }
+
+  @media (max-width: 1000px) {
+    .not-found-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 620px) {
+        .not-found-actions { flex-direction: column; margin-bottom: var(--hig-page-section-gap); }
+    .not-found-actions a { width: 100%; }
+    .not-found-grid { grid-template-columns: 1fr; gap: 12px; }
+  }
+</style>

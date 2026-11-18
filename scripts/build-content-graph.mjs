@@ -31,6 +31,7 @@ import {
 
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
+import { normalizeTime } from '../src/lib/timeline/time.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -77,7 +78,8 @@ function extractFrontmatter(content) {
   return match ? match[1] : null;
 }
 
-function walk(dir) {
+
+function walk(dir, extensions = ['.md']) {
   if (!existsSync(dir)) return [];
 
   const files = [];
@@ -87,8 +89,10 @@ function walk(dir) {
     const stat = statSync(fullPath);
 
     if (stat.isDirectory()) {
-      files.push(...walk(fullPath));
-    } else if (extname(entry).toLowerCase() === '.md') {
+      files.push(...walk(fullPath, extensions));
+    } else if (
+      extensions.includes(extname(entry).toLowerCase())
+    ) {
       files.push(fullPath);
     }
   }
@@ -235,6 +239,7 @@ function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
+
 function humanizeNodeId(id) {
   return String(id ?? '')
     .replace(/^article:[^/]+\//, '')
@@ -264,7 +269,23 @@ function resolveRelatedArticle(reference) {
   const parts = normalized.split('/');
 
   if (parts.length === 2 && SECTORS.includes(parts[0])) {
-    return articleNodeId(parts[0], parts[1]);
+    const [sector, articleReference] = parts;
+
+    // Sector-qualified references use the public article slug (filename),
+    // while graph nodes use the stable Article ID from frontmatter.
+    const matches = articles.filter(
+      item =>
+        item.sector === sector &&
+        (
+          item.id === articleReference ||
+          basename(item.path, extname(item.path)) === articleReference
+        )
+    );
+
+    // Do not guess if a reference matches more than one article.
+    if (matches.length !== 1) return null;
+
+    return matches[0].graphId;
   }
 
   if (parts.length !== 1) return null;
@@ -276,10 +297,7 @@ function resolveRelatedArticle(reference) {
   // A bare article ID is only resolvable when unique.
   if (matches.length !== 1) return null;
 
-  return articleNodeId(
-    matches[0].sector,
-    matches[0].id
-  );
+  return matches[0].graphId;
 }
 
 function loadEntityRegistry() {
@@ -508,9 +526,10 @@ function loadWorldStates() {
     return [];
   }
 
-  const files = walk(WORLD_STATES_DIR).filter(file =>
-    ['.yaml', '.yml', '.json'].includes(extname(file).toLowerCase())
-  );
+  const files = walk(
+  WORLD_STATES_DIR,
+  ['.yaml', '.yml', '.json']
+);
 
   const states = [];
 
@@ -556,6 +575,8 @@ function buildWorldStateNodes() {
     }
 
     const id = String(state.id);
+    const worldId = state.worldId ?? state.world ?? null;
+    const divergenceId = state.divergenceId ?? null;
 
     addNode({
       id,
@@ -566,20 +587,63 @@ function buildWorldStateNodes() {
         state.title,
         humanizeNodeId(id)
       ),
-      world: state.world ?? null,
-      time: state.time ?? state.date ?? null,
+      world: worldId,
+      divergence: divergenceId,
+      time: normalizeTime(state.time ?? state.date),
       description: state.description ?? null,
+      status: state.status ?? null,
+      variables: state.variables ?? [],
+      causedBy: Array.isArray(state.causedBy)
+        ? state.causedBy
+        : [],
       source: state._source,
     });
 
-    const worldStateWorld = state.world;
-
-    if (typeof worldStateWorld === 'string' && worldStateWorld) {
+    if (typeof worldId === 'string' && worldId) {
       addEdge({
-        id: `world-state-world:${id}:${worldStateWorld}`,
-        type: 'BELONGS_TO_WORLD',
+        id: `world-state-world:${id}:${worldId}`,
+        type: 'STATE_OF_WORLD',
         from: id,
-        to: worldStateWorld,
+        to: worldId,
+      });
+    }
+
+    if (
+      typeof divergenceId === 'string' &&
+      divergenceId
+    ) {
+      addEdge({
+        id: `world-state-divergence:${id}:${divergenceId}`,
+        type: 'STATE_OF_DIVERGENCE',
+        from: id,
+        to: divergenceId,
+      });
+    }
+  
+    const causedBy = Array.isArray(state.causedBy)
+      ? state.causedBy
+      : state.causedBy
+        ? [state.causedBy]
+        : [];
+
+    for (const cause of causedBy) {
+      const eventId =
+        typeof cause === 'string'
+          ? cause
+          : cause?.id;
+
+      if (typeof eventId !== 'string' || !eventId) {
+        addWarning(
+          `Invalid causedBy reference in world state "${id}".`
+        );
+        continue;
+      }
+
+      addEdge({
+        id: `world-state-caused-by:${id}:${eventId}`,
+        type: 'STATE_CAUSED_BY',
+        from: id,
+        to: eventId,
       });
     }
   }
@@ -616,6 +680,7 @@ function loadWorldTransitions() {
   }
 }
 
+
 function buildWorldTransitionNodes() {
   for (const transition of loadWorldTransitions()) {
     if (!transition?.id) {
@@ -624,36 +689,56 @@ function buildWorldTransitionNodes() {
     }
 
     const id = String(transition.id);
+    const fromStateId =
+      transition.fromStateId ?? transition.from ?? null;
+    const toStateId =
+      transition.toStateId ?? transition.to ?? null;
+    const eventId = transition.eventId ?? null;
 
     addNode({
       id,
       kind: 'world-transition',
       type: 'WORLD_TRANSITION',
       label: resolveNodeLabel(
+        transition.label,
         transition.name,
         transition.title,
         humanizeNodeId(id)
       ),
-      from: transition.from ?? null,
-      to: transition.to ?? null,
+      world: transition.worldId ?? null,
+      fromStateId,
+      toStateId,
+      eventId,
+      changes: transition.changes ?? [],
+      time: normalizeTime(transition.time),
       description: transition.description ?? null,
+      source: 'src/data/world-transitions.yaml',
     });
 
-    if (typeof transition.from === 'string' && transition.from) {
+    if (typeof fromStateId === 'string' && fromStateId) {
       addEdge({
-        id: `transition-from:${id}:${transition.from}`,
-        type: 'TRANSITION_FROM',
+        id: `transition-from-state:${id}:${fromStateId}`,
+        type: 'TRANSITION_FROM_STATE',
         from: id,
-        to: transition.from,
+        to: fromStateId,
       });
     }
 
-    if (typeof transition.to === 'string' && transition.to) {
+    if (typeof toStateId === 'string' && toStateId) {
       addEdge({
-        id: `transition-to:${id}:${transition.to}`,
-        type: 'TRANSITION_TO',
+        id: `transition-to-state:${id}:${toStateId}`,
+        type: 'TRANSITION_TO_STATE',
         from: id,
-        to: transition.to,
+        to: toStateId,
+      });
+    }
+
+    if (typeof eventId === 'string' && eventId) {
+      addEdge({
+        id: `transition-triggered-by:${id}:${eventId}`,
+        type: 'TRANSITION_TRIGGERED_BY',
+        from: id,
+        to: eventId,
       });
     }
   }
@@ -686,7 +771,7 @@ function buildTimelineEventNodes() {
           event.label,
           humanizeNodeId(id)
         ),
-        time: event.date ?? event.time ?? null,
+        time: normalizeTime(event.date ?? event.time),
         description: event.description ?? null,
         article: article.graphId,
       });
@@ -883,6 +968,214 @@ function validateEdges() {
   }
 }
 
+
+function reportAutomaticTransitionCandidates() {
+  const graphNodes = [...nodes.values()];
+
+  const states = graphNodes.filter(
+    node => node.kind === 'world-state'
+  );
+
+  const events = new Map(
+    graphNodes
+      .filter(node => node.kind === 'timeline-event')
+      .map(node => [node.id, node])
+  );
+
+  const existingTargets = new Set(
+    graphNodes
+      .filter(node => node.kind === 'world-transition')
+      .map(node => node.toStateId)
+      .filter(Boolean)
+  );
+
+  const categories = {
+    chronological: [],
+    review: [],
+    explicit: [],
+  };
+
+  const skipped = [];
+
+  for (const target of states) {
+    if (existingTargets.has(target.id)) {
+      categories.explicit.push({
+        state: target.id,
+        reason: 'Already has an explicit transition.',
+      });
+      continue;
+    }
+
+    const causes = Array.isArray(target.causedBy)
+      ? target.causedBy
+      : [];
+
+    if (causes.length !== 1) {
+      skipped.push({
+        state: target.id,
+        reason: causes.length === 0
+          ? 'No explicit cause.'
+          : 'Multiple causes require review.',
+      });
+      continue;
+    }
+
+    const eventId = causes[0];
+
+    if (
+      typeof eventId !== 'string' ||
+      !events.has(eventId)
+    ) {
+      skipped.push({
+        state: target.id,
+        reason: 'Cause does not resolve to a timeline event.',
+      });
+      continue;
+    }
+
+    const targetYear = Number.isFinite(target.time?.year)
+      ? target.time.year
+      : Number.isFinite(target.time?.startYear) &&
+          Number.isFinite(target.time?.endYear) &&
+          target.time.startYear === target.time.endYear
+        ? target.time.startYear
+        : null;
+
+    if (!Number.isFinite(targetYear)) {
+      skipped.push({
+        state: target.id,
+        reason: 'Target state has no numeric year.',
+      });
+      continue;
+    }
+
+    const previousStates = states.filter(state =>
+      state.id !== target.id &&
+      state.world === target.world &&
+      state.divergence === target.divergence &&
+      Number.isFinite(state.time?.year ?? state.time?.endYear) &&
+      (state.time?.year ?? state.time.endYear) < targetYear
+    );
+
+    if (previousStates.length === 0) {
+      skipped.push({
+        state: target.id,
+        reason: 'No earlier state in the same world and divergence.',
+      });
+      continue;
+    }
+
+    const latestPreviousYear = Math.max(
+      ...previousStates.map(
+        state => state.time?.year ?? state.time.endYear
+      )
+    );
+
+    const nearestStates = previousStates.filter(
+      state => (state.time?.year ?? state.time?.endYear) === latestPreviousYear
+    );
+
+    if (nearestStates.length !== 1) {
+      skipped.push({
+        state: target.id,
+        reason: 'Multiple equally near previous states.',
+      });
+      continue;
+    }
+
+    const source = nearestStates[0];
+    const event = events.get(eventId);
+
+    const sourceVariables = new Map(
+      (source.variables ?? []).map(variable => [
+        variable.key,
+        variable.value,
+      ])
+    );
+
+    const targetVariables = new Map(
+      (target.variables ?? []).map(variable => [
+        variable.key,
+        variable.value,
+      ])
+    );
+
+    const sharedVariableKeys = [...sourceVariables.keys()]
+      .filter(key => targetVariables.has(key));
+
+    const changedVariables = sharedVariableKeys.filter(
+      key =>
+        JSON.stringify(sourceVariables.get(key)) !==
+        JSON.stringify(targetVariables.get(key))
+    );
+
+    const eventYear = event.time?.year;
+    const eventYearKnown = Number.isFinite(eventYear);
+
+    const eventMatchesTargetYear =
+      eventYearKnown && eventYear === targetYear;
+
+    const candidate = {
+      fromStateId: source.id,
+      toStateId: target.id,
+      eventId,
+      yearFrom: source.time.year,
+      yearTo: targetYear,
+      eventTime: event.time ?? null,
+      sharedVariables: sharedVariableKeys,
+      changedVariables,
+    };
+
+    if (
+      sharedVariableKeys.length > 0 &&
+      changedVariables.length > 0 &&
+      eventMatchesTargetYear
+    ) {
+      categories.explicit.push({
+        ...candidate,
+        reason: 'Shared variables changed and event year matches target year.',
+      });
+    } else {
+      categories.chronological.push({
+        ...candidate,
+        reason: !eventMatchesTargetYear
+          ? 'Event year does not exactly match target year.'
+          : 'Insufficient shared variable evidence for a state transition.',
+      });
+    }
+  }
+
+  console.log('');
+  console.log('Automatic World Transition Analysis');
+  console.log('-----------------------------------');
+  console.log(`States analysed: ${states.length}`);
+  console.log(`Chronological candidates: ${categories.chronological.length}`);
+  console.log(`Explicit transition records: ${categories.explicit.length}`);
+  console.log(`Skipped for editorial review: ${skipped.length}`);
+
+  for (const [category, items] of Object.entries(categories)) {
+    console.log('');
+    console.log(`${category.toUpperCase()}:`);
+
+    for (const item of items) {
+      console.log(
+        `- ${item.fromStateId ?? item.state} -> ${item.toStateId ?? ''}` +
+        ` | ${item.eventId ?? ''}` +
+        ` | ${item.reason}`
+      );
+    }
+  }
+
+  console.log('');
+  console.log('SKIPPED:');
+
+  for (const item of skipped) {
+    console.log(`- ${item.state}: ${item.reason}`);
+  }
+
+  return { categories, skipped };
+}
+
 function main() {
   if (!existsSync(CONTENT_ROOT)) {
     addError(
@@ -899,7 +1192,9 @@ function main() {
   buildArticleRelationshipEdges();
   buildEntityNodes();
 
-  validateEdges();
+  reportAutomaticTransitionCandidates();
+
+  validateEdges();  
 
   const graphNodes = [...nodes.values()];
 

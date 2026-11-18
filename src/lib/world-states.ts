@@ -9,9 +9,12 @@ const worldStatesDir = join(
   'world-states'
 );
 
-type WorldState = {
+export type WorldState = {
   id: string;
+  name: string;
   worldId: string;
+  status?: string;
+  divergenceId?: string;
   time: {
     year: number;
     label: string;

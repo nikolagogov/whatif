@@ -1,0 +1,425 @@
+/* Sector cards, shared grids, and search presentation. Extracted from the former global.css; source order preserved. */
+/* =========================================
+   SECTOR PAGE — VISUAL POLISH
+   Dark cards, gold accents, softer borders
+   ========================================= */
+
+/* Section headings */
+.section-container[data-sector] .section-heading{
+    color: #f2bd65;
+    border-bottom-color: rgba(242, 189, 101, 0.32);
+}
+
+/* Latest cards */
+.section-container[data-sector] .latest-card,
+.section-container[data-sector] .archive-card{
+    background: var(--hig-surface-primary);
+    border: 1px solid var(--hig-surface-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Hover */
+.section-container[data-sector] .latest-card:hover,
+.section-container[data-sector] .archive-card:hover{
+    transform: translateY(-4px);
+    border-color: #e9b75c;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.38);
+}
+
+/* Image areas */
+.section-container[data-sector] .latest-img{
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+}
+
+.section-container[data-sector] .archive-img{
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Text areas — clean editorial card treatment */
+.section-container[data-sector] .latest-body,
+.section-container[data-sector] .archive-body{
+    background: transparent;
+    padding: 18px 20px 22px;
+}
+
+/* Article titles */
+.section-container[data-sector] .latest-body h3,
+.section-container[data-sector] .archive-body h4{
+    color: #f5f7fa;
+    transition: color 0.2s ease;
+}
+
+.section-container[data-sector] .latest-card:hover .latest-body h3,
+.section-container[data-sector] .archive-card:hover .archive-body h4{
+    color: #f2bd65;
+}
+
+/* Article descriptions */
+.section-container[data-sector] .latest-body p,
+.section-container[data-sector] .archive-body p{
+    color: #b9c8d8;
+}
+
+/* Explore tiles — lightly translucent, preserving the background artwork */
+.section-container[data-sector] .explore-tile{
+    background: var(--hig-surface-secondary);
+    border: 1px solid var(--hig-surface-border);
+    border-radius: 12px;
+    box-shadow: none;
+    backdrop-filter: blur(2px);
+}
+
+.section-container[data-sector] .explore-tile:hover{
+    background: var(--hig-surface-inset);
+    border-color: #e9b75c;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+/* Explore titles */
+.section-container[data-sector] .explore-title{
+    color: #e9b65a;
+}
+
+.section-container[data-sector] .explore-tile:hover .explore-title{
+    color: #f2bd65;
+}
+
+/* Explore descriptions */
+.section-container[data-sector] .explore-subtitle{
+    color: #b9c8d8;
+}
+
+/* Back to Homepage — understated editorial link */
+
+
+
+
+.section-container[data-sector] .back-arrow{
+    color: #e9b65a;
+}
+
+/* Mobile */
+@media (max-width: 620px) {
+    .section-container[data-sector] .latest-img{
+        height: 190px;
+    }
+
+    .section-container[data-sector] .latest-body,
+.section-container[data-sector] .archive-body{
+        padding: 16px;
+    }
+}
+/* =========================================
+   SECTOR PAGE — CARD LAYOUT POLISH
+   ========================================= */
+
+/* Consistent spacing between sections */
+.section-container[data-sector] .section-block{
+    margin-top: 34px;
+    margin-bottom: 0;
+}
+
+/* Latest — three equal cards */
+.section-container[data-sector] .latest-grid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* Explore — three equal columns */
+.section-container[data-sector] .explore-grid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* Archive — three equal columns */
+.section-container[data-sector] .archive-grid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* Cards should not overflow their grid cell */
+.section-container[data-sector] .latest-card,
+.section-container[data-sector] .archive-card,
+.section-container[data-sector] .explore-tile{
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Keep article cards visually consistent */
+.section-container[data-sector] .latest-card,
+.section-container[data-sector] .archive-card{
+    height: 100%;
+}
+
+/* Explore cards: balanced content */
+.section-container[data-sector] .explore-tile{
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+    .section-container[data-sector] .latest-grid,
+.section-container[data-sector] .explore-grid,
+.section-container[data-sector] .archive-grid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 620px) {
+    .section-container[data-sector] .latest-grid,
+.section-container[data-sector] .explore-grid,
+.section-container[data-sector] .archive-grid{
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .section-container[data-sector] .section-block{
+        margin-top: 26px;
+    }
+
+    .section-container[data-sector] .explore-tile{
+        min-height: 0;
+    }
+}
+/* =========================================
+   SECTOR PAGE — CARD COLORS
+   ========================================= */
+
+/* Latest и Archive — тъмносиня долна част */
+.section-container[data-sector] .latest-body,
+.section-container[data-sector] .archive-body{
+    background: var(--hig-surface-primary);
+}
+
+/* Explore — същият тъмносин фон */
+.section-container[data-sector] .explore-tile{
+    background: var(--hig-surface-primary);
+    border: 1px solid var(--hig-surface-border);
+    border-radius: 12px;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+/* Explore — hover */
+.section-container[data-sector] .explore-tile:hover{
+    background: var(--hig-surface-secondary);
+    border-color: #e9b75c;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+/* Заглавия на Latest и Archive */
+.section-container[data-sector] .latest-body h3,
+.section-container[data-sector] .archive-body h4{
+    color: #f5f7fa;
+    transition: color 0.2s ease;
+}
+
+/* Заглавия при hover */
+.section-container[data-sector] .latest-card:hover .latest-body h3,
+.section-container[data-sector] .archive-card:hover .archive-body h4{
+    color: #f2bd65;
+}
+
+/* Описания на Latest и Archive */
+.section-container[data-sector] .latest-body p,
+.section-container[data-sector] .archive-body p{
+    color: #b9c8d8;
+}
+
+/* Explore заглавия */
+.section-container[data-sector] .explore-title{
+    color: #e9b65a;
+}
+
+/* Explore заглавия при hover */
+.section-container[data-sector] .explore-tile:hover .explore-title{
+    color: #f2bd65;
+}
+
+/* Explore описания */
+.section-container[data-sector] .explore-subtitle{
+    color: #b9c8d8;
+}
+/* Back to Homepage — match sector title typography */
+
+
+
+
+.section-container[data-sector] .back-arrow{
+    font-family: var(--font-serif);
+    color: var(--accent-gold, #e9b65a);
+}
+/* =========================================
+   SECTOR PAGE — FINAL SPACING & ARCHIVE READABILITY
+   ========================================= */
+
+/* Keep section-to-section rhythm; the first section follows PageHeader's token gap. */
+.section-container[data-sector] .section-block{
+    margin-top: 54px;
+}
+.section-container[data-sector] > .page-title-area + .section-block{
+    margin-top: 0 !important;
+}
+
+/* Archive text readability */
+.section-container[data-sector] .archive-body{
+    padding: 20px;
+}
+
+.section-container[data-sector] .archive-body h4{
+    line-height: 1.35;
+    margin-bottom: 10px;
+}
+
+.section-container[data-sector] .archive-body p{
+    line-height: 1.6;
+}
+/* FIX: Latest, Continue Reading and Bookmarks icons */
+
+.archive-hub-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.archive-hub-icon svg{
+  display: block;
+  width: 24px;
+  height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+  background: transparent !important;
+  fill: none;
+  color: currentColor;
+  overflow: visible;
+}
+
+/* Prevent oversized SVGs from affecting card layout */
+
+.archive-hub-icon svg *{
+  vector-effect: non-scaling-stroke;
+}
+.hig-nav-icon{
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+  flex-shrink: 0;
+}
+/* Latest, Bookmarks, and Continue Reading use shared PageHeader rules. */
+/* Back to Homepage */
+
+
+/* Back to Homepage — match sector page link */
+.archive-page .archive-back-link{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px auto 0;
+    padding: 0;
+
+    color: #e9b65a;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    font-family: "Lora", serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0;
+    text-transform: none;
+
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.archive-page .archive-back-link:hover{
+    color: #f2bd65;
+    transform: none;
+    box-shadow: none;
+}
+
+.archive-page .archive-back-link .back-arrow{
+    color: #e9b65a;
+}
+
+@media (max-width: 768px) {
+    .archive-page .archive-back-link{
+        font-size: 1rem;
+    }
+}
+.archive-page .section-block[data-role="archive"]{
+    margin-top: 0;
+}
+/* Archive pages — match sector page cards */
+
+.archive-page .archive-card{
+    background: var(--hig-surface-primary);
+    border: 1px solid var(--hig-surface-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.archive-page .archive-card:hover{
+    transform: translateY(-4px);
+    border-color: #e9b75c;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.38);
+}
+
+.archive-page .archive-img{
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+}
+
+.archive-page .archive-body{
+    background: transparent;
+    padding: 18px 20px 22px;
+}
+
+.archive-page .archive-body h4{
+    color: #f5f7fa;
+}
+
+.archive-page .archive-body p{
+    color: #b9c8d8;
+}
+
+.archive-page .archive-card:hover .archive-body h4{
+    color: #f2bd65;
+}
+/* Back to Homepage — global navigation style */

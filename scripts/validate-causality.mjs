@@ -40,7 +40,26 @@ function isNonEmptyString(value) {
  *
  * Returns null when the date cannot be interpreted reliably.
  */
+
+
 function parseHistoricalDate(value) {
+  // Accept normalized time objects from the Content Graph.
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const start = value.startYear;
+    const end = value.endYear ?? value.startYear;
+
+    if (
+      Number.isFinite(start) &&
+      Number.isFinite(end) &&
+      start <= end
+    ) {
+      return { start, end };
+    }
+
+    // Fall back to parsing the original label if available.
+    value = value.label;
+  }
+
   if (typeof value !== "string" && typeof value !== "number") {
     return null;
   }
@@ -49,7 +68,7 @@ function parseHistoricalDate(value) {
 
   if (!text) return null;
 
-  // Exact year: 48 BC, 476 AD, 476 CE, 1200
+  // Exact year: 323 BC, 476 AD, 476 CE, 1200
   const exactYear = text.match(
     /^(\d{1,4})\s*(BC|BCE|AD|CE)?$/i
   );
@@ -90,7 +109,32 @@ function parseHistoricalDate(value) {
     };
   }
 
-  // Explicit year interval: 1150-1200 or 1150–1200
+  // Century range: 3rd–2nd centuries BC
+  const centuryRange = text.match(
+    /^(\d{1,2})(?:st|nd|rd|th)?\s*[-–—]\s*(\d{1,2})(?:st|nd|rd|th)?\s+centuries(?:\s+(BC|BCE|AD|CE))?$/i
+  );
+
+  if (centuryRange) {
+    const first = Number(centuryRange[1]);
+    const second = Number(centuryRange[2]);
+    const era = (centuryRange[3] ?? "CE").toUpperCase();
+
+    if (first < 1 || second < 1) return null;
+
+    if (era === "BC" || era === "BCE") {
+      return {
+        start: 1 - Math.max(first, second) * 100,
+        end: 1 - (Math.min(first, second) - 1) * 100,
+      };
+    }
+
+    return {
+      start: (Math.min(first, second) - 1) * 100 + 1,
+      end: Math.max(first, second) * 100,
+    };
+  }
+
+  // Year interval: 1150-1200 or 1150–1200
   const interval = text.match(
     /^(\d{1,4})\s*[-–—]\s*(\d{1,4})$/
   );
@@ -104,8 +148,41 @@ function parseHistoricalDate(value) {
     return { start, end };
   }
 
-  // Broad periods such as "Medieval period" are intentionally
-  // not converted into artificial dates.
+  // BC/BCE year interval: 321–320 BC
+  const bcInterval = text.match(
+    /^(\d{1,4})\s*[-–—]\s*(\d{1,4})\s*(BC|BCE)$/i
+  );
+
+  if (bcInterval) {
+    const first = Number(bcInterval[1]);
+    const second = Number(bcInterval[2]);
+
+    if (first < 1 || second < 1) return null;
+
+    return {
+      start: 1 - Math.max(first, second),
+      end: 1 - Math.min(first, second),
+    };
+  }
+
+  // BC/BCE year interval: 321 BC – 320 BC
+  const repeatedEraInterval = text.match(
+    /^(\d{1,4})\s*(BC|BCE)\s*[-–—]\s*(\d{1,4})\s*(BC|BCE)$/i
+  );
+
+  if (repeatedEraInterval) {
+    const first = Number(repeatedEraInterval[1]);
+    const second = Number(repeatedEraInterval[3]);
+
+    if (first < 1 || second < 1) return null;
+
+    return {
+      start: 1 - Math.max(first, second),
+      end: 1 - Math.min(first, second),
+    };
+  }
+
+  // Broad periods such as "Medieval period" remain unsupported.
   return null;
 }
 
@@ -347,8 +424,8 @@ function validate() {
 
     if (!source || !target) continue;
 
-    const sourceDate = parseHistoricalDate(source.date);
-    const targetDate = parseHistoricalDate(target.date);
+    const sourceDate = parseHistoricalDate(source.time ?? source.date);
+    const targetDate = parseHistoricalDate(target.time ?? target.date);
 
     if (!sourceDate || !targetDate) {
       chronologySkipped += 1;

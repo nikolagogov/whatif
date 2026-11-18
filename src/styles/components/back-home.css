@@ -1,0 +1,42 @@
+/* Back To Homepage component. */
+/* Back To Homepage — single source of truth. Use the shared component only. */
+.hig-back-home {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  width: fit-content !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #f5f7fa !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-family: 'Lora', serif !important;
+  font-size: 1rem !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  text-decoration: none !important;
+  transform: none !important;
+  transition: color 0.2s ease !important;
+}
+.hig-back-home__arrow,
+.hig-back-home__highlight {
+  color: #e9b65a !important;
+}
+.hig-back-home:hover {
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.hig-back-home:hover .hig-back-home__highlight {
+  color: #f2bd65 !important;
+}
+
+

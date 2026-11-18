@@ -1,0 +1,1382 @@
+---
+import { articleRoute, worldRoute, ROUTES } from '../lib/routes';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import contentGraph from '../data/content-graph.json';
+
+const nodes = contentGraph.nodes;
+const edges = contentGraph.edges.filter((edge) =>
+  ['causes', 'results_in'].includes(edge.type)
+);
+const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+
+function articleUrl(articleId: string | undefined) {
+  const article = nodeMap.get(articleId ?? '');
+  if (!article?.sector || !article?.path) return null;
+  return articleRoute(article.sector, article.path.split('/').pop()?.replace(/\.md$/, '') ?? '');
+}
+
+function imageFor(article: any, node: any, index: number) {
+  const slug =
+    article?.path?.split('/').pop()?.replace(/\.md$/, '') ?? '';
+
+  const sector = article?.sector ?? 'history';
+  const base = `/images/articles/${sector}/${slug}/${slug}`;
+
+  const variants = [
+    '',
+    '-world',
+    '-map',
+    '-portrait',
+    '-city',
+    '-battle',
+    '-harbour',
+    '-ships',
+    '-scholars',
+  ];
+
+  const ext = slug === 'egypt-1798' ? '.png' : '.jpg';
+  const variant = variants[index % variants.length];
+
+  return `${base}${variant}${ext}`;
+}
+
+const articleNodes = nodes.filter((node) => node.kind === 'article');
+
+const chains = articleNodes.map((article) => {
+  const articleEdges = edges.filter((edge) => edge.article === article.id);
+  const ids = [...new Set(articleEdges.flatMap((edge) => [edge.from, edge.to]))];
+
+  const relevantNodes = ids.map((id, index) => {
+    const node = nodeMap.get(id);
+    if (!node) return null;
+
+    return {
+      id: node.id,
+      label: node.label ?? node.title ?? node.id,
+      kind: node.kind,
+      time:
+        ('time' in node ? node.time : undefined) ??
+        ('date' in node ? node.date : undefined) ??
+        '',
+      description:
+        ('description' in node ? node.description : undefined) ??
+        ('summary' in node ? node.summary : undefined) ??
+        '',
+      url:
+        node.kind === 'world'
+          ? worldRoute(node.id)
+          : articleUrl(article.id),
+      image: imageFor(article, node, index),
+      articleImage: imageFor(article, node, 0),
+    };
+  }).filter(Boolean);
+
+  return {
+    id: article.id,
+    title: article.label,
+    url: articleUrl(article.id),
+    image: imageFor(article, article, 0),
+    nodes: relevantNodes,
+    edges: articleEdges.map((edge) => ({
+      id: edge.id,
+      from: edge.from,
+      to: edge.to,
+      type: edge.type,
+      label: edge.label ?? '',
+    })),
+  };
+}).filter((chain) => chain.edges.length > 0);
+---
+
+<BaseLayout
+  title="Causal Pathways | Had It Gone"
+  description="Explore alternate history visually through documented cause-and-effect pathways."
+>
+    <PageHeader title="Causal Pathways" />
+    <main class="visual-world" data-chains={JSON.stringify(chains)}>
+    <nav class="hig-mode-nav" aria-label="World Graph modes">
+      <a class="hig-mode-link" href={ROUTES.worldGraph}>Explore</a>
+      <a class="hig-mode-link active" href={ROUTES.causality} aria-current="page">Causality</a>
+      <a class="hig-mode-link" href={ROUTES.compare}>Compare</a>
+    </nav>
+
+    <div class="world-backdrop" aria-hidden="true"></div>
+
+    <nav
+      class="scenario-rail"
+      id="scenarioRail"
+      aria-label="Choose a history"
+    ></nav>
+
+    <div class="scene-tools">
+      <button id="backStep" aria-label="Back" title="Back">↶</button>
+      <button id="resetScene" aria-label="Reset exploration" title="Reset">⟲</button>
+    </div>
+
+    <section class="story-stage" aria-label="Interactive causal story">
+      <svg class="connections" id="connections" aria-hidden="true"></svg>
+<div class="scene-nodes" id="sceneNodes"></div>
+<svg class="connection-labels" id="connectionLabels" aria-hidden="true"></svg>
+
+      <div class="focus-caption" id="focusCaption" aria-live="polite">
+        <span class="caption-dot"></span>
+        <span class="caption-copy">
+          <strong id="focusTitle"></strong>
+          <small id="focusDescription"></small>
+        </span>
+        <span id="focusTime"></span>
+      </div>
+
+      <div class="scene-empty" id="sceneEmpty" hidden>
+        No recorded causal pathway
+      </div>
+    </section>
+
+    
+<div class="bottom-controls">
+  <a id="openStory" href="#" aria-label="Open story" title="Open story">↗</a>
+</div>
+
+  </main>
+</BaseLayout>
+
+<script>
+  type N = {
+    id: string;
+    label: string;
+    kind: string;
+    time: string;
+    description: string;
+    url: string | null;
+    image: string;
+    articleImage: string;
+  };
+
+  type E = {
+    id: string;
+    from: string;
+    to: string;
+    type: string;
+    label: string;
+  };
+
+  type C = {
+    id: string;
+    title: string;
+    url: string | null;
+    image: string;
+    nodes: N[];
+    edges: E[];
+  };
+
+  const root = document.querySelector<HTMLElement>('.visual-world');
+  const backdrop = document.querySelector<HTMLElement>('.world-backdrop');
+  const chains = JSON.parse(root?.dataset.chains ?? '[]') as C[];
+  const rail = document.querySelector<HTMLElement>('#scenarioRail');
+  const stage = document.querySelector<HTMLElement>('.story-stage');
+  const nodesEl = document.querySelector<HTMLElement>('#sceneNodes');
+  const svg = document.querySelector<SVGSVGElement>('#connections');
+  const labelsSvg = document.querySelector<SVGSVGElement>('#connectionLabels');
+  const titleEl = document.querySelector<HTMLElement>('#focusTitle');
+  const timeEl = document.querySelector<HTMLElement>('#focusTime');
+  const descriptionEl = document.querySelector<HTMLElement>('#focusDescription');
+  const empty = document.querySelector<HTMLElement>('#sceneEmpty');
+  const progress = document.querySelector<HTMLElement>('#progressFill');
+  const openStory = document.querySelector<HTMLAnchorElement>('#openStory');
+
+  let chainIndex = 0;
+  let selectedId: string | null = null;
+  let expanded = new Set<string>();
+  let history: string[] = [];
+  let zoom = 1;
+
+  const chain = () => chains[chainIndex];
+
+  function startingNode(c: C) {
+    const sources = c.nodes.filter(
+      (n) => !c.edges.some((e) => e.to === n.id && e.from !== n.id)
+    );
+
+    return (
+      sources.find((n) => n.kind === 'divergence') ??
+      sources[0] ??
+      c.nodes.find((n) => n.kind === 'divergence') ??
+      c.nodes[0]
+    )?.id ?? null;
+  }
+
+  const esc = (s: string) =>
+    s.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
+
+  
+
+function renderRail() {
+  if (!rail) return;
+
+  rail.replaceChildren();
+
+  chains.forEach((c, i) => {
+    const b = document.createElement('button');
+
+    b.className =
+      'scenario-thumb' + (i === chainIndex ? ' active' : '');
+
+    b.title = c.title;
+    b.dataset.storyTitle = c.title;
+    b.setAttribute('aria-label', `Choose story: ${c.title}`);
+    b.setAttribute('aria-pressed', String(i === chainIndex));
+
+    const img = document.createElement('img');
+    img.alt = '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    img.src = c.image || '';
+
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      b.classList.add('scenario-thumb-no-image');
+    }, { once: true });
+
+    const tooltip = document.createElement('span');
+    tooltip.className = 'rail-tooltip';
+    tooltip.textContent = c.title;
+
+    const index = document.createElement('span');
+    index.className = 'rail-index';
+    index.textContent = String(i + 1);
+
+    b.append(img, tooltip, index);
+
+    b.addEventListener('click', () => {
+      if (chainIndex === i) return;
+
+      chainIndex = i;
+      selectedId = startingNode(c);
+      expanded.clear();
+      history = [];
+      zoom = 1;
+
+      render();
+      renderRail();
+    });
+
+    rail.append(b);
+  });
+}
+
+  function choose(id: string) {
+    if (selectedId === id) {
+      if (expanded.has(id)) expanded.delete(id);
+      else expanded.add(id);
+    } else {
+      if (selectedId) history.push(selectedId);
+      selectedId = id;
+      expanded.clear();
+    }
+
+    render();
+  }
+
+  function render() {
+  const c = chain();
+
+  if (!c || !nodesEl || !svg || !labelsSvg || !stage) return;
+
+  nodesEl.replaceChildren();
+  svg.replaceChildren();
+  labelsSvg.replaceChildren();
+
+    if (!selectedId) selectedId = startingNode(c);
+
+    const active = c.nodes.find((n) => n.id === selectedId);
+
+    const visibleIds = new Set<string>();
+
+    if (!active) {
+      c.nodes.forEach((n) => visibleIds.add(n.id));
+    } else {
+      visibleIds.add(active.id);
+
+      const neighbors = (id: string) =>
+        new Set(
+          c.edges
+            .filter((e) => e.from === id || e.to === id)
+            .flatMap((e) => [e.from, e.to])
+        );
+
+      neighbors(active.id).forEach((id) => visibleIds.add(id));
+
+      if (expanded.has(active.id)) {
+        const firstRing = [...visibleIds];
+        firstRing.forEach((id) =>
+          neighbors(id).forEach((next) => visibleIds.add(next))
+        );
+      }
+    }
+
+    const visible = c.nodes.filter((n) => visibleIds.has(n.id));
+    empty!.hidden = visible.length > 0;
+
+    const rect = stage.getBoundingClientRect();
+    const w = Math.max(rect.width, 600);
+    const h = Math.max(rect.height, 460);
+
+    for (const layer of [svg, labelsSvg]) {
+      layer.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      layer.setAttribute('preserveAspectRatio', 'none');
+    }
+
+    const depth = new Map<string, number>();
+
+    function d(id: string, seen = new Set<string>()): number {
+      if (depth.has(id)) return depth.get(id)!;
+      if (seen.has(id)) return 0;
+
+      seen.add(id);
+
+      const incoming = c.edges.filter(
+        (e) => e.to === id && visibleIds.has(e.from)
+      );
+
+      const value = incoming.length
+        ? Math.min(
+            4,
+            Math.max(...incoming.map((e) => d(e.from, new Set(seen)) + 1))
+          )
+        : 0;
+
+      depth.set(id, value);
+      return value;
+    }
+
+    visible.forEach((n) => d(n.id));
+
+    const layers = new Map<number, N[]>();
+
+    visible.forEach((n) => {
+      const k = depth.get(n.id) ?? 0;
+      if (!layers.has(k)) layers.set(k, []);
+      layers.get(k)!.push(n);
+    });
+
+    const maxDepth = Math.max(0, ...layers.keys());
+    const pos = new Map<string, { x: number; y: number }>();
+
+    const safeLeft = Math.max(150, w * 0.16);
+    const safeRight = w - Math.max(125, w * 0.1);
+
+    for (const [layer, list] of layers) {
+      list.forEach((n, i) => {
+        let x =
+          maxDepth === 0
+            ? w * 0.5
+            : safeLeft +
+              (safeRight - safeLeft) * (layer / Math.max(1, maxDepth));
+
+        let y = (h * (i + 1)) / (list.length + 1);
+
+        if (active && n.id === active.id) {
+          x = w * 0.5;
+          y = h * 0.47;
+        } else if (active) {
+          const edgeIn = c.edges.some(
+            (e) => e.from === n.id && e.to === active.id
+          );
+
+          const edgeOut = c.edges.some(
+            (e) => e.from === active.id && e.to === n.id
+          );
+
+          if (edgeIn) {
+            x = w * 0.24;
+            y = (h * (i + 1)) / (list.length + 1);
+          } else if (edgeOut) {
+            x = w * 0.76;
+            y = (h * (i + 1)) / (list.length + 1);
+          }
+        }
+
+        pos.set(n.id, { x, y });
+      });
+    }
+
+    const ns = 'http://www.w3.org/2000/svg';
+
+    const defs = document.createElementNS(ns, 'defs');
+
+    defs.innerHTML = `
+      <marker id="goldArrow" markerWidth="9" markerHeight="9"
+        refX="7" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="#ffc078"/>
+      </marker>
+      <marker id="blueArrow" markerWidth="9" markerHeight="9"
+        refX="7" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="#78cfff"/>
+      </marker>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="5" result="b"/>
+        <feMerge>
+          <feMergeNode in="b"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    `;
+
+    svg.append(defs);
+
+c.edges.forEach((e, index) => {
+  const a = pos.get(e.from);
+  const b = pos.get(e.to);
+
+  if (!a || !b) return;
+
+  const forward = b.x >= a.x;
+  const dx = Math.max(50, Math.abs(b.x - a.x) * 0.42);
+
+  const c1x = a.x + (forward ? dx : -dx);
+  const c2x = b.x - (forward ? dx : -dx);
+
+  const dPath = `M${a.x},${a.y} C${c1x},${a.y} ${c2x},${b.y} ${b.x},${b.y}`;
+
+  // Причинно-следствена линия
+  const path = document.createElementNS(ns, 'path');
+
+  path.setAttribute('d', dPath);
+  path.setAttribute(
+    'class',
+    'cause-line' +
+      (active && (e.from === active.id || e.to === active.id)
+        ? ' lit'
+        : '')
+  );
+  path.setAttribute(
+    'marker-end',
+    `url(#${e.type === 'causes' ? 'goldArrow' : 'blueArrow'})`
+  );
+
+  svg.append(path);
+
+  if (!e.label) return;
+
+  // При връзка с активния възел изместваме етикета
+  // към свободната част на линията.
+  let t = 0.5;
+
+  if (active && e.to === active.id) {
+    t = 0.34;
+  } else if (active && e.from === active.id) {
+    t = 0.66;
+  }
+
+  const mt = 1 - t;
+
+  // Точката върху кубичната крива на Безие
+  const mx =
+    mt * mt * mt * a.x +
+    3 * mt * mt * t * c1x +
+    3 * mt * t * t * c2x +
+    t * t * t * b.x;
+
+  const my =
+    mt * mt * mt * a.y +
+    3 * mt * mt * t * a.y +
+    3 * mt * t * t * b.y +
+    t * t * t * b.y;
+
+  // Посоката на кривата в точката t
+  const tangentX =
+    3 * mt * mt * (c1x - a.x) +
+    6 * mt * t * (c2x - c1x) +
+    3 * t * t * (b.x - c2x);
+
+  const tangentY =
+    6 * mt * t * (b.y - a.y) +
+    3 * t * t * (b.y - a.y);
+
+  const tangentLength =
+    Math.sqrt(tangentX * tangentX + tangentY * tangentY) || 1;
+
+  // Перпендикулярно отместване от линията
+  const side = index % 2 === 0 ? -1 : 1;
+  const offset = 34;
+
+  let labelX = mx - (tangentY / tangentLength) * offset * side;
+  let labelY = my + (tangentX / tangentLength) * offset * side;
+
+  // Ограничаваме размера на етикета спрямо наличното място
+  const labelWidth = Math.min(
+    Math.max(e.label.length * 6.4 + 22, 100),
+    Math.max(100, Math.min(320, w * 0.32))
+  );
+
+  const labelHeight = 28;
+  const halfWidth = labelWidth / 2;
+
+  // Не допускаме етикетът да излиза извън видимата сцена
+  labelX = Math.max(
+    halfWidth + 8,
+    Math.min(w - halfWidth - 8, labelX)
+  );
+
+  labelY = Math.max(
+    labelHeight / 2 + 8,
+    Math.min(h - labelHeight / 2 - 8, labelY)
+  );
+
+  const background = document.createElementNS(ns, 'rect');
+  background.setAttribute('x', String(labelX - halfWidth));
+  background.setAttribute('y', String(labelY - labelHeight / 2));
+  background.setAttribute('width', String(labelWidth));
+  background.setAttribute('height', String(labelHeight));
+  background.setAttribute('rx', '8');
+  background.setAttribute('class', 'edge-label-bg');
+
+  const text = document.createElementNS(ns, 'text');
+  text.setAttribute('x', String(labelX));
+  text.setAttribute('y', String(labelY));
+  text.setAttribute('class', 'edge-label');
+  text.setAttribute('text-anchor', 'middle');
+  text.setAttribute('dominant-baseline', 'middle');
+
+  // Дългите надписи се побират в ширината на фона
+  text.setAttribute('textLength', String(Math.max(60, labelWidth - 16)));
+  text.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+  text.textContent = e.label;
+
+  // Текстът и фонът са върху отделния SVG слой
+  labelsSvg.append(background, text);
+});
+
+    visible.forEach((n, i) => {
+      const p = pos.get(n.id)!;
+
+      const b = document.createElement('button');
+
+      b.className =
+        'image-node ' +
+        (n.kind === 'divergence'
+          ? 'turning-point'
+          : n.kind === 'world'
+            ? 'world-node'
+            : 'event-node') +
+        (n.id === selectedId ? ' selected' : '') +
+        (active &&
+        n.id !== active.id &&
+        !c.edges.some(
+          (e) =>
+            (e.from === active.id && e.to === n.id) ||
+            (e.to === active.id && e.from === n.id)
+        )
+          ? ' faded'
+          : '');
+
+      b.style.left = `${p.x}px`;
+      b.style.top = `${p.y}px`;
+      b.style.setProperty('--delay', `${Math.min(i * 20, 160)}ms`);
+
+      b.setAttribute(
+        'aria-label',
+        `${n.label}. Select to explore connected causes and consequences.`
+      );
+      b.setAttribute('aria-pressed', String(n.id === selectedId));
+      b.title = `${n.label} — select to explore connections`;
+
+      b.innerHTML = `
+        <img src="${n.image}"
+          onerror="this.onerror=null;this.src='${n.articleImage}'" alt="">
+        <span class="node-halo"></span>
+        <span class="node-label">${esc(n.label)}</span>
+        <span class="node-action" aria-hidden="true">↗</span>
+      `;
+
+      b.addEventListener('click', () => choose(n.id));
+      nodesEl!.append(b);
+    });
+
+    if (titleEl) titleEl.textContent = active?.label ?? c.title;
+    if (timeEl) timeEl.textContent = active?.time ?? '';
+    if (descriptionEl) descriptionEl.textContent = active?.description ?? '';
+
+    if (openStory) {
+      openStory.href = active?.url ?? c.url ?? '#';
+      openStory.style.visibility =
+        active?.url || c.url ? 'visible' : 'hidden';
+    }
+
+    if (progress) {
+      progress.style.width = `${Math.min(
+        100,
+        Math.max(8, (visibleIds.size / Math.max(1, c.nodes.length)) * 100)
+      )}%`;
+    }
+
+    nodesEl.style.transform = `scale(${zoom})`;
+  }
+
+  document.querySelector('#backStep')?.addEventListener('click', () => {
+    selectedId = history.pop() ?? startingNode(chain());
+    expanded.clear();
+    render();
+  });
+
+  document.querySelector('#resetScene')?.addEventListener('click', () => {
+    selectedId = startingNode(chain());
+    expanded.clear();
+    history = [];
+    zoom = 1;
+    render();
+  });
+
+  document.querySelector('#zoomIn')?.addEventListener('click', () => {
+    zoom = Math.min(1.35, zoom + 0.1);
+    render();
+  });
+
+  document.querySelector('#zoomOut')?.addEventListener('click', () => {
+    zoom = Math.max(0.75, zoom - 0.1);
+    render();
+  });
+
+  window.addEventListener('resize', () => render());
+
+  renderRail();
+  render();
+</script>
+
+<style is:global>
+  html,
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .visual-world {
+    position: fixed;
+    z-index: 1;
+    isolation: isolate;
+    top: 62px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+    color: #f7f4ef;
+    background: #07111b;
+    font-family: inherit;
+  }
+
+  .world-backdrop {
+    position: absolute;
+    inset: -3%;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, rgba(3, 12, 21, 0.76), rgba(3, 12, 21, 0.15) 48%, rgba(3, 12, 21, 0.2)),
+      linear-gradient(0deg, rgba(3, 12, 21, 0.65), transparent 35%),
+      url('/images/articles/history/alexander-west/alexander-west-map.jpg') center/cover;
+    filter: saturate(0.75) brightness(0.7);
+    transform: scale(1.03);
+  }
+
+  .world-backdrop:after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 0, rgba(2, 8, 15, 0.35) 75%);
+  }
+
+  .scenario-rail {
+    position: absolute;
+    z-index: 10;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #b88a4b55;
+    border-radius: 60px;
+    background: #07111bc9;
+    backdrop-filter: blur(14px);
+  }
+
+  .scenario-thumb {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 1px solid #d7bd8a55;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #101b27;
+    cursor: pointer;
+    opacity: 0.62;
+    transition: 0.25s;
+    position: relative;
+  }
+
+  .scenario-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .scenario-thumb.active,
+  .scenario-thumb:hover,
+  .scenario-thumb:focus-visible {
+    opacity: 1;
+    transform: scale(1.1);
+    border: 2px solid #ffc078;
+    box-shadow: 0 0 22px #ffc07877;
+  }
+
+  .scenario-thumb:focus-visible,
+  .scene-tools button:focus-visible,
+  .bottom-controls button:focus-visible,
+  .bottom-controls a:focus-visible,
+  .image-node:focus-visible {
+    outline: 3px solid #fff1ce;
+    outline-offset: 5px;
+  }
+
+  .scene-hint {
+    display: none !important;
+  }
+
+  .scene-tools {
+    position: absolute;
+    z-index: 10;
+    right: 22px;
+    top: 18px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .scene-tools button,
+  .bottom-controls button,
+  .bottom-controls a {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #e7bd7c88;
+    border-radius: 50%;
+    color: #ffd18c;
+    background: #08131dc9;
+    text-decoration: none;
+    font-size: 23px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: 0.2s;
+  }
+
+  .scene-tools button:hover,
+  .bottom-controls button:hover,
+  .bottom-controls a:hover {
+    background: #ffc078;
+    color: #101722;
+    transform: scale(1.07);
+  }
+
+  .story-stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .connections {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .connection-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.edge-label-bg {
+  fill: #07111b;
+  fill-opacity: 0.94;
+  stroke: #ffc078;
+  stroke-opacity: 0.75;
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.edge-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: #fff0d6;
+  pointer-events: none;
+}
+
+  .cause-line {
+    fill: none;
+    stroke: #7dcdf8;
+    stroke-width: 3;
+    opacity: 0.82;
+    stroke-dasharray: 7 9;
+    animation: flow 18s linear infinite;
+    transition: opacity 0.3s, stroke-width 0.3s;
+    filter: drop-shadow(0 0 4px #68cfff88);
+  }
+
+  .cause-line.lit {
+    stroke: #ffc078;
+    stroke-width: 4;
+    opacity: 1;
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 8px #ffad58);
+  }
+
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -160;
+    }
+  }
+
+  .scene-nodes {
+    position: absolute;
+    inset: 0;
+    transform-origin: center;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .connections path {
+    transition: opacity 0.35s, stroke-width 0.35s;
+  }
+
+  .image-node {
+    position: absolute;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    width: clamp(116px, 14vw, 204px);
+    aspect-ratio: 1;
+    border: 0;
+    padding: 0;
+    border-radius: 50%;
+    background: #0b1824;
+    cursor: pointer;
+    isolation: isolate;
+    animation: appear 0.65s both;
+    animation-delay: var(--delay);
+    transition: opacity 0.3s, filter 0.3s, transform 0.3s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .image-node img {
+    position: absolute;
+    inset: 4px;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    object-fit: cover;
+    border-radius: 50%;
+    z-index: -1;
+    filter: saturate(0.8);
+    transition: filter 0.3s, transform 0.4s;
+  }
+
+  .image-node:before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid #8ad8ff;
+    box-shadow: 0 0 12px #6ecaff88, inset 0 0 16px #6ecaff33;
+    transition: 0.3s;
+  }
+
+  .image-node.turning-point:before {
+    border-color: #ffb46e;
+    box-shadow: 0 0 18px #ff9f4caa, inset 0 0 18px #ff9f4c33;
+  }
+
+  .image-node.world-node:before {
+    border-color: #e9d4a3;
+  }
+
+  .image-node:hover,
+  .image-node:focus-visible,
+  .image-node.selected {
+    z-index: 5;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+
+  .image-node:hover img,
+  .image-node:focus-visible img,
+  .image-node.selected img {
+    filter: saturate(1.15) brightness(1.08);
+  }
+
+  .image-node.selected:before {
+    inset: -9px;
+    border-width: 3px;
+    box-shadow: 0 0 36px #ffc078cc, inset 0 0 20px #ffc07855;
+  }
+
+  .image-node.faded {
+    opacity: 0.34;
+    filter: grayscale(0.6);
+  }
+
+  .node-halo {
+    position: absolute;
+    inset: -17px;
+    border-radius: 50%;
+    border: 1px solid #ffc07800;
+    pointer-events: none;
+  }
+
+  .image-node.selected .node-halo {
+    border-color: #ffc07866;
+    animation: pulse 2s infinite;
+  }
+
+  .node-action {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #07131de8;
+    border: 1px solid #ffc078aa;
+    color: #ffc078;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: 0.25s;
+    box-shadow: 0 0 16px #ffc07844;
+  }
+
+  .image-node:hover .node-action,
+  .image-node:focus-visible .node-action,
+  .image-node.selected .node-action {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .node-label {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: min(260px, 30vw);
+    text-align: center;
+    font-size: clamp(12px, 1vw, 16px);
+    font-weight: 750;
+    line-height: 1.3;
+    padding: 3px 7px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, transparent, #06101b66, transparent);
+    color: #fff4e2;
+    text-shadow: 0 2px 12px #000, 0 1px 3px #000;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  .image-node.selected .node-label {
+    color: #ffc078;
+    opacity: 1;
+    background: #07111bd9;
+    box-shadow: 0 0 0 1px #ffc07866;
+    padding: 6px 10px;
+    border-radius: 7px;
+  }
+
+  .focus-caption {
+    position: absolute;
+    z-index: 7;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: min(560px, 70vw);
+    padding: 10px 17px;
+    border: 1px solid #a8cbe655;
+    border-radius: 16px;
+    background: #06121de8;
+    backdrop-filter: blur(14px);
+    font-size: 12px;
+    color: #d7e7f3;
+    white-space: normal;
+    box-shadow: 0 8px 26px #0005;
+  }
+
+  .caption-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .caption-copy strong {
+    font-weight: 750;
+    color: #fff;
+  }
+
+  .caption-copy small {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #c0d0dc;
+    max-width: 450px;
+  }
+
+  .caption-dot {
+    width: 7px;
+    height: 7px;
+    background: #ffc078;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ffc078;
+  }
+
+  .focus-caption span:nth-child(2) {
+    font-weight: 750;
+    color: #fff;
+  }
+
+  .focus-caption span:nth-child(3) {
+    color: #a6bbcb;
+  }
+
+  .edge-label-bg {
+    fill: #07111b;
+    fill-opacity: 0.94;
+    stroke: #ffc078;
+    stroke-opacity: 0.65;
+    stroke-width: 1;
+    pointer-events: none;
+  }
+
+  .edge-label {
+    font-size: 12px;
+    font-weight: 750;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    fill: #fff0d6;
+    pointer-events: none;
+  }
+
+  .scene-empty {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #f2d1a2;
+  }
+
+  .bottom-controls {
+    position: absolute;
+    z-index: 10;
+    left: 22px;
+    bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border: 1px solid #c0d3e333;
+    border-radius: 40px;
+    background: #06121dc9;
+    backdrop-filter: blur(12px);
+  }
+
+  .bottom-controls button,
+  .bottom-controls a {
+    width: 32px;
+    height: 32px;
+    font-size: 19px;
+    border: 0;
+  }
+
+  .progress-track {
+    width: 130px;
+    height: 3px;
+    background: #60738366;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-track span {
+    display: block;
+    height: 100%;
+    width: 8%;
+    background: #ffc078;
+    box-shadow: 0 0 8px #ffc078;
+    transition: width 0.3s;
+  }
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      scale: 0.7;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scale(1.12);
+      opacity: 1;
+    }
+  }
+
+  .scenario-thumb {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .scenario-thumb img {
+    border-radius: 50%;
+    display: block;
+    overflow: hidden;
+  }
+
+  .scenario-thumb.active {
+    opacity: 1;
+    transform: scale(1.12);
+    border: 2px solid #ffc078;
+    box-shadow: 0 0 0 4px #ffc0782b, 0 0 24px #ffc07899;
+  }
+
+  .scenario-thumb.active:after {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border: 1px solid #ffc07888;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .rail-tooltip {
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translate(-5px, -50%);
+    z-index: 20;
+    min-width: max-content;
+    max-width: 260px;
+    white-space: normal;
+    padding: 8px 11px;
+    border: 1px solid #d7bd8a66;
+    border-radius: 9px;
+    background: #07111bf2;
+    color: #fff2d9;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    box-shadow: 0 8px 24px #0008;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.16s, transform 0.16s;
+  }
+
+  .scenario-thumb:hover .rail-tooltip,
+  .scenario-thumb:focus-visible .rail-tooltip,
+  .scenario-thumb.active .rail-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+  }
+
+  .rail-index {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 2px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #101c28;
+    border: 1px solid #a9c4d3;
+    color: #f7f4ef;
+    font-size: 9px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .scenario-thumb.active .rail-index {
+    opacity: 1;
+    background: #ffc078;
+    color: #17202a;
+    border-color: #ffc078;
+  }
+
+  .cause-line:not(.lit) {
+    transition: opacity 0.25s;
+  }
+
+  @media (max-width: 760px) {
+    .visual-world {
+      top: 62px;
+      bottom: 56px;
+      min-height: 0;
+      height: auto;
+    }
+
+    .scenario-rail {
+      left: 8px;
+      top: 10px;
+      bottom: 62px;
+      transform: none;
+      max-height: none;
+      overflow-x: hidden;
+      overflow-y: auto;
+      gap: 7px;
+      padding: 7px;
+    }
+
+    .scenario-thumb {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+    }
+
+    .scene-hint {
+      display: none !important;
+    }
+
+    .scene-tools {
+      right: 8px;
+      top: 10px;
+      gap: 6px;
+    }
+
+    .scene-tools button {
+      width: 36px;
+      height: 36px;
+    }
+
+    .image-node {
+      width: clamp(92px, 23vw, 150px);
+    }
+
+    .node-label {
+      max-width: 31vw;
+      font-size: 11px;
+    }
+
+    .focus-caption {
+      left: auto;
+      right: 8px;
+      bottom: 8px;
+      transform: none;
+      max-width: calc(100% - 110px);
+    }
+
+    .bottom-controls {
+      left: 68px;
+      bottom: 10px;
+      gap: 6px;
+    }
+
+    .progress-track {
+      width: 70px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cause-line,
+    .node-halo,
+    .image-node,
+    .scenario-thumb,
+    .scene-nodes,
+    .image-node:before,
+    .node-action,
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+    .hig-mode-nav {
+    position: absolute;
+    z-index: 50;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    max-width: calc(100vw - 120px);
+    padding: 5px;
+    border: 1px solid #d7bd8a44;
+    border-radius: 12px;
+    background: #07111be8;
+    backdrop-filter: blur(14px);
+  }
+
+  .hig-mode-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 15px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #b7c5d2;
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 650;
+    transition: .2s;
+  }
+
+  .hig-mode-link:hover {
+    color: #fff;
+    border-color: #8ba0b355;
+  }
+
+  .hig-mode-link.active {
+    color: #ffd18c;
+    background: #302719;
+    border-color: #d7ad65;
+  }
+
+  @media (max-width: 520px) {
+    .hig-mode-nav {
+      top: 8px;
+      max-width: calc(100vw - 100px);
+      gap: 2px;
+      padding: 4px;
+    }
+
+    .hig-mode-link {
+      padding: 8px 9px;
+      font-size: 11px;
+    }
+  }
+</style>

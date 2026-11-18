@@ -1,6 +1,8 @@
 ---
+import { articleRoute, ROUTES } from '../lib/routes';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 
 const historyPosts = await getCollection('history');
 const sciencePosts = await getCollection('science');
@@ -18,40 +20,34 @@ const articlesData = allPosts.map(p => ({
   id: p.id,
   title: p.data.title,
   description: p.data.description,
+  image: p.data.image || '',
   sector: p.sector,
-  url: `/${p.sectorSlug}/${p.id}`,
+  url: articleRoute(p.sectorSlug, p.id),
 }));
 ---
 
 <BaseLayout
   title="Continue Reading | Had It Gone"
   description="Articles you have started but not finished."
-  url="/continue"
+  url={ROUTES.continueReading}
   type="website"
 >
-  <div class="section-container">
-    <section class="topic-hero">
-      <a href="/" class="topic-back">← Back to Homepage</a>
-      <h1 class="topic-title">
-        <span class="topic-emoji">📖</span>
-        Continue Reading
-      </h1>
-      <p class="topic-subtitle" id="continueCount">
-        Articles you have started but not finished.
-      </p>
-    </section>
+  <div class="section-container archive-page">
 
-    <section class="section-block" id="continueBlock" style="display: none;">
-      <div class="continue-grid" id="continueGrid"></div>
-    </section>
+  <PageHeader title="Continue Reading" />
 
-    <section class="section-block" id="emptyBlock">
-      <div class="no-articles">
-        You haven't started any articles yet.<br />
-        Open any article and it will appear here while you're reading it.
-      </div>
-    </section>
-  </div>
+  <section class="section-block" id="continueBlock" style="display: none;">
+    <div class="hig-card-grid" id="continueGrid"></div>
+  </section>
+
+  <section class="section-block" id="emptyBlock">
+    <div class="no-articles">
+      You haven't started any articles yet.<br />
+      Open any article and it will appear here while you're reading it.
+    </div>
+  </section>
+</div>
+
   <script is:inline define:vars={{ articlesData }}>
 // @ts-nocheck
 (function () {
@@ -99,6 +95,7 @@ const articlesData = allPosts.map(p => ({
           url: article.url,
           title: article.title,
           description: article.description || '',
+          image: article.image || '',
           progress: Math.max(0, Math.min(100, Number(item.progress) || 0)),
           scrollY: Math.max(0, Number(item.scrollY) || 0),
           ts: Number(item.ts) || 0
@@ -111,24 +108,23 @@ const articlesData = allPosts.map(p => ({
 
     if (grid) {
       grid.innerHTML = articles.map(function (a) {
-        return '<div class="continue-card">' +
-          '<a href="' + a.url +
-          '?from=continue&scrollY=' + a.scrollY +
-          '" class="continue-card-link">' +
-          '<span class="continue-card-sector">' + a.sector + '</span>' +
-          '<h4>' + a.title + '</h4>' +
-          '<p>' + a.description + '</p>' +
-          '<div class="personal-progress"><div class="personal-progress-bar" style="width:' +
-          a.progress + '%"></div></div>' +
-          '<span class="personal-progress-text">' +
-          Math.round(a.progress) + '% read</span>' +
-          '</a>' +
-          '<button class="continue-remove" data-article-id="' +
-          a.id + '" data-article-sector="' + a.sector.toLowerCase() +
+        var safe = function (value) { return String(value || '').replace(/[&<>"']/g, function (char) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]; }); };
+        return '<div class="hig-card-utility">' +
+          '<a href="' + safe(a.url) + '?from=continue&scrollY=' + encodeURIComponent(a.scrollY) + '" class="hig-content-card" aria-label="' + safe(a.title) + '">' +
+          (a.image ? '<img class="hig-content-card__image" src="' + safe(a.image) + '" alt="" loading="lazy" decoding="async">' : '') +
+          '<span class="hig-content-card__shade" aria-hidden="true"></span>' +
+          '<span class="hig-content-card__content">' +
+          '<span class="hig-content-card__eyebrow">' + safe(a.sector) + '</span>' +
+          '<span class="hig-content-card__title">' + safe(a.title) + '</span>' +
+          '<span class="hig-content-card__description">' + safe(a.description) + '</span>' +
+          '<span class="hig-content-card__progress"><span class="hig-content-card__progress-track"><span class="hig-content-card__progress-fill" style="display:block;width:' + a.progress + '%"></span></span><span class="hig-content-card__progress-label">' + Math.round(a.progress) + '% read</span></span>' +
+          '</span></a>' +
+          '<button class="hig-card-remove" type="button" aria-label="Remove from Continue Reading" data-article-id="' +
+          safe(a.id) + '" data-article-sector="' + safe(a.sector.toLowerCase()) +
           '">✕ Remove</button></div>';
       }).join('');
 
-      grid.querySelectorAll('.continue-remove').forEach(function (btn) {
+      grid.querySelectorAll('.hig-card-remove').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var id = btn.getAttribute('data-article-id');
           var sector = btn.getAttribute('data-article-sector');

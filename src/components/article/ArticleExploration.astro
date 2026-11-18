@@ -1,0 +1,29 @@
+---
+import { sectorRoute } from '../../lib/routes';
+import BackToHomepage from '../BackToHomepage.astro';
+import type { ArticleExplorationProps } from '../../types/article';
+import ArticleAlternativePaths from './ArticleAlternativePaths.astro';
+import ArticleRelated from './ArticleRelated.astro';
+import ArticleShare from './ArticleShare.astro';
+
+type Props = ArticleExplorationProps;
+
+const {
+  alternativePaths = [],
+  relatedArticles = [],
+  worldName,
+  title,
+  pageUrl,
+  sector,
+  sectorTitle,
+} = Astro.props;
+---
+<footer class="scenario-exploration-footer">
+  <ArticleAlternativePaths items={alternativePaths} worldName={worldName} />
+  <ArticleRelated items={relatedArticles} />
+  <ArticleShare title={title} pageUrl={pageUrl} />
+  <div class="back-links">
+    <a href={sectorRoute(sector)} class="back-link hig-article-action hig-article-action--secondary">← Return to {sectorTitle}</a>
+    <BackToHomepage />
+  </div>
+</footer>

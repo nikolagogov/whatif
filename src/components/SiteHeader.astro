@@ -1,0 +1,223 @@
+---
+import { ROUTES } from '../lib/routes';
+
+interface SearchItem {
+  title: string;
+  description: string;
+  sector: string;
+  url: string;
+  tags: string[];
+  topics: string[];
+}
+
+interface Props {
+  pathname: string;
+  searchData: SearchItem[];
+}
+
+const { pathname, searchData } = Astro.props;
+const currentSector = pathname.split('/')[1] || '';
+const isDiscoverActive = ['content', 'history', 'science', 'space', 'society', 'latest'].includes(currentSector);
+const isExploreActive = ['explore', 'timeline', 'branches', 'compare', 'causality', 'world', 'world-graph'].includes(currentSector);
+---
+
+    <header class="hig-site-header" id="higSiteHeader">
+      <div class="hig-header-inner">
+        <a href="/" class="hig-brand" aria-label="Had It Gone Platform home">
+          <img src="/logo-portal.png" alt="HAD IT GONE" />
+        </a>
+
+        <nav class="hig-main-nav" id="higMainNav" aria-label="Main navigation">
+          <div class={`hig-nav-dropdown ${isDiscoverActive ? 'is-current' : ''}`} data-nav-dropdown>
+            <button class="hig-nav-dropdown-toggle" type="button" aria-expanded="false" aria-controls="higDiscoverMenu">
+              Discover <span class="hig-nav-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="hig-nav-dropdown-menu" id="higDiscoverMenu">
+              <a class="hig-nav-feature-link" href="/content">All Articles</a>
+              <a href="/history">History</a>
+              <a href="/science">Science</a>
+              <a href="/space">Space</a>
+              <a href="/society">Society</a>
+              <a href="/latest">Latest</a>
+            </div>
+          </div>
+
+          <div class={`hig-nav-dropdown ${isExploreActive ? 'is-current' : ''}`} data-nav-dropdown>
+            <button class="hig-nav-dropdown-toggle" type="button" aria-expanded="false" aria-controls="higExploreMenu">
+              Explore <span class="hig-nav-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="hig-nav-dropdown-menu" id="higExploreMenu">
+              <a class="hig-nav-feature-link" href="/explore">Worlds</a>
+            </div>
+          </div>
+        </nav>
+
+        <div class="hig-header-actions">
+          <button class="hig-search-toggle" id="higSearchToggle" type="button" aria-label="Open search" aria-expanded="false" aria-controls="higSearchPanel">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.6" stroke="currentColor" stroke-width="1.7" />
+              <path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+            </svg>
+          </button>
+
+          <button class="hig-menu-toggle" id="higMenuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="higMainNav">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true">
+              <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="hig-search-panel" id="higSearchPanel">
+        <form class="hig-search-form" action="/search" method="get" role="search">
+          <input id="higSearchInput" type="search" name="q" placeholder="Search scenarios…" aria-label="Search scenarios" />
+          <button type="submit">Search</button>
+        </form>
+        <div class="hig-search-suggestions" id="higSearchSuggestions" aria-live="polite"></div>
+      </div>
+    </header>
+
+    <script define:vars={{ searchData }}>
+      const searchToggle = document.getElementById('higSearchToggle');
+      const searchPanel = document.getElementById('higSearchPanel');
+      const searchInput = document.getElementById('higSearchInput');
+      const suggestions = document.getElementById('higSearchSuggestions');
+      const menuToggle = document.getElementById('higMenuToggle');
+      const mainNav = document.getElementById('higMainNav');
+      const dropdowns = Array.from(document.querySelectorAll('[data-nav-dropdown]'));
+
+      const closeSearch = () => {
+        searchPanel?.classList.remove('open');
+        searchToggle?.setAttribute('aria-expanded', 'false');
+      };
+
+      const closeDropdowns = (except = null) => {
+        dropdowns.forEach((dropdown) => {
+          if (dropdown === except) return;
+          dropdown.classList.remove('is-open');
+          dropdown.querySelector('.hig-nav-dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+        });
+      };
+
+      const closeMainNav = () => {
+        mainNav?.classList.remove('open');
+        menuToggle?.setAttribute('aria-expanded', 'false');
+        closeDropdowns();
+      };
+
+      dropdowns.forEach((dropdown) => {
+        const toggle = dropdown.querySelector('.hig-nav-dropdown-toggle');
+        toggle?.addEventListener('click', () => {
+          const willOpen = !dropdown.classList.contains('is-open');
+          closeDropdowns(dropdown);
+          dropdown.classList.toggle('is-open', willOpen);
+          toggle.setAttribute('aria-expanded', String(willOpen));
+        });
+      });
+
+      searchInput?.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        if (!suggestions) return;
+        if (query.length < 2) { suggestions.innerHTML = ''; suggestions.classList.remove('has-results'); return; }
+        const matches = searchData.filter(post => post.title.toLowerCase().includes(query) || post.description.toLowerCase().includes(query) || post.tags.some(tag => tag.toLowerCase().includes(query)) || post.topics.some(topic => topic.toLowerCase().includes(query))).slice(0, 3);
+        suggestions.classList.add('has-results');
+        suggestions.innerHTML = matches.map(post => `<a class=\"hig-search-suggestion\" href=\"${post.url}\"><span class=\"hig-search-suggestion-copy\"><span class=\"hig-search-suggestion-sector\">${post.sector}</span><span class=\"hig-search-suggestion-title\">${post.title}</span></span><span class=\"hig-search-suggestion-arrow\" aria-hidden=\"true\">↗</span></a>`).join('') + `<a class=\"hig-search-more\" href=\"/search?q=${encodeURIComponent(searchInput.value.trim())}\"><span>More results</span><span aria-hidden=\"true\">→</span></a>`;
+      });
+
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (searchPanel?.classList.contains('open') && !searchPanel.contains(target) && !searchToggle?.contains(target)) closeSearch();
+        if (!dropdowns.some((dropdown) => dropdown.contains(target))) closeDropdowns();
+      });
+
+      searchToggle?.addEventListener('click', () => {
+        const isOpen = searchPanel?.classList.toggle('open') ?? false;
+        searchToggle.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) {
+          searchInput?.focus();
+          closeMainNav();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeSearch();
+          closeMainNav();
+        }
+      });
+
+      menuToggle?.addEventListener('click', () => {
+        const isOpen = mainNav?.classList.toggle('open') ?? false;
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) closeSearch();
+        else closeDropdowns();
+      });
+
+      mainNav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMainNav));
+
+      const siteHeader = document.getElementById('higSiteHeader');
+      if (siteHeader) {
+        let lastScrollY = Math.max(0, window.scrollY);
+        let directionTravel = 0;
+        let lastDirection = 0;
+        let ticking = false;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const revealHeader = (withSurface = true) => {
+          siteHeader.classList.remove('is-scroll-hidden');
+          siteHeader.classList.toggle('is-scroll-revealed', withSurface);
+        };
+
+        const updateHeaderVisibility = () => {
+          const currentScrollY = Math.max(0, window.scrollY);
+          const delta = currentScrollY - lastScrollY;
+          const direction = Math.sign(delta);
+
+          if (currentScrollY <= 72) {
+            revealHeader(false);
+            directionTravel = 0;
+          } else if (direction !== 0) {
+            if (direction !== lastDirection) directionTravel = 0;
+            directionTravel += Math.abs(delta);
+            if (directionTravel >= 12) {
+              if (direction > 0 && currentScrollY > 120) {
+                // A downward scroll always dismisses every header panel before
+                // hiding the header, even when a dropdown or search is open.
+                closeSearch();
+                closeMainNav();
+                closeDropdowns();
+                siteHeader.classList.add('is-scroll-hidden');
+                siteHeader.classList.remove('is-scroll-revealed');
+              } else if (direction < 0) {
+                revealHeader(true);
+              }
+              directionTravel = 0;
+            }
+            lastDirection = direction;
+          }
+          lastScrollY = currentScrollY;
+          ticking = false;
+        };
+
+        if (!reducedMotion) {
+          window.addEventListener('scroll', () => {
+            if (!ticking) {
+              window.requestAnimationFrame(updateHeaderVisibility);
+              ticking = true;
+            }
+          }, { passive: true });
+          siteHeader.addEventListener('focusin', () => revealHeader(window.scrollY > 72));
+        }
+      }
+
+      const backToTop = document.getElementById('backToTop');
+
+      if (backToTop) {
+        window.addEventListener('scroll', () => {
+          backToTop.classList.toggle('visible', window.scrollY > 0);
+        }, { passive: true });
+
+        backToTop.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    </script>

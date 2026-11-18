@@ -1,0 +1,33 @@
+/* Shared page frame and content-width shells. */
+/* Sole owner of the outer page-frame geometry. It stays full-bleed;
+   the inner page roots below use the shared content-frame token. */
+.page-frame {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:is(
+  .section-container,
+  .archive-page,
+  .about-page,
+  .search-page,
+  .compare-page,
+  .timeline-page,
+  .explore-page,
+  .scenario-page,
+  .what-if-page,
+  .world-page,
+  .branches-page,
+  .article-page,
+  .wg-page,
+  .visual-world
+) {
+  width: var(--hig-page-frame-width) !important;
+  max-width: var(--hig-page-content-max) !important;
+  margin-inline: auto !important;
+  padding-inline: 0 !important;
+  box-sizing: border-box !important;
+}

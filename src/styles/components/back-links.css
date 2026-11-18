@@ -1,0 +1,39 @@
+/* Shared back-link treatment. */
+/* Page-heading appearance is controlled centrally by the page-title tokens below.
+   Sector pages use the same selectors as every other route. */
+
+.section-container .back-link,
+.section-container .back-link.archive-back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px auto 0;
+  padding: 0;
+  color: var(--hig-copy);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: 'Lora', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+.section-container .back-link .back-arrow,
+.section-container .back-link .back-home-highlight {
+  color: var(--hig-gold);
+}
+.section-container .back-link:hover,
+.section-container .back-link.archive-back-link:hover {
+  color: var(--hig-gold-hover);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  transform: none;
+}
+

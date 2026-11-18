@@ -1,0 +1,207 @@
+---
+import { articleRoute, worldRoute, ROUTES } from '../../lib/routes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { getWorldStatesByWorldAndDivergence } from '../../lib/world/repository';
+
+// Turning Point pages are intentionally hidden while the underlying
+// Divergence model and page implementation are retained.
+export async function getStaticPaths() {
+  return [];
+}
+
+const { post, sector } = Astro.props;
+const { description, image, divergence, world } = post.data;
+const states = world?.id && divergence?.id
+  ? getWorldStatesByWorldAndDivergence(world.id, divergence.id)
+  : [];
+const articleUrl = articleRoute(sector, post.id);
+---
+<BaseLayout title={`${divergence.title} | Alternate History`} description={description} image={image} url={articleUrl}>
+  <main class="what-if-page">
+    <PageHeader title={divergence.title} />
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href={ROUTES.content}>Home</a><span>/</span><a href={ROUTES.explore}>Explore</a><span>/</span><span>Turning Point</span></nav>
+    <header class="what-if-hero">
+      <p class="lead">{description}</p>
+      <div class="hero-actions"><a class="primary-link" href={articleUrl}>Read the article <span aria-hidden="true">→</span></a>{world?.id && <a class="secondary-link" href={worldRoute(world.id)}>Explore its world</a>}</div>
+    </header>
+
+    <section class="what-if-section divergence-grid" aria-labelledby="divergence-heading">
+      <div><p class="eyebrow">THE POINT OF DIVERGENCE</p><h2 id="divergence-heading">{divergence.date ? `${divergence.date}: ` : ''}{divergence.title}</h2><p class="muted">The moment history takes a different path.</p></div>
+      <div class="outcome-card reference"><span class="card-label">OUR TIMELINE</span><p>{divergence.referenceOutcome}</p></div>
+      <div class="outcome-card alternate"><span class="card-label">ALTERNATE TIMELINE</span><p>{divergence.alternateOutcome}</p></div>
+    </section>
+
+    {states.length > 0 && <section class="what-if-section" aria-labelledby="states-heading">
+      <div class="section-heading"><div><p class="eyebrow">THE ALTERNATE WORLD</p><h2 id="states-heading">How the world develops</h2></div><a class="text-link" href={worldRoute(world!.id)}>Open world page →</a></div>
+      <div class="state-grid">
+        {states.map((state) => <article class="state-card"><p class="timeline-date">{state.time.label}</p><h3>{state.name}</h3>{state.description && <p>{state.description}</p>}</article>)}
+      </div>
+    </section>}
+
+    <section class="what-if-footer"><div><p class="eyebrow">CONTINUE EXPLORING</p><h2>{world?.name ?? 'Explore the alternative history'}</h2><p>{world?.name ? 'Explore the alternate world, its recorded states, and the story that connects them.' : 'Read the article and explore the consequences of this turning point.'}</p></div><a class="primary-link" href={articleUrl}>Read the full article →</a></section>
+  </main>
+</BaseLayout>
+
+<style>
+.what-if-page {
+  padding: 30px 0 96px;
+  color: var(--text, #e8e8e8);
+}
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 28px;
+  color: var(--muted, #9ca3af);
+  font-size: .82rem;
+}
+.breadcrumbs a {
+  color: var(--muted, #aeb6c4);
+  text-decoration: none;
+  transition: color .2s ease;
+}
+.breadcrumbs a:hover { color: var(--accent, #e8bd78); }
+.breadcrumbs [aria-current="page"] { color: var(--text, #e8e8e8); }
+.what-if-hero {
+  margin-top: 22px;
+  padding: clamp(30px, 5vw, 68px);
+  border: 1px solid var(--border, rgba(255,255,255,.12));
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse at 85% 15%, rgba(231,189,120,.10), transparent 42%),
+    linear-gradient(135deg, rgba(87,112,164,.18), rgba(20,25,38,.42));
+}
+.lead {
+  max-width: 980px;
+  margin: 0;
+  color: var(--hig-copy, #e8edf5);
+  font-size: clamp(1.08rem, 1.5vw, 1.3rem);
+  line-height: 1.75;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+.primary-link, .secondary-link {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 13px 19px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.primary-link { background: #e7bd78; color: #171b24; }
+.primary-link:hover { transform: translateY(-2px); background: #f0ce96; }
+.secondary-link {
+  border: 1px solid var(--border, rgba(255,255,255,.2));
+  color: var(--text, #e8e8e8);
+}
+.secondary-link:hover { border-color: rgba(231,189,120,.65); }
+.what-if-section { margin-top: clamp(54px, 6vw, 82px); }
+.what-if-section h2, .what-if-footer h2 {
+  margin: 0 0 16px;
+  color: var(--text, #f0f0f0);
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: clamp(1.7rem, 2.7vw, 2.4rem);
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+.eyebrow {
+  margin: 0 0 13px;
+  color: var(--accent, #e7bd78);
+  font-size: .72rem;
+  font-weight: 750;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.divergence-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.1fr) repeat(2, minmax(260px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+.divergence-grid > div:first-child { padding: 16px 12px 16px 0; }
+.outcome-card, .state-card {
+  min-width: 0;
+  padding: clamp(22px, 2.4vw, 32px);
+  border: 1px solid var(--border, rgba(255,255,255,.12));
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.018));
+}
+.outcome-card p, .state-card p {
+  margin: 12px 0 0;
+  color: var(--hig-copy, #d5dce7);
+  line-height: 1.75;
+}
+.card-label {
+  color: var(--muted, #aeb6c4);
+  font-size: .72rem;
+  font-weight: 750;
+  letter-spacing: .12em;
+}
+.alternate .card-label { color: var(--accent, #e7bd78); }
+.muted { color: var(--muted, #9ca3af); line-height: 1.65; }
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.section-heading h2 { margin-bottom: 0; }
+.text-link { color: var(--accent, #e7bd78); text-decoration: none; }
+.text-link:hover { color: #f4d49f; }
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.state-card h3 {
+  margin: 8px 0 0;
+  color: var(--text, #f0f0f0);
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  line-height: 1.3;
+}
+.timeline-date {
+  margin: 0;
+  color: var(--accent, #e7bd78);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.what-if-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+  margin-top: clamp(60px, 7vw, 90px);
+  padding: clamp(26px, 3.5vw, 44px);
+  border: 1px solid var(--border, rgba(255,255,255,.12));
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(231,189,120,.08), rgba(255,255,255,.025));
+}
+.what-if-footer p:not(.eyebrow) {
+  max-width: 760px;
+  margin: 0;
+  color: var(--hig-copy, #d5dce7);
+  line-height: 1.7;
+}
+@media (max-width: 1000px) {
+  .divergence-grid { grid-template-columns: 1fr 1fr; }
+  .divergence-grid > div:first-child { grid-column: 1 / -1; }
+  .state-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .what-if-page { padding-top: 22px; }
+  .breadcrumbs { margin-bottom: 22px; }
+  .divergence-grid, .state-grid { grid-template-columns: 1fr; }
+  .section-heading { align-items: flex-start; flex-direction: column; }
+  .what-if-footer { align-items: flex-start; flex-direction: column; }
+}
+</style>

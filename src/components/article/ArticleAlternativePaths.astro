@@ -1,0 +1,20 @@
+---
+import { articleRoute } from '../../lib/routes';
+import type { ArticleAlternativePathsProps } from '../../types/article';
+type Props = ArticleAlternativePathsProps;
+
+const { items = [], worldName } = Astro.props;
+---
+{items.length > 0 && (
+  <div class="exploration-block">
+    <h3>Alternative Paths in {worldName}</h3>
+    <div class="exploration-grid">
+      {items.map((alt) => (
+        <a href={articleRoute(alt.sector, alt.id)} class="explore-card">
+          <div class="explore-thumb" style={`background-image: url('${alt.data.image}');`}></div>
+          <div class="explore-info"><span class="explore-sector">{alt.sector}</span><h4>{alt.data.title}</h4></div>
+        </a>
+      ))}
+    </div>
+  </div>
+)}

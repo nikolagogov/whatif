@@ -1,0 +1,34 @@
+---
+import { sectorRoute, worldRoute } from '../../lib/routes';
+import type { ArticleHeroProps } from '../../types/article';
+type Props = ArticleHeroProps;
+const { sector, sectorTitle, world, image, divergence, readingTime, articleId } = Astro.props;
+---
+<div class="scenario-breadcrumbs">
+  <a href={sectorRoute(sector)} class="sector-tag">{sectorTitle}</a>
+</div>
+<header class="world-entry-hero" aria-label="Article overview">
+  <div class="hero-backdrop" style={`background-image: url('${image}');`}></div>
+  <div class="hero-content-box">
+    {divergence && (
+      <div class="entry-divergence">
+        <span class="divergence-label">
+          Turning point{divergence.date ? `: ${divergence.date}` : ''}
+        </span>
+        <p>{divergence.title}</p>
+      </div>
+    )}
+    {world?.id && (
+      <div class="scenario-page-links">
+        <a href={worldRoute(world.id)}>Explore world <span aria-hidden="true">→</span></a>
+      </div>
+    )}
+    <div class="hero-meta-row">
+      <span class="hero-meta">⏱ {readingTime} min read</span>
+      <button class="save-btn hig-article-action hig-article-action--secondary" id="saveBtn" data-article-id={articleId} data-article-sector={sector} aria-label="Save">
+        <span class="save-icon">☆</span>
+        <span class="save-text">Save</span>
+      </button>
+    </div>
+  </div>
+</header>
