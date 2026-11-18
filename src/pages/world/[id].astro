@@ -1,0 +1,211 @@
+---
+import { articleHeadingRoute, articleRoute, worldRoute, ROUTES } from '../../lib/routes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getWorldStaticPaths, getWorldPageData } from '../../lib/world/repository';
+
+export async function getStaticPaths() {
+  return getWorldStaticPaths();
+}
+
+const { post } = Astro.props;
+const { world, timeline, uniqueArticles } = await getWorldPageData(post);
+const pageDescription = `Explore the stories and historical turning points connected to ${world.name}.`;
+
+---
+
+<BaseLayout title={`${world.name} | Had It Gone`} description={pageDescription} url={worldRoute(world.id)}>
+  <main class="world-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href={ROUTES.home}>Home</a>
+      <span aria-hidden="true">/</span>
+      <a href={ROUTES.explore}>Explore</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{world.name}</span>
+    </nav>
+
+    <PageHeader title={world.name} showBack={false} />
+
+    {timeline.length > 0 && (
+      <section class="world-section world-timeline" aria-labelledby="world-timeline-title" hidden>
+        <div class="section-heading">
+          <h2 id="world-timeline-title">Timeline</h2>
+        </div>
+
+        <ol class="timeline-list">
+          {timeline.map((event) => (
+            <li class="timeline-item">
+              <span class="timeline-marker" aria-hidden="true"></span>
+              <div class="timeline-content">
+                <p class="timeline-date">{event.date}</p>
+                <h3>{event.title}</h3>
+                {event.description && <p class="timeline-description">{event.description}</p>}
+                <a class="text-link" href={articleHeadingRoute(event.articleUrl.split("/")[1], event.articleUrl.split("/")[2], event.headingId)}>
+                  Explore this event <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {uniqueArticles.length > 0 && (
+      <section class="world-section world-stories">
+        <div class="story-grid">
+          {uniqueArticles.map((item) => (
+            <ArticleCard
+              href={articleRoute(item.sector, item.id)}
+              image={item.data.image}
+              title={item.data.title}
+              description={item.data.description}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</BaseLayout>
+
+<style>
+  .world-page {
+    width: min(1160px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 30px 0 100px;
+    color: var(--text, #e8e8e8);
+  }
+
+  .breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 28px;
+    color: var(--muted, #9ca3af);
+    font-size: .82rem;
+  }
+
+  .breadcrumbs a {
+    color: var(--muted, #aeb6c4);
+    text-decoration: none;
+    transition: color .2s ease;
+  }
+
+  .breadcrumbs a:hover { color: var(--accent, #e8bd72); }
+  .breadcrumbs [aria-current="page"] { color: var(--text, #e8e8e8); }
+
+  .world-section { margin-top: clamp(28px, 4vw, 44px); }
+  .section-heading { margin-bottom: 30px; }
+  .section-heading h2 {
+    margin: 0;
+    color: var(--text, #f0f0f0);
+    font-family: var(--font-serif, Georgia, serif);
+    font-size: clamp(1.8rem, 3.2vw, 2.55rem);
+    font-weight: 600;
+    letter-spacing: -.025em;
+    line-height: 1.2;
+  }
+
+
+  .timeline-list {
+    position: relative;
+    display: grid;
+    gap: 0;
+    max-width: 900px;
+    margin: 0;
+    padding: 0 0 0 25px;
+    list-style: none;
+  }
+
+  .timeline-list::before {
+    position: absolute;
+    top: 8px;
+    bottom: 18px;
+    left: 5px;
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(231,189,120,.8), rgba(231,189,120,.12));
+    content: "";
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 0 0 38px 24px;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    top: 5px;
+    left: -25px;
+    width: 11px;
+    height: 11px;
+    border: 2px solid #e7bd78;
+    border-radius: 50%;
+    background: #111925;
+    box-shadow: 0 0 0 5px rgba(231,189,120,.10);
+  }
+
+  .timeline-date {
+    margin: 0 0 8px;
+    color: #e7bd78;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+  }
+
+  .timeline-content h3 {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-serif, Georgia, serif);
+    font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+    font-weight: 600;
+    line-height: 1.28;
+    text-wrap: balance;
+  }
+
+  .timeline-description,
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 13px;
+    color: #e7bd78;
+    font-size: .86rem;
+    text-decoration: none;
+    transition: gap .2s ease, color .2s ease;
+  }
+
+  .text-link:hover { gap: 12px; color: #f4d49f; }
+
+  /* Match the shared three-column article-card grid used on Latest.
+     The card itself is rendered by the central Card.astro component. */
+  .story-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .story-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 620px) {
+    .story-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .world-page { width: min(calc(100% - 32px), 1160px); padding-top: 22px; }
+    .breadcrumbs { margin-bottom: 22px; }
+  }
+
+  @media (max-width: 420px) {
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .story-card, .story-card__image img, .text-link { transition: none; }
+  }
+</style>

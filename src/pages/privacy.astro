@@ -1,15 +1,18 @@
 ---
+import { ROUTES } from '../lib/routes';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import BackToHomepage from '../components/BackToHomepage.astro';
 ---
 
 <BaseLayout
   title="Privacy Policy | Had It Gone"
   description="How Had It Gone handles data, local storage, and privacy. We do not collect personal data and we do not use tracking cookies."
-  url="/privacy"
+  url={ROUTES.privacy}
   type="website"
 >
   <div class="about-page">
-    <h1>Privacy Policy</h1>
+    <PageHeader title="Privacy Policy" />
 
     <p>
       <em>Last updated: October 2026</em>
@@ -122,6 +125,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       📧 <a href="mailto:hello@haditgone.com">hello@haditgone.com</a>
     </p>
 
-    <a href="/" class="back-link">← Back to Homepage</a>
+    <BackToHomepage />
   </div>
 </BaseLayout>

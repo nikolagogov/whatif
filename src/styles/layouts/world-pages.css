@@ -1,0 +1,274 @@
+/* World/scenario page sections and navigation. Extracted from the former global.css; source order preserved. */
+/* ============================================
+   WORLD / SCENARIO EXPERIENCE — FINAL DESIGN SYSTEM
+   ============================================ */
+
+
+
+/* 1. BREADCRUMBS */
+
+
+
+
+
+
+/* 2. WORLD ENTRY (HERO) — Кинематографичен вход */
+
+
+
+
+
+
+
+
+
+
+
+
+/* Divergence е визуално по-силен от This World */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 3. SECTION HEADERS */
+
+
+
+
+/* 4. TIMELINE — Дискретна вертикална хронологична линия */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 5. KEY ENTITIES — Редакционен и лек поток */
+
+
+
+
+
+
+
+
+
+
+/* 6. WHY THIS WORLD? — Причинно-следствена верига */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 7. COMPARE (OUR WORLD / THIS WORLD) */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 640px) {
+    
+
+    
+
+    
+}
+
+/* 8. EXPLORATION FOOTER (Alternative Paths & Related) */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================
+   RESPONSIVE DESIGN (Mobile First / Adaptations)
+   ============================================ */
+@media (max-width: 900px) {
+    
+    
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  
+}
+
+@media (max-width: 420px) {
+  
+}
+/* Previous / Next scenario navigation */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 480px) {
+  
+
+  
+
+  
+}
+  
+.wg-zoom-controls{
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid rgba(245, 189, 85, 0.24);
+  border-radius: 16px;
+  background: rgba(9, 15, 24, 0.88);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+}
+
+.wg-zoom-controls button{
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #e8edf5;
+  font: 500 23px/1 Inter, system-ui, sans-serif;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.wg-zoom-controls button:hover{
+  background: rgba(245, 189, 85, 0.13);
+  border-color: rgba(245, 189, 85, 0.5);
+  color: #ffd58a;
+  transform: translateY(-1px);
+}
+
+.wg-zoom-controls button:focus-visible{
+  outline: 2px solid #f5bd55;
+  outline-offset: 2px;
+}
+
+.wg-zoom-controls button svg{
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wg-control-divider{
+  width: 1px;
+  height: 25px;
+  margin: 0 2px;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+@media (max-width: 700px) {
+  .wg-zoom-controls{
+    bottom: 12px;
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .wg-zoom-controls button{
+    width: 35px;
+    height: 35px;
+  }
+}

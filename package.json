@@ -17,7 +17,9 @@
     "world:transitions:validate": "node scripts/validate-world-transitions.mjs",
     "world:transition:apply": "node scripts/apply-world-transition.mjs",
     "migration:inventory": "node scripts/migration-inventory.mjs",
-    "links:check": "node scripts/check-internal-links.mjs"
+    "links:check": "node scripts/check-internal-links.mjs",
+    "editor": "node scripts/article-editor/server.mjs",
+    "admin": "node scripts/article-editor/server.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

@@ -1,5 +1,7 @@
 ---
+import { ROUTES, articleRoute } from '../lib/routes';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import contentGraph from '../data/content-graph.json';
 
 const graphPayload = JSON.stringify(contentGraph)
@@ -11,45 +13,73 @@ const graphPayload = JSON.stringify(contentGraph)
   title="World Graph Explorer"
   description="Explore alternate worlds, divergences, timelines and their connections."
 >
-  <main class="wg-page">
+    <PageHeader title="World Graph Explorer" />
+    <main class="wg-page">
     <section class="wg-shell" aria-label="Interactive knowledge graph explorer">      
       <section class="wg-graph-panel" aria-label="Graph canvas">
-        <div class="wg-search-bar">
-          <label class="wg-search-label" for="wg-search">
-            Find a world or event
-          </label>
-          <input
-            id="wg-search"
-            class="wg-search"
-            type="search"
-            placeholder="Search the graph…"
-            autocomplete="off"
-          />
-          <button id="wg-reset" class="wg-reset" type="button">
-            Reset
-          </button>
+        
+        <!-- ЛЯВ ПАНЕЛ: Заглавие, Навигация, Търсене -->
+        <div class="wg-left-panel">
+          
+          <!-- 1. Заглавие -->
+          <div class="wg-canvas-top">
+            <strong id="wg-view-title">Choose<br/>your world</strong>
+            <small id="wg-view-subtitle">Explore alternative</small>
+            <span id="wg-stats" style="display:none;">Loading graph…</span>
+          </div>
+
+          <!-- 2. Навигационни бутони -->
+          <nav class="wg-mode-nav" aria-label="World Graph modes">
+            <a class="wg-mode-link active" href={ROUTES.worldGraph} aria-current="page">
+              <span class="wg-mode-icon">◎</span>
+              <span>Explore</span>
+            </a>
+            <a class="wg-mode-link" href={ROUTES.causality}>
+              <span class="wg-mode-icon">⤳</span>
+              <span>Causality</span>
+            </a>
+            <a class="wg-mode-link" href={ROUTES.compare}>
+              <span class="wg-mode-icon">⇄</span>
+              <span>Compare</span>
+            </a>
+          </nav>
+
+          <!-- 3. Търсене (разпъващо се) -->
+          <div class="wg-search-wrapper" id="wg-search-wrapper">
+            <div class="wg-search-bar" id="wg-search-bar">
+              <input
+                id="wg-search"
+                class="wg-search"
+                type="search"
+                placeholder="Search the graph…"
+                autocomplete="off"
+              />
+              <button id="wg-reset" class="wg-reset" type="button" title="Reset search">Reset</button>
+            </div>
+            <button id="wg-search-toggle" class="wg-search-toggle" aria-label="Toggle search">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+          </div>
+
         </div>
-        <div class="wg-canvas-top">
-          <span><i class="live-dot"></i> LIVE KNOWLEDGE GRAPH</span>
-          <span id="wg-stats">Loading graph…</span>
-        </div>
-<canvas id="wg-canvas" aria-label="Interactive graph of alternate worlds and related events"></canvas>
+
+        <canvas id="wg-canvas" aria-label="Interactive graph of alternate worlds and related events"></canvas>
+        
         <div id="wg-empty" class="wg-empty" hidden>
           No nodes match these filters. Try enabling more node types.
         </div>
 
-        
-<div class="wg-zoom-controls" aria-label="Graph navigation controls">
-  <button type="button" id="wg-zoom-in" aria-label="Увеличи" title="Увеличи">+</button>
-  <button type="button" id="wg-zoom-out" aria-label="Намали" title="Намали">−</button>
-  <span class="wg-control-divider" aria-hidden="true"></span>
-  <button type="button" id="wg-back" aria-label="Назад" title="Предишна стъпка">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/><path d="M9 12h11"/></svg>
-  </button>
-  <button type="button" id="wg-home" aria-label="Начало" title="Начален изглед">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-7h5v7"/></svg>
-  </button>
-</div>
+        <div class="wg-zoom-controls" aria-label="Graph navigation controls">
+          <button type="button" id="wg-zoom-in" aria-label="Увеличи" title="Увеличи">+</button>
+          <button type="button" id="wg-zoom-out" aria-label="Намали" title="Намали">−</button>
+          <span class="wg-control-divider" aria-hidden="true"></span>
+          <button type="button" id="wg-back" aria-label="Назад" title="Предишна стъпка">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/><path d="M9 12h11"/></svg>
+          </button>
+          <button type="button" id="wg-home" aria-label="Начало" title="Начален изглед">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-7h5v7"/></svg>
+          </button>
+        </div>
 
       </section>
 
@@ -75,12 +105,22 @@ const graphPayload = JSON.stringify(contentGraph)
 
   <script type="application/json" id="wg-data" is:inline set:html={graphPayload}></script>
   <script>
+    import { timelineSortValue, timeLabel } from '../lib/timeline/time.mjs';
+
     type GraphNode = {
       id: string;
       kind: string;
       type?: string;
       label: string;
+      world?: string;
+      status?: string;
+      variables?: Array<{
+        key: string;
+        value: unknown;
+        status?: string;
+      }>;
       date?: string | null;
+      time?: { label?: string; year?: number; startYear?: number; endYear?: number; precision?: string } | string | null;
       sector?: string;
       articleId?: string;
       articleUrl?: string | null;
@@ -92,6 +132,10 @@ const graphPayload = JSON.stringify(contentGraph)
       radius?: number;
     };
 
+    function graphNodeTimeLabel(node: GraphNode): string {
+      return node.date || timeLabel(node.time);
+    }
+
     type GraphEdge = {
       id: string;
       type: string;
@@ -99,7 +143,6 @@ const graphPayload = JSON.stringify(contentGraph)
       to: string;
       article?: string;
 
-      // Contextual relationships: entities mentioned in the same article.
       contextual?: boolean;
       evidence?: string;
     };
@@ -315,7 +358,6 @@ function restorePreviousView(): void {
 
     const nodeMap = new Map(nodes.map((n) => [n.id, n]));
 
-    // Persist the selected graph element in the URL so refresh opens the same view.
     function syncSelectedNodeInUrl(id: string | null): void {
       const url = new URL(window.location.href);
       if (id) url.searchParams.set('node', id);
@@ -360,25 +402,27 @@ function restorePreviousView(): void {
     
     
     function arrangeWorlds(worlds: GraphNode[]) {
-      if (!worlds.length) return;
+  if (!worlds.length) return;
 
-      // Stable, compact grid: the camera fits the grid to the available canvas.
-      const columns = Math.min(4, Math.max(1, Math.ceil(Math.sqrt(worlds.length))));
-      const rows = Math.ceil(worlds.length / columns);
-      const gapX = 360;
-      const gapY = 218;
-      const totalWidth = (columns - 1) * gapX;
-      const totalHeight = (rows - 1) * gapY;
+  const columns = Math.min(4, Math.max(1, Math.ceil(Math.sqrt(worlds.length))));
+  const rows = Math.ceil(worlds.length / columns);
 
-      worlds.forEach((world, index) => {
-        const col = index % columns;
-        const row = Math.floor(index / columns);
-        world.x = col * gapX - totalWidth / 2;
-        world.y = row * gapY - totalHeight / 2;
-        world.vx = 0;
-        world.vy = 0;
-      });
-    }
+  const gapX = 360;
+  const gapY = 250;
+
+  const totalWidth = (columns - 1) * gapX;
+  const totalHeight = (rows - 1) * gapY;
+
+  worlds.forEach((world, index) => {
+    const col = index % columns;
+    const row = Math.floor(index / columns);
+
+    world.x = col * gapX - totalWidth / 2;
+    world.y = row * gapY - totalHeight / 2;
+    world.vx = 0;
+    world.vy = 0;
+  });
+}
 
     arrangeWorlds(visibleNodes.filter((n) => n.kind === 'world'));
     
@@ -387,10 +431,9 @@ function restorePreviousView(): void {
       const selected = selectedId ? nodeMap.get(selectedId) : null;
       const targetIds = new Set<string>();
 
-      // Search is a temporary result view; each result includes its real direct neighbours.
       if (q) {
         for (const node of nodes) {
-          const haystack = `${node.label} ${node.date || ''} ${node.kind} ${node.id}`.toLowerCase();
+          const haystack = `${node.label} ${graphNodeTimeLabel(node)} ${node.kind} ${node.id}`.toLowerCase();
           if (haystack.includes(q)) {
             targetIds.add(node.id);
             for (const edge of allEdges) {
@@ -403,7 +446,6 @@ function restorePreviousView(): void {
         viewLevel = 'overview';
         selectedId = null;
 
-        // Всички алтернативни светове.
         for (const node of nodes) {
           if (node.kind === 'world') {
             targetIds.add(node.id);
@@ -413,8 +455,7 @@ function restorePreviousView(): void {
       
       
       } else if (selected.kind === 'world') {
-  // The selected world defines the scenario but is not a visible node.
-  // Its illustration will be used as the canvas background.
+        targetIds.add(selected.id);
 
         const scenarioArticleIds = new Set<string>();
 
@@ -448,10 +489,6 @@ function restorePreviousView(): void {
           }
         }
       } else {
-        // Node exploration is intentionally local: show the selected node and
-        // its immediate real neighbours only. The user explores the graph by
-        // selecting one of those neighbours, rather than seeing the entire
-        // connected component at once.
         targetIds.add(selected.id);
 
         for (const edge of allEdges) {
@@ -460,55 +497,52 @@ function restorePreviousView(): void {
         }
       }
 
-      // World cards belong only to the opening overview. After entering a world
-      // or selecting any connected node, explore the scenario through its
-      // articles, divergences, timeline events and other graph nodes only.
       visibleNodes = nodes.filter((node) =>
         targetIds.has(node.id) &&
-        (viewLevel === 'overview' && !q || node.kind !== 'world')
+        (
+          (viewLevel === 'overview' && !q) ||
+          node.kind !== 'world' ||
+          node.id === selectedId
+        )
       );
       const visibleIds = new Set(visibleNodes.map((node) => node.id));
       visibleEdges = allEdges.filter((edge) => visibleIds.has(edge.from) && visibleIds.has(edge.to));
 
       if (viewLevel === 'overview' && !q) {
         arrangeWorlds(visibleNodes.filter((n) => n.kind === 'world'));
-        // Keep the overview deliberately clean. Neighbours are shown on selection/expand.
         simTicks = 0;
+      
       
       } else {
         const center = selectedId ? nodeMap.get(selectedId) : null;
 
         if (center && visibleNodes.length) {
-          const place = (node: GraphNode, x: number, y: number) => {
-            node.x = x;
-            node.y = y;
-            node.vx = 0;
-            node.vy = 0;
-          };
-
-          
-          // Arrange the visible connected component by graph distance from the
-          // selected node. This keeps related nodes together while giving image
-          // nodes enough room and avoiding the crowded, type-based rings.
-          place(center, 0, 0);
-
           const layoutIds = new Set(visibleNodes.map((node) => node.id));
           layoutIds.add(center.id);
+
+          // Keep the selected node in place. Arrange only the surrounding
+          // nodes, using the selected node's current position as an anchor.
+          const centerX = center.x ?? 0;
+          const centerY = center.y ?? 0;
+
           const distanceById = new Map<string, number>([[center.id, 0]]);
           const queue: string[] = [center.id];
+
           while (queue.length) {
             const currentId = queue.shift()!;
             const distance = distanceById.get(currentId)!;
-            // Use the source graph here because a selected world is a virtual
-            // hub in this view and intentionally isn't drawn as a node.
+
             for (const edge of allEdges) {
-              const neighbourId = edge.from === currentId
-                ? edge.to
-                : edge.to === currentId
-                  ? edge.from
-                  : null;
+              const neighbourId =
+                edge.from === currentId
+                  ? edge.to
+                  : edge.to === currentId
+                    ? edge.from
+                    : null;
+
               if (
-                neighbourId && layoutIds.has(neighbourId) &&
+                neighbourId &&
+                layoutIds.has(neighbourId) &&
                 !distanceById.has(neighbourId)
               ) {
                 distanceById.set(neighbourId, distance + 1);
@@ -518,39 +552,57 @@ function restorePreviousView(): void {
           }
 
           const rings = new Map<number, GraphNode[]>();
+
           for (const node of visibleNodes) {
             if (node.id === center.id) continue;
+
             const distance = distanceById.get(node.id) ?? 1;
+
             if (!rings.has(distance)) rings.set(distance, []);
             rings.get(distance)!.push(node);
           }
 
-          for (const [distance, ring] of [...rings.entries()].sort((a, b) => a[0] - b[0])) {
+          for (const [distance, ring] of [...rings.entries()].sort(
+            (a, b) => a[0] - b[0]
+          )) {
             ring.sort((a, b) => {
               const kindOrder = (a.kind || '').localeCompare(b.kind || '');
               return kindOrder || a.label.localeCompare(b.label);
             });
 
-            // Wider rings for image-bearing worlds and enough circumference for
-            // readable spacing. The golden-angle offset avoids radial spokes.
-            const imageNodes = ring.filter((node) => node.kind === 'world').length;
-            const minimumCircumference = ring.length * 118 + imageNodes * 92;
+            const labelSpace = ring.reduce((total, node) => {
+              const labelLength = displayNodeLabel(node).length;
+              const weight = node.kind === 'world' ? 1.8 : 1;
+              return total + Math.max(150, labelLength * 8) * weight;
+            }, 0);
+
             const radius = Math.max(
-              220 + (distance - 1) * 185,
-              minimumCircumference / (Math.PI * 2)
+              280 + (distance - 1) * 220,
+              (labelSpace + ring.length * 45) / (Math.PI * 2)
             );
+
             const startAngle = -Math.PI / 2 + distance * 0.47;
 
             ring.forEach((node, index) => {
-              const angle = startAngle + (Math.PI * 2 * index) / ring.length;
+              const angle =
+                startAngle + (Math.PI * 2 * index) / ring.length;
               const stagger = index % 2 === 0 ? 1 : 1.035;
-              place(
-                node,
-                Math.cos(angle) * radius * stagger,
-                Math.sin(angle) * radius * (index % 3 === 0 ? 1.025 : 1)
-              );
+
+              node.x =
+                centerX + Math.cos(angle) * radius * stagger;
+              node.y =
+                centerY +
+                Math.sin(angle) *
+                  radius *
+                  (index % 3 === 0 ? 1.025 : 1);
+
+              node.vx = 0;
+              node.vy = 0;
             });
           }
+
+          center.vx = 0;
+          center.vy = 0;
         }
       }
 
@@ -569,8 +621,6 @@ function restorePreviousView(): void {
   }
 
     function draw() {
-      // Do not let a transient invalid canvas size break rendering. Keep this
-      // guard non-destructive: invalid frames are skipped, not cleared to blank.
       if (
         !Number.isFinite(width) || !Number.isFinite(height) ||
         width <= 0 || height <= 0
@@ -598,7 +648,6 @@ function restorePreviousView(): void {
       bg.addColorStop(1, '#070b11');
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, width, height);
-      // Use the same clean graph background for every selected node type.
 
       for (let i = 0; i < 95; i++) {
         const x = ((i * 127.1 + 31.7) % width + width) % width;
@@ -621,9 +670,6 @@ function restorePreviousView(): void {
           ])
         : null;
 
-      // In Overview, show only *indirect* world-to-world paths that are
-      // grounded in the graph: both worlds share a real intermediary node.
-      // These are dashed and subdued so they cannot be mistaken for direct edges.
       if (viewLevel === 'overview' && !selectedId) {
         const worlds = visibleNodes.filter((n) => n.kind === 'world');
         const adjacency = new Map<string, Set<string>>();
@@ -677,9 +723,6 @@ function restorePreviousView(): void {
         }
       }
 
-      // In a selected-world view, the article is context, not the branching hub.
-      // Re-route article-scoped containment links visually through the registered
-      // divergence when the graph provides one for that same article.
       const scenarioDivergenceByArticle = new Map<string, GraphNode>();
       if (viewLevel === 'world') {
         for (const edge of allEdges) {
@@ -691,7 +734,6 @@ function restorePreviousView(): void {
         }
       }
 
-      // Draw real Content Graph edges in the selected/expanded view.
       for (const e of visibleEdges) {
         const a = nodeMap.get(e.from);
         const b = nodeMap.get(e.to);
@@ -700,9 +742,6 @@ function restorePreviousView(): void {
         if (viewLevel === 'world' && e.article && scenarioDivergenceByArticle.has(e.article)) {
           const articleNode = a.kind === 'article' ? a : b.kind === 'article' ? b : null;
           const scenarioNode = articleNode ? (a.id === articleNode.id ? b : a) : null;
-          // Keep the article-to-divergence connection visible: it explains which
-          // point of divergence belongs to this story. Only article-to-event spokes
-          // are replaced by the cleaner branches drawn from the divergence below.
           if (articleNode && scenarioNode && scenarioNode.kind === 'timeline-event') {
             continue;
           }
@@ -711,8 +750,6 @@ function restorePreviousView(): void {
         const p = screenPoint(a);
         const q = screenPoint(b);
 
-        // In a selected-world view, show the scenario's real internal relationships
-        // at full strength. The world itself is contextual and is not a visible canvas node.
         const focused =
           viewLevel === 'world' || !active || active.has(a.id) || active.has(b.id);
 
@@ -720,8 +757,6 @@ function restorePreviousView(): void {
         const dy = q.y - p.y;
         const distance = Math.hypot(dx, dy) || 1;
 
-        // Curve the line without changing the underlying graph relation.
-        // Alternate curve directions so parallel connections remain distinguishable.
         const edgeIndex = visibleEdges.indexOf(e);
         const direction = edgeIndex % 2 === 0 ? 1 : -1;
         const bend = Math.min(76, distance * 0.22) * direction;
@@ -747,8 +782,6 @@ function restorePreviousView(): void {
         ctx.moveTo(p.x, p.y);
         ctx.quadraticCurveTo(cx, cy, q.x, q.y);
 
-        // Contextual links are dashed and subdued so they are not
-        // mistaken for direct factual or causal relationships.
         ctx.setLineDash(
           contextual
             ? [5, 5]
@@ -785,7 +818,6 @@ function restorePreviousView(): void {
 
         ctx.setLineDash([]);
 
-        // Direction markers are reserved for relations whose type explicitly implies direction.
         if ((causal || chronology) && focused) {
           const t = 0.72;
           const ax = (1 - t) * (1 - t) * p.x + 2 * (1 - t) * t * cx + t * t * q.x;
@@ -809,7 +841,6 @@ function restorePreviousView(): void {
           ctx.restore();
         }
 
-        // Subtle luminous point on causal connections.
         if (causal && focused) {
           const t = 0.5;
           const mx =
@@ -829,8 +860,6 @@ function restorePreviousView(): void {
 
       }
 
-      // Scenario branches: connect each timeline event to the divergence registered
-      // under the same article. These are neutral structural branches, not causal arrows.
       if (viewLevel === 'world' && scenarioDivergenceByArticle.size) {
         const divergenceEventPairs = new Set<string>();
         for (const edge of allEdges) {
@@ -867,6 +896,13 @@ function restorePreviousView(): void {
         }
       }
 
+      const placedLabelBoxes: Array<{
+        left: number;
+        right: number;
+        top: number;
+        bottom: number;
+      }> = [];
+
       for (const n of visibleNodes) {
         const p = screenPoint(n);
         if (p.x < -80 || p.x > width + 80 || p.y < -50 || p.y > height + 50) continue;
@@ -879,8 +915,6 @@ function restorePreviousView(): void {
           n.kind === 'world-state' ? 5 :
           n.kind === 'world-transition' ? 6 : 5;
 
-        // Node size is independent of camera zoom.
-        // Selected/hovered nodes are slightly enlarged.
         const r =
           baseRadius *
           (selectedId === n.id || hoverId === n.id ? 1.12 : 1);
@@ -914,13 +948,11 @@ function restorePreviousView(): void {
         if (image?.complete && image.naturalWidth > 0) {
           ctx.save();
 
-          // Warm atmospheric halo.
           ctx.beginPath();
           ctx.arc(p.x, p.y, r + 6, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(245,189,85,0.09)';
           ctx.fill();
 
-          // Clip the image into a circle.
           ctx.beginPath();
           ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
           ctx.clip();
@@ -935,13 +967,11 @@ function restorePreviousView(): void {
             p.x - r, p.y - r, r * 2, r * 2
           );
 
-          // Slightly darken the image to maintain visual consistency.
           ctx.fillStyle = 'rgba(5,10,18,0.10)';
           ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
 
           ctx.restore();
 
-          // Gold border.
           ctx.beginPath();
           ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
           ctx.strokeStyle = selected ? '#ffffff' : '#f5bd55';
@@ -954,13 +984,10 @@ function restorePreviousView(): void {
           ctx.lineWidth = 1;
           ctx.stroke();
         } else {
-          // Ignore invalid transient node coordinates instead of passing NaN or
-          // Infinity to CanvasGradient. The next simulation frame can recover.
           if (
             !Number.isFinite(p.x) || !Number.isFinite(p.y) ||
             !Number.isFinite(r) || r <= 0
           ) continue;
-          // Attractive fallback until the illustration is available.
           const sphere = ctx.createRadialGradient(
             p.x - r * 0.34,
             p.y - r * 0.38,
@@ -992,9 +1019,6 @@ function restorePreviousView(): void {
           }
         }
 
-
-        // In a selected-node view, label the selected node and its immediate
-        // neighbours. Keep distant nodes unlabeled to avoid visual clutter.
         const showLabel =
           n.id === selectedId ||
           n.id === hoverId ||
@@ -1008,22 +1032,18 @@ function restorePreviousView(): void {
             n.kind === 'divergence' ||
             n.id === selectedId ||
             n.id === hoverId;
-          // Keep connected-world labels readable at every camera zoom level.
-          // Only the node positions zoom; text stays at a comfortable screen size.
           const fontSize = n.id === selectedId ? 15 : n.kind === 'world' ? 17 : n.kind === 'divergence' ? 14 : 13;
 
           ctx.font = `${important ? '650 ' : '500 '}${fontSize}px Inter, system-ui, sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
 
-          // Keep canvas labels compact: at most two centered lines.
-          // The full title remains available in the World Explorer panel.
           const maxChars =
             n.kind === 'world' ? 30 :
             n.kind === 'timeline-event' ? 26 : 34;
           const fullLabel =
             n.kind === 'timeline-event' && viewLevel === 'world'
-              ? `${n.date ? `${n.date} — ` : ''}${displayNodeLabel(n)}`
+              ? `${graphNodeTimeLabel(n) ? `${graphNodeTimeLabel(n)} — ` : ''}${displayNodeLabel(n)}`
               : displayNodeLabel(n);
           const words = fullLabel.split(/\s+/).filter(Boolean);
           const labelLines: string[] = [];
@@ -1051,12 +1071,8 @@ function restorePreviousView(): void {
           }
 
           const lineHeight = fontSize + 3;
-          const textWidth = Math.max(...labelLines.map((line) => ctx.measureText(line).width));
           const textHeight = labelLines.length * lineHeight;
 
-          // In exploration views, place labels on the outside of the radial
-          // layout instead of stacking every label underneath its node.
-          // Overview world cards keep their familiar centered captions.
           let labelX = p.x;
           let labelY = p.y + r + (n.kind === 'world' ? 13 : important ? 8 : 6);
           if (viewLevel !== 'overview' && selectedId && n.id !== selectedId) {
@@ -1077,8 +1093,6 @@ function restorePreviousView(): void {
           } else {
             ctx.textAlign = 'center';
           }
-
-          // World names are rendered directly on the canvas, without rectangular backdrops.
 
           ctx.fillStyle = focused
             ? '#ffffff'
@@ -1110,7 +1124,6 @@ function restorePreviousView(): void {
             const b = visibleNodes[j];
             const dx = (a.x || 0) - (b.x || 0);
             const dy = (a.y || 0) - (b.y || 0);
-            
             
             const d2 = dx * dx + dy * dy + 20;
             const involvesWorld = a.kind === 'world' || b.kind === 'world';
@@ -1166,6 +1179,212 @@ function restorePreviousView(): void {
       raf = requestAnimationFrame(tick);
     }
 
+        function compareStateValues(
+      fromValue: unknown,
+      toValue: unknown,
+      path = ''
+    ): Array<{
+      path: string;
+      from: unknown;
+      to: unknown;
+      status: 'changed' | 'unchanged' | 'added' | 'missing';
+    }> {
+      const isObject = (value: unknown): value is Record<string, unknown> =>
+        value !== null &&
+        typeof value === 'object' &&
+        !Array.isArray(value);
+
+      if (isObject(fromValue) && isObject(toValue)) {
+        const keys = new Set([
+          ...Object.keys(fromValue),
+          ...Object.keys(toValue),
+        ]);
+
+        return [...keys].flatMap((key) => {
+          const nextPath = path ? `${path}.${key}` : key;
+          const hasFrom = Object.hasOwn(fromValue, key);
+          const hasTo = Object.hasOwn(toValue, key);
+
+          if (!hasFrom) {
+            return [{
+              path: nextPath,
+              from: undefined,
+              to: toValue[key],
+              status: 'added' as const,
+            }];
+          }
+
+          if (!hasTo) {
+            return [{
+              path: nextPath,
+              from: fromValue[key],
+              to: undefined,
+              status: 'missing' as const,
+            }];
+          }
+
+          return compareStateValues(
+            fromValue[key],
+            toValue[key],
+            nextPath
+          );
+        });
+      }
+
+      const equal = JSON.stringify(fromValue) === JSON.stringify(toValue);
+
+      return [{
+        path: path || 'value',
+        from: fromValue,
+        to: toValue,
+        status: equal ? 'unchanged' : 'changed',
+      }];
+    }
+
+    function formatComparisonValue(value: unknown): string {
+      if (value === undefined) return '—';
+      if (value === null) return 'null';
+
+      return typeof value === 'object'
+        ? JSON.stringify(value)
+        : String(value);
+    }
+
+    function renderWorldStateComparison(
+      current: GraphNode
+    ): string {
+      const states = allNodes.filter(
+        (node) =>
+          node.kind === 'world-state' &&
+          node.world === current.world &&
+          node.id !== current.id
+      );
+
+      if (!states.length) {
+        return '<p class="wg-no-links">No other world states are available for comparison.</p>';
+      }
+
+      const options = states.map((state) =>
+        `<option value="${escapeAttr(state.id)}">${escapeHtml(displayNodeLabel(state))}</option>`
+      ).join('');
+
+      return `
+        <section class="wg-state-comparison">
+          <div class="wg-related-title">COMPARE WORLD STATES</div>
+          <label class="wg-compare-label" for="wg-compare-state">
+            Compare this state with
+          </label>
+          <select id="wg-compare-state" class="wg-compare-select">
+            <option value="">Choose a world state…</option>
+            ${options}
+          </select>
+          <div id="wg-compare-results" aria-live="polite">
+            <p class="wg-no-links">
+              Select another state to inspect variable-level differences.
+            </p>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderWorldStateComparisonResults(
+      fromState: GraphNode,
+      toState: GraphNode
+    ): string {
+      const fromVariables = new Map(
+        (fromState.variables || []).map((variable) => [
+          variable.key,
+          variable,
+        ])
+      );
+
+      const toVariables = new Map(
+        (toState.variables || []).map((variable) => [
+          variable.key,
+          variable,
+        ])
+      );
+
+      const keys = new Set([
+        ...fromVariables.keys(),
+        ...toVariables.keys(),
+      ]);
+
+      if (!keys.size) {
+        return '<p class="wg-no-links">Neither state contains comparable variables.</p>';
+      }
+
+      const rows: string[] = [];
+
+      for (const key of keys) {
+        const fromVariable = fromVariables.get(key);
+        const toVariable = toVariables.get(key);
+
+        if (!fromVariable) {
+          rows.push(`
+            <div class="wg-compare-row">
+              <strong>${escapeHtml(key)}</strong>
+              <span class="wg-compare-status is-added">Added</span>
+              <small>Target: ${escapeHtml(formatComparisonValue(toVariable?.value))}</small>
+            </div>
+          `);
+          continue;
+        }
+
+        if (!toVariable) {
+          rows.push(`
+            <div class="wg-compare-row">
+              <strong>${escapeHtml(key)}</strong>
+              <span class="wg-compare-status is-missing">Missing in target</span>
+              <small>Source: ${escapeHtml(formatComparisonValue(fromVariable.value))}</small>
+            </div>
+          `);
+          continue;
+        }
+
+        const differences = compareStateValues(
+          fromVariable.value,
+          toVariable.value
+        );
+
+        for (const difference of differences) {
+          const statusLabels = {
+            changed: 'Changed',
+            unchanged: 'Unchanged',
+            added: 'Added',
+            missing: 'Missing in target',
+          };
+
+          const statusClass = {
+            changed: 'is-changed',
+            unchanged: 'is-unchanged',
+            added: 'is-added',
+            missing: 'is-missing',
+          };
+
+          rows.push(`
+            <div class="wg-compare-row">
+              <strong>${escapeHtml(key)}${difference.path === 'value' ? '' : ` · ${escapeHtml(difference.path)}`}</strong>
+              <span class="wg-compare-status ${statusClass[difference.status]}">${statusLabels[difference.status]}</span>
+              <small>Source: ${escapeHtml(formatComparisonValue(difference.from))}</small>
+              <small>Target: ${escapeHtml(formatComparisonValue(difference.to))}</small>
+            </div>
+          `);
+        }
+      }
+
+      return `
+        <div class="wg-compare-summary">
+          ${rows.length} variable-level comparison result(s)
+        </div>
+        <div class="wg-compare-list">${rows.join('')}</div>
+        <p class="wg-compare-note">
+          This is a comparison of recorded data, not proof that every difference
+          was caused by a specific event.
+        </p>
+      `;
+    }
+
     function selectNode(n: GraphNode | null) {
       const nextId = n?.id || null;
       if (nextId !== selectedId || (!n && viewLevel !== 'overview')) saveView();
@@ -1180,8 +1399,6 @@ function restorePreviousView(): void {
       rebuild();
 
       if (n) {
-        // Fit the selected node and its real neighbours together; centering at a
-        // fixed zoom clipped connected nodes on smaller screens.
         simTicks = 0;
         requestAnimationFrame(() => fit());
       }
@@ -1234,7 +1451,8 @@ function restorePreviousView(): void {
         }
 
         const sortedEvents = [...events.values()].sort((a, b) =>
-          (a.date || '').localeCompare(b.date || '')
+          timelineSortValue(a.time) - timelineSortValue(b.time) ||
+          (a.label || '').localeCompare(b.label || '')
         );
 
         const storyLinks = scenarioArticles
@@ -1256,7 +1474,7 @@ function restorePreviousView(): void {
             <i style="--node-color:${palette[node.kind] || '#8da4b8'}"></i>
             <span>
               ${escapeHtml(displayNodeLabel(node))}
-              <small>${escapeHtml(node.date || relation)}</small>
+              <small>${escapeHtml(graphNodeTimeLabel(node) || relation)}</small>
             </span>
             <b>↗</b>
           </button>
@@ -1322,8 +1540,6 @@ function restorePreviousView(): void {
         if (x.node) uniq.set(x.node.id, x as { edge: GraphEdge; node: GraphNode });
       });
 
-      // Keep every direct relationship available in the inspector. The list scrolls
-      // independently; the canvas focuses on spatial readability instead of hiding data.
       const linked = [...uniq.values()].sort((a, b) =>
         a.edge.type.localeCompare(b.edge.type) || a.node.label.localeCompare(b.node.label)
       );
@@ -1336,7 +1552,7 @@ function restorePreviousView(): void {
         </div>
         <h2>${escapeHtml(displayNodeLabel(n))}</h2>
         ${fullNodeDescription(n) ? `<p class="wg-node-description">${escapeHtml(fullNodeDescription(n))}</p>` : ''}
-        ${n.date ? `<div class="wg-date">${escapeHtml(n.date)}</div>` : ''}
+        ${graphNodeTimeLabel(n) ? `<div class="wg-date">${escapeHtml(graphNodeTimeLabel(n))}</div>` : ''}
         <p class="wg-node-id">${escapeHtml(n.type || n.id)}</p>
         <div class="wg-detail-stats">
           <div><strong>${relatedEdges.length}</strong><span>direct connections</span></div>
@@ -1362,11 +1578,39 @@ function restorePreviousView(): void {
             : '<p class="wg-no-links">No direct connections are registered for this node.</p>'
         }
         ${
+          n.kind === 'world-state'
+            ? renderWorldStateComparison(n)
+            : ''
+        }
+        ${
           url
             ? `<a class="wg-story-link" href="${escapeAttr(url)}">Read the related story <span>↗</span></a>`
             : ''
         }
       `;
+
+            const compareSelect =
+        inspector.querySelector<HTMLSelectElement>('#wg-compare-state');
+
+      compareSelect?.addEventListener('change', () => {
+        const results =
+          inspector.querySelector<HTMLDivElement>('#wg-compare-results');
+
+        if (!results) return;
+
+        const target = nodeMap.get(compareSelect.value);
+
+        if (!target || target.kind !== 'world-state') {
+          results.innerHTML = `
+            <p class="wg-no-links">
+              Select another state to inspect variable-level differences.
+            </p>
+          `;
+          return;
+        }
+
+        results.innerHTML = renderWorldStateComparisonResults(n, target);
+      });
 
       inspector
         .querySelectorAll<HTMLButtonElement>('[data-node]')
@@ -1385,7 +1629,6 @@ function restorePreviousView(): void {
 function fullNodeDescription(node: GraphNode): string {
   const raw = (node.label || '').trim();
   if (!raw || raw === node.id) return '';
-  // Only show a separate description when it adds information beyond the short label.
   return raw === displayNodeLabel(node) ? '' : raw;
 }
 
@@ -1393,7 +1636,6 @@ function displayNodeLabel(node: GraphNode): string {
   const raw = (node.label || node.id || '').trim().replaceAll('_', ' ');
   const lower = raw.toLowerCase();
 
-  // Articles must remain distinguishable from events and divergences.
   if (node.kind === 'article') {
     return raw
       .replace(/^what if\s+/i, '')
@@ -1401,20 +1643,16 @@ function displayNodeLabel(node: GraphNode): string {
       .trim();
   }
 
-  // Preserve the actual labels of worlds and divergences.
   if (node.kind === 'world' || node.kind === 'divergence') {
     return raw;
   }
 
-  // Timeline events have short, meaningful labels in the source data.
   if (node.kind === 'timeline-event' || node.kind === 'world-transition') {
     return raw;
   }
 
-  // Keep concise labels intact.
   if (raw.length <= 38) return raw;
 
-  // Shorten other long labels without changing their meaning unnecessarily.
   const cleaned = raw
     .replace(/^what if\s+/i, '')
     .replace(/[.!?].*$/, '')
@@ -1431,7 +1669,7 @@ function articlePath(path: string): string | null {
     .replace(/^src\/content\//, '')
     .replace(/\.md$/, '');
   const bits = clean.split('/');
-  return bits.length >= 2 ? `/${bits[0]}/${bits.slice(1).join('/')}/` : null;
+  return bits.length >= 2 ? articleRoute(bits[0], bits.slice(1).join('/')) : null;
 }
 
 function escapeHtml(v: string): string {
@@ -1482,14 +1720,19 @@ function animateCamera(
   cameraAnimationFrame = requestAnimationFrame(tick);
 }
 
-function centerNode(n: GraphNode, targetZoom = 1.65) {
+function centerNode(n: GraphNode, targetZoom = 1.35) {
   const x = n.x ?? 0;
   const y = n.y ?? 0;
 
+  // Keep the selected node slightly left of center,
+  // leaving room for the information panel.
+  const targetX = width * 0.42 - width / 2;
+  const targetY = 0;
+
   animateCamera(
     targetZoom,
-    -x * targetZoom,
-    -y * targetZoom
+    targetX - x * targetZoom,
+    targetY - y * targetZoom
   );
 }
     
@@ -1547,7 +1790,6 @@ function centerNode(n: GraphNode, targetZoom = 1.65) {
       selectedId === n.id || hoverId === n.id ? 1.1 : 1
     );
 
-    // Keep a comfortable click target without changing visual size.
     const hitRadius = Math.max(12, visualRadius + 5);
 
     if (Math.hypot(x - p.x, y - p.y) < hitRadius) {
@@ -1568,7 +1810,6 @@ canvas.addEventListener('pointerdown', (e) => {
   lastY = y;
   moved = false;
 
-  // Възлите могат да се избират, но не и да се влачат.
   dragging = null;
   panning = !hit(x, y);
 
@@ -1608,7 +1849,6 @@ canvas.addEventListener('pointerup', (e) => {
   const x = e.clientX - r.left;
   const y = e.clientY - r.top;
 
-  // Избирай възел само при клик, а не при влачене.
   if (!moved && !panning) {
     const n = hit(x, y);
     if (n) selectNode(n);
@@ -1650,8 +1890,10 @@ canvas.addEventListener('pointercancel', (e) => {
     );
 
     search.addEventListener('input', () => {
+      const query = search.value.trim();
+
       rebuild();
-      simTicks = 12;
+      simTicks = 0;
     });
 
     document.querySelector('#wg-zoom-in')?.addEventListener('click', () => {
@@ -1726,7 +1968,6 @@ document.querySelector('#wg-reset')?.addEventListener('click', () => {
     const initialNode = initialNodeId ? nodeMap.get(initialNodeId) : undefined;
 
     if (initialNode) {
-      // Reconstruct the selected world/event view, inspector and connected layer.
       selectNode(initialNode);
     } else {
       if (initialNodeId) syncSelectedNodeInUrl(null);
@@ -1753,6 +1994,35 @@ requestAnimationFrame(() => {
         fit();
       });
     });
+
+    // Управление на разпъващото се търсене
+    const searchWrapper = document.querySelector('.wg-search-wrapper');
+    const searchToggle = document.getElementById('wg-search-toggle');
+
+    if (searchWrapper && searchToggle) {
+      searchToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        searchWrapper.classList.toggle('is-open');
+        if (searchWrapper.classList.contains('is-open')) {
+          search.focus();
+        }
+      });
+
+      // Затваряне при клик извън полето
+      document.addEventListener('click', (e) => {
+        if (
+          searchWrapper.classList.contains('is-open') &&
+          !searchWrapper.contains(e.target as Node)
+        ) {
+          searchWrapper.classList.remove('is-open');
+        }
+      });
+      
+      // Затваряне при клик върху canvas
+      canvas.addEventListener('pointerdown', () => {
+        searchWrapper.classList.remove('is-open');
+      });
+    }
   </script>
 </BaseLayout>
 
@@ -1774,7 +2044,6 @@ requestAnimationFrame(() => {
     background: #080c12;
   }
 
-  /* Graph page occupies only the space between fixed bars */
   body:has(.wg-page) > .page-frame {
     width: 100%;
     height: 100dvh;
@@ -1802,15 +2071,12 @@ requestAnimationFrame(() => {
     font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
-  /* The internal topbar duplicates the global navigation, hide it. */
-  .wg-topbar {
-    display: none;
-  }
+  .wg-topbar { display: none; }
 
-  /* ---------- Main shell ---------- */
   .wg-shell {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 270px;    flex: 1 1 0;
+    grid-template-columns: minmax(0, 1fr);
+    flex: 1 1 0;
     height: auto;
     min-height: 0;
     max-height: none;
@@ -1834,23 +2100,13 @@ requestAnimationFrame(() => {
   }
 
   .wg-sidebar::-webkit-scrollbar,
-  .wg-inspector::-webkit-scrollbar {
-    display: none;
-  }
+  .wg-inspector::-webkit-scrollbar { display: none; }
 
   .wg-sidebar { border-right: 1px solid #253241; }
   .wg-inspector { border-left: 1px solid #253241; }
-  
-  /* World Graph uses the full canvas; details open on demand. */
-  .wg-shell {
-    grid-template-columns: minmax(0, 1fr);
-  }
 
-  .wg-inspector {
-    display: none;
-  }
+  .wg-inspector { display: none; }
 
-  /* ---------- Sidebar controls ---------- */
   .wg-search-label,
   .wg-select-label {
     display: block;
@@ -1910,7 +2166,6 @@ requestAnimationFrame(() => {
     white-space: nowrap;
   }
 
-  /* ---------- Dots ---------- */
   .dot {
     display: inline-block;
     width: 9px;
@@ -1925,7 +2180,6 @@ requestAnimationFrame(() => {
   .dot.entity { background: #35dcb1; }
   .dot.world-state { background: #38c6cf; }
 
-  /* ---------- Reset button + hint ---------- */
   .wg-reset {
     width: 100%;
     margin-top: 24px;
@@ -1942,14 +2196,7 @@ requestAnimationFrame(() => {
     border-color: #f5bd55;
     color: #f5bd55;
   }
-  .wg-hint {
-    font-size: 11px;
-    line-height: 1.6;
-    color: #718298;
-    margin-top: 16px;
-  }
 
-  /* ---------- Graph panel ---------- */
   .wg-graph-panel {
     position: relative;
     display: flex;
@@ -1960,6 +2207,7 @@ requestAnimationFrame(() => {
     overflow: hidden;
     background: #080c12;
   }
+
   .wg-canvas-top {
     position: relative;
     z-index: 2;
@@ -1994,7 +2242,6 @@ requestAnimationFrame(() => {
     white-space: nowrap;
   }
 
-  /* ---------- Canvas ---------- */
   #wg-canvas {
     display: block;
     flex: 1 1 0;
@@ -2009,40 +2256,6 @@ requestAnimationFrame(() => {
     cursor: grabbing;
   }
 
-  /* ---------- Focus controls ---------- */
-  
-  .wg-focus-controls {
-    position: relative;
-    top: auto;
-    left: auto;
-    z-index: 2;
-    display: flex;
-    flex: 0 0 auto;
-    gap: 6px;
-    padding: 8px 16px;
-    background: #080c12;
-    border-bottom: 1px solid #253241;
-  }
-
-  .wg-focus-controls button {
-    border: 1px solid #334256;
-    background: #101925;
-    color: #aab8c9;
-    border-radius: 8px;
-    padding: 8px 11px;
-    font: 600 11px Inter, system-ui, sans-serif;
-    cursor: pointer;
-    transition: background .15s, border-color .15s, color .15s;
-  }
-  .wg-focus-controls button:hover,
-  .wg-focus-controls button.active {
-    background: #263444;
-    border-color: #f5bd55;
-    color: #fff;
-  }
-
-  
-  /* ---------- Graph navigation controls ---------- */
   .wg-zoom-controls {
     position: absolute;
     z-index: 5;
@@ -2127,7 +2340,6 @@ requestAnimationFrame(() => {
     }
   }
 
-  /* ---------- Legend + empty ---------- */
   .wg-legend {
     display: none !important;
   }
@@ -2142,7 +2354,6 @@ requestAnimationFrame(() => {
     pointer-events: none;
   }
 
-  /* ---------- Inspector ---------- */
   .wg-inspector-head {
     display: flex;
     align-items: center;
@@ -2327,25 +2538,6 @@ requestAnimationFrame(() => {
   }
   .wg-story-link:hover { background: #ffd17a; }
 
-  /* ---------- Footer ---------- */
-  .wg-footer {
-    flex: 0 0 18px;
-    height: 18px;
-    min-height: 18px;
-    margin: 0;
-    padding: 0 4px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    overflow: hidden;
-    color: #8192a7;
-    font-size: 9px;
-    line-height: 1.4;
-    letter-spacing: .4px;
-  }
-
-  /* ---------- Responsive ---------- */
   @media (max-width: 1150px) {
     .wg-shell { grid-template-columns: 190px minmax(0, 1fr); }
     .wg-inspector { display: none; }
@@ -2384,263 +2576,20 @@ requestAnimationFrame(() => {
     .wg-inspector {
       display: none;
     }
-
-    .wg-footer {
-      flex-basis: 18px;
-      height: 18px;
-      min-height: 18px;
-      flex-direction: row;
-      font-size: 8px;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .wg-page * { scroll-behavior: auto !important; }
   }
-  
-  
-  /* Скриваме дублиращите се контроли над графиката. */
-  .wg-canvas-top,
+
   .wg-focus-controls {
     display: none !important;
   }
 
-  /* Страницата заема ограничено пространство под глобалната навигация. */
-  .wg-page {
-    width: 100%;
-    height: calc(100dvh - var(--site-header-height, 76px) - 28px);
-    max-height: calc(100dvh - var(--site-header-height, 76px) - 28px);
-    min-height: 0;
-    margin: 0 auto;
-    padding: 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    overflow: hidden;
+  body:has(.wg-page) .wg-canvas-top {
+    display: flex !important;
   }
 
-  /* Графиката заема свободното място, без да избутва футъра. */
-  .wg-shell {
-    flex: 1 1 0;
-    height: 0;
-    min-height: 0;
-    max-height: none;
-    overflow: hidden;
-  }
-
-  .wg-graph-panel {
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  #wg-canvas {
-    flex: 1 1 0;
-    height: 0;
-    min-height: 0;
-  }
-
-  /* Футърът остава в долната част на графичната страница. */
-  .wg-footer {
-    flex: 0 0 18px;
-    height: 18px;
-    min-height: 18px;
-    margin: 0;
-    overflow: hidden;
-  }
-
-  @media (max-width: 700px) {
-    .wg-page {
-      width: calc(100% - 16px);
-      height: calc(100dvh - var(--site-header-height, 76px) - 12px);
-      max-height: calc(100dvh - var(--site-header-height, 76px) - 12px);
-      padding: 6px 0 4px;
-      gap: 6px;
-    }
-
-    .wg-shell {
-      display: flex;
-      flex: 1 1 0;
-      flex-direction: column;
-      height: 0;
-      min-height: 0;
-    }
-
-    .wg-graph-panel {
-      flex: 1 1 0;
-      height: 0;
-      min-height: 0;
-    }
-
-    #wg-canvas {
-      flex: 1 1 0;
-      height: 0;
-      min-height: 0;
-    }
-
-    .wg-footer {
-      flex: 0 0 18px;
-      height: 18px;
-      min-height: 18px;
-      font-size: 8px;
-    }
-  }
-  
-/* Search bar */
-.wg-search-label {
-  display: block !important;
-  grid-column: 1 / -1;
-  margin-bottom: 0;
-}
-
-.wg-search::placeholder {
-  color: #718298 !important;
-}
-
-/* Graph page: reserve space for the global site footer */
-html:has(.wg-page) {
-  height: auto;
-  min-height: 100%;
-}
-
-body:has(.wg-page) {
-  height: auto;
-  min-height: 100dvh;
-  margin: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background: #080c12;
-}
-
-.wg-page {
-  width: min(calc(100% - 32px), 1800px);
-  height: calc(100dvh - var(--site-header-height, 76px) - 76px);
-  min-height: 440px;
-  max-height: none;
-  margin: 0 auto;
-  padding: 8px 0 6px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow: visible;
-  color: #e8edf5;
-}
-
-/* The graph takes the available space */
-.wg-shell {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  flex: 1 1 auto;
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  margin: 0;
-  border: 1px solid #253241;
-  border-radius: 13px;
-  overflow: hidden;
-  background: #080c12;
-  box-shadow: 0 25px 80px #0005;
-}
-
-.wg-graph-panel {
-  grid-column: 1;
-  grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  overflow: hidden;
-}
-
-#wg-canvas {
-  display: block;
-  flex: 1 1 auto;
-  width: 100%;
-  height: 0;
-  min-width: 0;
-  min-height: 0;
-}
-
-/* Keep the details panel available on demand */
-.wg-inspector {
-  display: none;
-}
-
-.wg-shell.has-selection .wg-inspector {
-  display: block;
-  position: absolute;
-  z-index: 20;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(400px, 38%);
-  box-sizing: border-box;
-  border-left: 1px solid #35465a;
-  background: rgba(14, 21, 32, 0.97);
-  box-shadow: -18px 0 45px rgba(0, 0, 0, 0.3);
-  overflow-x: hidden;
-  overflow-y: auto;
-  backdrop-filter: blur(14px);
-}
-
-/* Graph footer: always visible beneath the canvas */
-.wg-footer {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  min-height: 24px;
-  height: auto;
-  margin: 0;
-  padding: 4px 2px;
-  box-sizing: border-box;
-  overflow: visible;
-  color: #8192a7;
-  font-size: 10px;
-  line-height: 1.5;
-  letter-spacing: .3px;
-}
-
-@media (max-width: 700px) {
-  .wg-page {
-    width: calc(100% - 16px);
-    height: auto;
-    min-height: 0;
-    padding: 6px 0 12px;
-    overflow: visible;
-  }
-
-  .wg-shell {
-    flex: 0 0 auto;
-    height: 70dvh;
-    min-height: 420px;
-    max-height: 720px;
-  }
-
-  .wg-graph-panel {
-    height: 100%;
-    min-height: 0;
-  }
-
-  .wg-shell.has-selection .wg-inspector {
-    width: min(340px, 88%);
-  }
-
-  .wg-footer {
-    font-size: 9px;
-  }
-}
-
-
-
-  /* FINAL OVERRIDES — World Graph: stable viewport, visible shared chrome, larger illustrated worlds. */
   html:has(.wg-page) {
     width: 100%;
     height: 100%;
@@ -2658,7 +2607,6 @@ body:has(.wg-page) {
     background: #080c12;
   }
 
-  /* The shared site header is owned by BaseLayout, not by this page. */
   body:has(.wg-page) > .site-nav {
     position: fixed !important;
     inset: 0 0 auto 0 !important;
@@ -2676,7 +2624,6 @@ body:has(.wg-page) {
     box-sizing: border-box;
   }
 
-  /* Keep the shared site footer visible; never substitute the graph's old mini-footer. */
   body:has(.wg-page) > .site-footer {
     display: flex !important;
     position: fixed !important;
@@ -2730,7 +2677,6 @@ body:has(.wg-page) {
     overflow: hidden;
   }
 
-  /* View controls stay available without taking a full extra toolbar row. */
   body:has(.wg-page) .wg-focus-controls {
     display: flex !important;
     position: absolute;
@@ -2763,7 +2709,6 @@ body:has(.wg-page) {
     color: #ffe0a0;
   }
 
-  /* Search label, input and Reset share one row on desktop. */
   body:has(.wg-page) .wg-search-bar {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -2802,7 +2747,6 @@ body:has(.wg-page) {
     min-height: 0;
   }
 
-  /* The inspector opens only when a node is selected. */
   body:has(.wg-page) .wg-inspector {
     display: none;
   }
@@ -2824,7 +2768,6 @@ body:has(.wg-page) {
     backdrop-filter: blur(14px);
   }
 
-  /* No duplicate graph footer: the shared BaseLayout footer is the only footer. */
   body:has(.wg-page) .wg-footer {
     display: none !important;
   }
@@ -2876,8 +2819,6 @@ body:has(.wg-page) {
     body:has(.wg-page) * { scroll-behavior: auto !important; }
   }
 
-
-  /* Selected-node layout: reserve space for the inspector instead of covering the graph. */
   body:has(.wg-page) .wg-shell.has-selection {
     grid-template-columns: minmax(0, 1fr) 340px !important;
   }
@@ -2909,7 +2850,6 @@ body:has(.wg-page) {
     backdrop-filter: none !important;
   }
 
-  /* Mobile: the inspector becomes a full overlay with a close control. */
   @media (max-width: 900px) {
     body:has(.wg-page) .wg-shell.has-selection {
       grid-template-columns: minmax(0, 1fr) minmax(280px, 36%) !important;
@@ -2931,8 +2871,6 @@ body:has(.wg-page) {
     }
   }
 
-
-  /* Compact inspector: fit within the visible viewport without its own scrollbar. */
   body:has(.wg-page) .wg-shell.has-selection .wg-inspector {
     min-height: 0 !important;
     overflow-x: hidden !important;
@@ -3025,8 +2963,6 @@ body:has(.wg-page) {
     }
   }
 
-
-  /* Final viewport polish: readable world labels and a compact, non-scrolling inspector. */
   body:has(.wg-page) .wg-shell.has-selection {
     grid-template-columns: minmax(0, 1fr) minmax(310px, 360px) !important;
   }
@@ -3123,8 +3059,6 @@ body:has(.wg-page) {
     }
   }
 
-
-  /* Final layout override: let the graph use the full viewport width, without a surrounding card frame. */
   body:has(.wg-page) > .page-frame > .wg-page {
     width: 100% !important;
     max-width: none !important;
@@ -3145,8 +3079,6 @@ body:has(.wg-page) {
     border-radius: 0 !important;
   }
 
-  /* Search is integrated into the graph area but reserves its own row,
-     so it never covers a world, its title, or a connection. */
   body:has(.wg-page) .wg-search-bar {
     position: relative !important;
     inset: auto !important;
@@ -3203,4 +3135,379 @@ body:has(.wg-page) {
     }
   }
 
+  body:has(.wg-page) .wg-mode-nav {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 46px;
+    padding: 4px 0 8px;
+    box-sizing: border-box;
+  }
+
+  body:has(.wg-page) .wg-mode-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 112px;
+    padding: 9px 16px;
+    border: 1px solid #29384a;
+    border-radius: 9px;
+    background: #101722;
+    color: #aebed0;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 650;
+    transition: background .2s, border-color .2s, color .2s;
+  }
+
+  body:has(.wg-page) .wg-mode-link:hover {
+    border-color: #7890a8;
+    color: #fff;
+  }
+
+  body:has(.wg-page) .wg-mode-link.active {
+    border-color: #d7ad65;
+    background: #302719;
+    color: #ffd18c;
+    box-shadow: inset 0 0 0 1px #d7ad6522;
+  }
+
+  body:has(.wg-page) .wg-mode-icon {
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  @media (max-width: 520px) {
+    body:has(.wg-page) .wg-mode-nav {
+      gap: 5px;
+      min-height: 42px;
+      padding-bottom: 6px;
+    }
+
+    body:has(.wg-page) .wg-mode-link {
+      flex: 1 1 0;
+      min-width: 0;
+      gap: 5px;
+      padding: 9px 5px;
+      font-size: 11px;
+    }
+  }
+
+  
+  /* =========================================================================
+     World Graph: compact left panel — title, navigation and expandable search
+     ========================================================================= */
+
+  body:has(.wg-page) .wg-left-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 210px;
+    pointer-events: none;
+  }
+
+  /* Compact stacked title */
+  body:has(.wg-page) .wg-canvas-top {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  body:has(.wg-page) #wg-view-title {
+    display: block;
+    max-width: 180px;
+    color: #f5bd55;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+
+  body:has(.wg-page) #wg-view-subtitle {
+    display: block;
+    max-width: 190px;
+    margin-top: 5px;
+    color: #a6b4c5;
+    font-size: 11px;
+    line-height: 1.35;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+
+  body:has(.wg-page) #wg-stats {
+    display: none !important;
+  }
+
+  /* Vertical navigation */
+  body:has(.wg-page) .wg-mode-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+    width: 132px;
+    min-height: 0;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  body:has(.wg-page) .wg-mode-link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    box-sizing: border-box;
+    padding: 9px 13px;
+    border: 1px solid #334256;
+    border-radius: 11px;
+    background: rgba(14, 21, 32, 0.88);
+    color: #aebed0;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 650;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  body:has(.wg-page) .wg-mode-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  body:has(.wg-page) .wg-mode-link.active {
+    background: #f5bd55;
+    color: #17130b;
+    border-color: #f5bd55;
+  }
+
+  body:has(.wg-page) .wg-mode-icon {
+    flex: 0 0 auto;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* Search: icon by default, expandable field on click */
+  body:has(.wg-page) .wg-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    pointer-events: auto;
+    transition: width 220ms ease;
+  }
+
+  body:has(.wg-page) .wg-search-toggle {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid #334256;
+    border-radius: 50%;
+    background: rgba(14, 21, 32, 0.92);
+    color: #aebed0;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  body:has(.wg-page) .wg-search-toggle:hover {
+    background: #1b2939;
+    color: #fff;
+  }
+
+  body:has(.wg-page) .wg-search-bar {
+    display: none !important;
+  }
+
+  body:has(.wg-page) .wg-search-wrapper.is-open {
+    width: 290px;
+    max-width: calc(100vw - 40px);
+  }
+
+  body:has(.wg-page) .wg-search-wrapper.is-open .wg-search-toggle {
+    display: none;
+  }
+
+  body:has(.wg-page) .wg-search-wrapper.is-open .wg-search-bar {
+    position: absolute;
+    inset: 0;
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 1px solid #334256;
+    border-radius: 12px;
+    background: rgba(14, 21, 32, 0.97);
+    backdrop-filter: blur(10px);
+  }
+
+  body:has(.wg-page) .wg-search-wrapper.is-open .wg-search-bar .wg-search {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    height: 34px;
+    box-sizing: border-box;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: #080d14;
+    color: #e8edf5;
+    font-size: 12px;
+  }
+
+  body:has(.wg-page) .wg-search-wrapper.is-open .wg-search-bar .wg-search:focus {
+    border-color: #f5bd55;
+    outline: none;
+  }
+
+  body:has(.wg-page) .wg-search-wrapper.is-open .wg-search-bar .wg-reset {
+    flex: 0 0 auto;
+    height: 34px;
+    margin: 0;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: rgba(245, 189, 85, 0.15);
+    color: #f5bd55;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  body:has(.wg-page) .wg-search-wrapper.is-open .wg-search-bar .wg-reset:hover {
+    background: #f5bd55;
+    color: #17130b;
+  }
+
+  /* Mobile layout */
+  @media (max-width: 700px) {
+    body:has(.wg-page) .wg-left-panel {
+      top: 12px;
+      left: 12px;
+      gap: 9px;
+      width: 180px;
+    }
+
+    body:has(.wg-page) #wg-view-title {
+      font-size: 17px;
+    }
+
+    body:has(.wg-page) #wg-view-subtitle {
+      font-size: 10px;
+    }
+
+    body:has(.wg-page) .wg-mode-nav {
+      width: 120px;
+    }
+
+    body:has(.wg-page) .wg-mode-link {
+      min-height: 36px;
+      padding: 7px 10px;
+      font-size: 11px;
+    }
+
+    body:has(.wg-page) .wg-search-wrapper.is-open {
+      width: min(270px, calc(100vw - 24px));
+    }
+  }
+
+    .wg-state-comparison {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #263342;
+  }
+
+  .wg-compare-label {
+    display: block;
+    margin: 10px 0 6px;
+    color: #aab8c8;
+    font-size: 12px;
+  }
+
+  .wg-compare-select {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #34465a;
+    border-radius: 8px;
+    background: #111c29;
+    color: #e8edf5;
+    font: inherit;
+    font-size: 12px;
+  }
+
+  .wg-compare-summary {
+    margin: 12px 0 8px;
+    color: #aab8c8;
+    font-size: 11px;
+  }
+
+  .wg-compare-list {
+    display: grid;
+    gap: 7px;
+  }
+
+  .wg-compare-row {
+    display: grid;
+    gap: 5px;
+    padding: 9px;
+    border: 1px solid #263748;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.025);
+    overflow-wrap: anywhere;
+  }
+
+  .wg-compare-row strong {
+    color: #e8edf5;
+    font-size: 12px;
+  }
+
+  .wg-compare-row small {
+    color: #aab8c8;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .wg-compare-status {
+    width: fit-content;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .wg-compare-status.is-changed { color: #f5bd55; }
+  .wg-compare-status.is-unchanged { color: #8fa4b8; }
+  .wg-compare-status.is-added { color: #35dcb1; }
+  .wg-compare-status.is-missing { color: #ff914d; }
+
+  .wg-compare-note {
+    margin-top: 10px;
+    color: #8999ad;
+    font-size: 11px;
+    line-height: 1.5;
+  }
 </style>

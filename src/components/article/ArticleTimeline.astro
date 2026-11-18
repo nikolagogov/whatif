@@ -1,0 +1,25 @@
+---
+import type { ArticleTimelineProps } from '../../types/article';
+type Props = ArticleTimelineProps;
+const { items = [] } = Astro.props;
+---
+{items.length > 0 && (
+  <section class="world-timeline-section">
+    <div class="section-header-line"><h2>Timeline</h2></div>
+    <div class="timeline-stream">
+      {items.map((item) => (
+        <div class:list={['timeline-stream-node', { 'is-linked': item.targetHeading }]}>
+          <div class="timeline-event-header">
+            <span class="node-year">{item.date}</span>
+            {item.targetHeading ? (
+              <a class="node-event timeline-event-link" href={`#${item.targetHeading}`} data-target-heading={item.targetHeading}>{item.title}</a>
+            ) : (
+              <p class="node-event">{item.title}</p>
+            )}
+          </div>
+          {item.description && <p class="node-desc">{item.description}</p>}
+        </div>
+      ))}
+    </div>
+  </section>
+)}

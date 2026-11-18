@@ -1,0 +1,95 @@
+/* Unified shared card skin. */
+/* Unified article card skin: Homepage, Latest, and sector archive cards. */
+:is(.latest-card, .archive-card) {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  color: inherit !important;
+  background: var(--hig-card-background) !important;
+  border: var(--hig-card-border-width) solid var(--hig-card-border-color) !important;
+  border-radius: var(--hig-card-radius) !important;
+  box-shadow: var(--hig-card-shadow) !important;
+  text-decoration: none !important;
+  transition: var(--hig-card-transition) !important;
+  position: relative;
+}
+:is(.latest-card, .archive-card):hover {
+  transform: translateY(var(--hig-card-hover-lift)) !important;
+  border-color: var(--hig-card-hover-border) !important;
+  box-shadow: var(--hig-card-shadow-hover) !important;
+}
+:is(.latest-img, .archive-img) {
+  display: block !important;
+  width: 100% !important;
+  height: var(--hig-card-image-height) !important;
+  flex: 0 0 var(--hig-card-image-height) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+:is(.latest-body, .archive-body) {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  padding: var(--hig-card-body-padding) !important;
+  background: transparent !important;
+}
+:is(.latest-body h3, .archive-body h4) {
+  color: var(--hig-card-title-color) !important;
+}
+:is(.latest-card, .archive-card):hover :is(.latest-body h3, .archive-body h4) {
+  color: var(--hig-card-title-hover-color) !important;
+}
+:is(.latest-body p, .archive-body p) {
+  color: var(--hig-card-copy-color) !important;
+}
+.home-latest-sector,
+.continue-card-sector,
+.archive-personal-sector {
+  color: var(--hig-card-meta-color) !important;
+}
+:is(.latest-grid, .archive-grid, .continue-grid) {
+  gap: var(--hig-card-grid-gap) !important;
+  align-items: stretch !important;
+}
+
+
+/* The Homepage utility cards and personal reading/bookmark cards use the same
+   surface tokens while retaining their existing imagery and behavior. */
+:is(.archive-hub-card, .archive-hub-card--subject, .explore-tile, .archive-personal-card-wrap, .continue-card) {
+  border: var(--hig-card-border-width) solid var(--hig-card-border-color) !important;
+  border-radius: var(--hig-card-radius) !important;
+  box-shadow: var(--hig-card-shadow) !important;
+  transition: var(--hig-card-transition) !important;
+}
+:is(.archive-hub-card, .archive-hub-card--subject, .explore-tile, .archive-personal-card-wrap, .continue-card):hover {
+  border-color: var(--hig-card-hover-border) !important;
+  box-shadow: var(--hig-card-shadow-hover) !important;
+}
+.archive-personal-card-wrap,
+.continue-card {
+  background: var(--hig-card-background) !important;
+}
+.archive-personal-card-wrap {
+  padding: 16px !important;
+}
+.continue-card {
+  overflow: hidden !important;
+}
+.continue-card-link {
+  padding: var(--hig-card-body-padding) !important;
+}
+.continue-card h4,
+.archive-personal-card h3 {
+  color: var(--hig-card-title-color) !important;
+}
+.continue-card p,
+.archive-personal-card p {
+  color: var(--hig-card-copy-color) !important;
+}
+
+

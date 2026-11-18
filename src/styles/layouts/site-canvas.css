@@ -1,0 +1,15 @@
+/* Shared site canvas background. */
+/* The site canvas is shared across every route. */
+html,
+body {
+  background-color: var(--hig-site-background) !important;
+}
+body {
+  background-image: var(--hig-site-background-overlay), var(--hig-site-background-image) !important;
+  background-position: center top !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+

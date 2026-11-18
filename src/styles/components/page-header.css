@@ -1,0 +1,87 @@
+/* Shared page title system. */
+/* SINGLE PAGE TITLE SYSTEM — all routes render their h1 through PageHeader. */
+.page-title-area {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: var(--hig-page-content-max);
+  box-sizing: border-box;
+  margin: 0 auto !important;
+  /* The shared top rhythm is applied once; eyebrow pages add only their own row. */
+  padding: var(--hig-page-title-top-gap) 0 var(--hig-page-title-bottom-gap) !important;
+  text-align: center;
+}
+.page-title-area--with-eyebrow {
+  padding-top: calc(var(--hig-page-title-top-gap) + 1.7rem) !important;
+}
+.page-title-eyebrow {
+  position: absolute;
+  top: var(--hig-page-title-top-gap);
+  left: 0;
+  right: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--hig-page-title-accent) !important;
+  font: 600 .72rem/1.4 var(--font-sans, Arial, sans-serif) !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.page-title-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center;
+}
+.page-title-header--navigation {
+  /* Keep the title in a genuinely centered, flexible track between equal sides. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 1fr);
+}
+.page-title-header .hig-back-home {
+  grid-column: 1; grid-row: 1; justify-self: start; align-self: center;
+  margin: 0 !important;
+}
+.hig-page-title {
+  grid-column: 1; grid-row: 1;
+  margin: 0 !important; padding: 0 !important;
+  color: var(--hig-page-title-color) !important;
+  font-family: var(--hig-page-title-font) !important;
+  font-size: var(--hig-page-title-size) !important;
+  font-style: var(--hig-page-title-style) !important;
+  font-weight: var(--hig-page-title-weight) !important;
+  letter-spacing: var(--hig-page-title-letter-spacing) !important;
+  line-height: var(--hig-page-title-line-height) !important;
+  text-align: center !important;
+  max-width: 100% !important;
+}
+.page-title-header--navigation .hig-page-title {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  width: 100%;
+  justify-self: stretch;
+}
+.page-title-header--navigation .page-title-header__balance {
+  grid-column: 3;
+  grid-row: 1;
+  display: block;
+  min-width: 0;
+}
+.hig-page-title__accent { color: var(--hig-page-title-accent) !important; }
+.hig-page-title__home { color: #f7f4ef !important; }
+.hig-page-title__white { color: #f7f4ef !important; }
+/* Parents no longer supply a second top offset. */
+.compare-page, .timeline-page, .explore-page, .scenario-page, .world-page,
+.branches-page, .about-page, .section-container, .article-page, .platform-portal, .wg-page, .visual-world, .archive-page, .search-page { padding-top: 0 !important; }
+.compare-hero, .timeline-hero, .explore-hero, .scenario-hero, .world-hero,
+.world-entry-hero, .topic-hero, .branches-header { margin-top: 0 !important; }
+@media (max-width: 700px) {
+  .page-title-area { width: 100%; }
+  .page-title-header--navigation { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+  .page-title-header--navigation .hig-page-title { grid-column: 1; grid-row: 1; }
+  .page-title-header--navigation .hig-back-home { grid-column: 1; grid-row: 2; justify-self: start; }
+  .page-title-header__balance { display: none; }
+}

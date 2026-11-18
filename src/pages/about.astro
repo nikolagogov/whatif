@@ -1,15 +1,18 @@
 ---
+import { ROUTES } from '../lib/routes';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import BackToHomepage from '../components/BackToHomepage.astro';
 ---
 
 <BaseLayout
   title="About | Had It Gone"
   description="What Had It Gone is and what you will find here."
-  url="/about"
+  url={ROUTES.about}
   type="website"
 >
   <div class="about-page">
-    <h1>About Had It Gone</h1>
+    <PageHeader title="About Had It Gone" />
 
     <p>
       <em>Had It Gone</em> is a collection of alternate history, speculative
@@ -46,7 +49,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </p>
 
     <div class="back-links">
-  <a href="/" class="back-link">← Back to Homepage</a>
+  <BackToHomepage />
 </div>
   </div>
 </BaseLayout>

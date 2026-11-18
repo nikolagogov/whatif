@@ -150,6 +150,12 @@ relationships:
     description: Connects a world state to its point of divergence.
     from: [world-state]
     to: [divergence]
+    
+  - id: STATE_CAUSED_BY
+    category: causal
+    description: Connects a world state to a timeline event explicitly identified as its cause.
+    from: [world-state]
+    to: [timeline-event]
 
   - id: TRANSITION_FROM_STATE
     category: structural

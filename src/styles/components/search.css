@@ -1,0 +1,27 @@
+/* Search page-specific styling. Keep the query readable on its light input surface. */
+.search-page .search-box-page input,
+.search-page .search-box-page input[type="text"] {
+  color: #182431 !important;
+  -webkit-text-fill-color: #182431 !important;
+  caret-color: #a87936;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.search-page .search-box-page input::placeholder {
+  color: #657487 !important;
+  -webkit-text-fill-color: #657487 !important;
+  opacity: 1 !important;
+}
+
+.search-page .search-box-page input:focus {
+  border-color: #c49b58;
+  box-shadow: 0 0 0 3px rgba(196, 155, 88, .16);
+}
+
+.search-page .search-box-page input:-webkit-autofill,
+.search-page .search-box-page input:-webkit-autofill:hover,
+.search-page .search-box-page input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #182431 !important;
+  transition: background-color 9999s ease-out 0s;
+}

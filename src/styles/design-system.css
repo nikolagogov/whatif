@@ -1,0 +1,14 @@
+/* HAD IT GONE — design-system entry point.
+   Tokens and visual rules are delegated to focused modules.
+   Import order intentionally preserves the original design-system.css cascade. */
+@import "./tokens.css";
+@import "./components/back-links.css";
+@import "./components/cards.css";
+@import "./tokens-site.css";
+@import "./layouts/site-canvas.css";
+@import "./layouts/page-shell.css";
+@import "./layouts/article-layout.css";
+@import "./components/cards-shared.css";
+@import "./components/back-home.css";
+@import "./components/page-header.css";
+@import "./components/search.css";

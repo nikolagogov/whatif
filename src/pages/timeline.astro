@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { getAllArticles } from '../lib/article/repository';
+import { getAllTimelineEvents } from '../lib/timeline/repository';
+
+const [timelineEvents, articles] = await Promise.all([
+  getAllTimelineEvents(),
+  getAllArticles(),
+]);
+
+const events = [...timelineEvents]
+  .sort((a, b) => a.sortValue - b.sortValue || a.title.localeCompare(b.title))
+  .map((event) => ({
+    ...event,
+    article: event.articleGraphId,
+    label: event.title,
+    timeLabel: event.date,
+    searchText: `${event.title} ${event.date} ${event.description ?? ''} ${event.articleTitle} ${event.world?.name ?? ''}`.toLowerCase(),
+    worldLabel: event.world?.name ?? null,
+  }));
+
+const articleOptions = articles
+  .map((article) => ({
+    id: `article:${article.sector}/${article.id}`,
+    title: article.data.title,
+  }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+---
+
+<BaseLayout
+  title="Alternate Timeline | HAD IT GONE"
+  description="Explore the events that shape alternate worlds, ordered through time and linked to their What If scenarios."
+>
+  <main class="timeline-page">
+    <PageHeader title="Alternate" highlight="Timeline" eyebrow="HAD IT GONE · INTERACTIVE EXPLORATION" />
+    <header class="timeline-hero">
+      <p class="timeline-intro">Follow the turning points, consequences, and distant futures of the worlds that might have been. Every event below comes from the existing HAD IT GONE Content Graph.</p>
+      <div class="timeline-stat-row">
+        <div><strong>{events.length}</strong><span>TIMELINE EVENTS</span></div>
+        <div><strong>{articleOptions.length}</strong><span>WHAT IF STORIES</span></div>
+        <div><strong>{new Set(events.map((event) => event.article).filter(Boolean)).size}</strong><span>SCENARIOS WITH EVENTS</span></div>
+      </div>
+    </header>
+
+    <section class="timeline-explorer" aria-labelledby="timeline-heading">
+      <div class="timeline-tools">
+        <label class="timeline-search-label" for="timeline-search">Search events
+          <input id="timeline-search" type="search" placeholder="Search title, date, or scenario…" autocomplete="off" />
+        </label>
+        <label for="timeline-scenario">What If scenario
+          <select id="timeline-scenario">
+            <option value="all">All scenarios</option>
+            {articleOptions.map((article) => <option value={article.id}>{article.title}</option>)}
+          </select>
+        </label>
+        <label for="timeline-order">Order
+          <select id="timeline-order">
+            <option value="asc">Earliest first</option>
+            <option value="desc">Latest first</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="timeline-results-heading">
+        <div>
+          <p class="eyebrow">THE MANY PATHS OF HISTORY</p>
+          <h2 id="timeline-heading">Events through time</h2>
+        </div>
+        <p id="timeline-count" aria-live="polite">{events.length} events</p>
+      </div>
+
+      <ol class="timeline-list" id="timeline-list">
+        {events.map((event) => (
+          <li class="timeline-item" data-timeline-item data-search={event.searchText} data-article={event.article ?? ''} data-sort={event.sortValue}>
+            <div class="timeline-marker" aria-hidden="true"><span></span></div>
+            <article class="timeline-event-card">
+              <p class="timeline-event-date">{event.timeLabel || 'Date unspecified'}</p>
+              <h3>{event.label}</h3>
+              {event.description && <p class="timeline-event-description">{event.description}</p>}
+              <div class="timeline-event-links">
+                {event.articleUrl && <a href={event.articleUrl}>Read scenario <span aria-hidden="true">→</span></a>}
+                {event.worldUrl && <a href={event.worldUrl}>Explore {event.worldLabel} <span aria-hidden="true">→</span></a>}
+              </div>
+            </article>
+          </li>
+        ))}
+      </ol>
+      <p class="timeline-empty" id="timeline-empty" hidden>No events match those filters. Try another search or choose all scenarios.</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const searchInput = document.querySelector<HTMLInputElement>('#timeline-search');
+  const scenarioSelect = document.querySelector<HTMLSelectElement>('#timeline-scenario');
+  const orderSelect = document.querySelector<HTMLSelectElement>('#timeline-order');
+  const list = document.querySelector<HTMLOListElement>('#timeline-list');
+  const count = document.querySelector<HTMLElement>('#timeline-count');
+  const empty = document.querySelector<HTMLElement>('#timeline-empty');
+
+  if (searchInput && scenarioSelect && orderSelect && list && count && empty) {
+    const items = Array.from(list.querySelectorAll<HTMLElement>('[data-timeline-item]'));
+    const updateTimeline = () => {
+      const query = searchInput.value.trim().toLowerCase();
+      const selectedArticle = scenarioSelect.value;
+      const direction = orderSelect.value === 'desc' ? -1 : 1;
+      const visible = items.filter((item) => {
+        const matchesQuery = (item.dataset.search ?? '').includes(query);
+        const matchesScenario = selectedArticle === 'all' || item.dataset.article === selectedArticle;
+        return matchesQuery && matchesScenario;
+      });
+      visible.sort((a, b) => {
+        const aSort = Number(a.dataset.sort ?? Number.MAX_SAFE_INTEGER);
+        const bSort = Number(b.dataset.sort ?? Number.MAX_SAFE_INTEGER);
+        return (aSort - bSort) * direction || (a.textContent ?? '').localeCompare(b.textContent ?? '');
+      });
+      items.forEach((item) => { item.hidden = true; });
+      visible.forEach((item) => { item.hidden = false; list.append(item); });
+      count.textContent = `${visible.length} ${visible.length === 1 ? 'event' : 'events'}`;
+      empty.hidden = visible.length !== 0;
+    };
+    searchInput.addEventListener('input', updateTimeline);
+    scenarioSelect.addEventListener('change', updateTimeline);
+    orderSelect.addEventListener('change', updateTimeline);
+    updateTimeline();
+  }
+</script>
+
+<style>
+  .timeline-page { max-width: 1180px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+  .timeline-hero { padding: 0 0 2.5rem; border-bottom: 1px solid var(--border-color, #ddd); }
+  .eyebrow { margin: 0 0 .75rem; color: var(--accent, #b66b45); font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  .timeline-intro { max-width: 760px; margin: 1.5rem 0 0; color: var(--text-secondary, #666); font-size: 1.1rem; line-height: 1.75; }
+  .timeline-stat-row { display: flex; flex-wrap: wrap; gap: 2rem 3.5rem; margin-top: 2.5rem; }
+  .timeline-stat-row div { display: grid; gap: .3rem; }
+  .timeline-stat-row strong { font-size: 1.8rem; font-variant-numeric: tabular-nums; }
+  .timeline-stat-row span { color: var(--text-secondary, #777); font-size: .68rem; letter-spacing: .1em; }
+  .timeline-explorer { padding-top: 2.5rem; }
+  .timeline-tools { display: grid; grid-template-columns: minmax(220px, 1.6fr) minmax(220px, 1fr) minmax(160px, .6fr); gap: 1rem; padding: 1.25rem; border: 1px solid var(--border-color, #ddd); border-radius: 14px; background: var(--surface, transparent); }
+  .timeline-tools label { display: grid; align-content: start; gap: .55rem; color: var(--text-secondary, #666); font-size: .78rem; font-weight: 600; }
+  .timeline-tools input, .timeline-tools select { width: 100%; min-height: 46px; padding: .7rem .8rem; border: 1px solid var(--border-color, #ccc); border-radius: 8px; background: var(--background, #fff); color: var(--text-color, #222); font: inherit; font-size: .9rem; }
+  .timeline-results-heading { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin: 3rem 0 1.5rem; }
+  .timeline-results-heading h2 { margin: 0; font-size: clamp(1.6rem, 3vw, 2.4rem); letter-spacing: -.035em; }
+  #timeline-count { margin: 0 0 .2rem; color: var(--text-secondary, #777); font-size: .85rem; }
+  .timeline-list { list-style: none; margin: 0; padding: 0; }
+  .timeline-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 1rem; min-height: 150px; }
+  .timeline-item[hidden] { display: none; }
+  .timeline-marker { position: relative; display: flex; justify-content: center; }
+  .timeline-marker::before { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border-color, #ddd); content: ''; }
+  .timeline-item:first-child .timeline-marker::before { top: 1.25rem; }
+  .timeline-item:last-child .timeline-marker::before { bottom: calc(100% - 1.25rem); }
+  .timeline-marker span { position: relative; z-index: 1; width: 12px; height: 12px; margin-top: 1.2rem; border: 3px solid var(--background, #fff); border-radius: 50%; background: var(--accent, #b66b45); box-shadow: 0 0 0 1px var(--accent, #b66b45); }
+  .timeline-event-card { margin-bottom: 1rem; padding: 1.25rem 1.5rem 1.4rem; border: 1px solid var(--border-color, #ddd); border-radius: 12px; background: var(--surface, transparent); }
+  .timeline-event-date { margin: 0 0 .5rem; color: var(--accent, #b66b45); font-size: .78rem; font-weight: 700; letter-spacing: .035em; }
+  .timeline-event-card h3 { margin: 0; font-size: 1.2rem; line-height: 1.35; }
+  .timeline-event-description { max-width: 780px; margin: .65rem 0 0; color: var(--text-secondary, #666); line-height: 1.7; }
+  .timeline-event-links { display: flex; flex-wrap: wrap; gap: .6rem 1.25rem; margin-top: 1rem; }
+  .timeline-event-links a { color: var(--accent, #b66b45); font-size: .83rem; font-weight: 700; text-decoration: none; }
+  .timeline-event-links a:hover { text-decoration: underline; }
+  .timeline-empty { padding: 2rem; border: 1px dashed var(--border-color, #ddd); border-radius: 12px; color: var(--text-secondary, #666); text-align: center; }
+  @media (max-width: 760px) { .timeline-page { padding: 1.5rem 1rem 3rem; } .timeline-tools { grid-template-columns: 1fr; } .timeline-results-heading { align-items: start; } .timeline-event-card { padding: 1rem; } }
+</style>

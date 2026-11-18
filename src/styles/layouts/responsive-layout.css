@@ -1,0 +1,42 @@
+/* Unified vertical page layout.
+   BaseLayout owns the only page shell: Header -> flexible page frame -> Footer.
+   Keep legacy .site-nav/.site-footer rules out of this file. */
+
+html {
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Header keeps its intrinsic shared height and never participates in page-specific sizing. */
+body > .hig-site-header {
+  flex: 0 0 auto;
+}
+
+/* Short pages expand to fill the viewport; long pages grow naturally with their content. */
+body > .page-frame {
+  flex: 1 0 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Footer always follows the page frame and never shrinks. */
+body > .hig-site-footer {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: 0;
+}
+
+@media (max-width: 700px) {
+  body > .page-frame {
+    min-height: 0;
+  }
+}

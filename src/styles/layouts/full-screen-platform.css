@@ -1,0 +1,85 @@
+/* Full-screen platform page. Extracted from the former global.css; source order preserved. */
+/* Intentional full-screen exception: platform bypasses the normal page shell. */
+body:has(.platform-portal) {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+body:has(.platform-portal) .page-frame {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* The portal fills the viewport below the fixed navigation */
+body:has(.platform-portal) .platform-portal {
+  width: 100%;
+  height: auto;
+  min-height: calc(100svh - var(--hig-header-min-height, 86px));
+  margin: 0;
+  overflow: visible;
+}
+
+body:has(.platform-portal) .back-to-top {
+  display: none;
+}
+body:has(.platform-portal) .back-to-top {
+  display: none !important;
+}
+
+/* The platform page uses the same shared BaseLayout shell as every other page. */
+
+body:has(.platform-portal) .site-nav {
+  background: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+/* Move the main logo down to the former headline position */
+.brand-logo {
+  margin-top: 120px;
+}
+
+#portal-tagline {
+  margin-top: 12px;
+}
+/* FINAL FIX — global navigation logo */
+body > .site-nav .nav-inner > .logo {
+  display: flex;
+  flex: 0 0 160px;
+  width: 160px;
+  height: 100%;
+  align-items: center;
+  overflow: hidden;
+}
+
+body > .site-nav .nav-inner > .logo img {
+  display: block;
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  max-height: 46px;
+  object-fit: contain;
+}
+
+/* Sector page layout. Page title spacing and typography are owned by design-system.css. */
+.section-container[data-sector] { padding-top: 0; }
+.section-container[data-sector] .section-hero {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0; padding: 0; margin: 0 0 24px;
+}
+.section-container[data-sector] .sector-header-img {
+    width: min(620px, 100%); height: 230px; background-size: cover;
+    background-position: center; border-radius: 18px;
+}
+.section-container[data-sector] .back-link { margin: 16px auto 0; }
+.section-container[data-sector] [data-role="latest"] { margin-top: 0; }
+.section-container[data-sector] .section-heading {
+    color: #f7f4ef; margin-top: 0; margin-bottom: 12px; display: block;
+}
+@media (max-width: 768px) {
+    .section-container[data-sector] { padding-top: 0; }
+    .section-container[data-sector] .sector-header-img { height: 180px; }
+}
+
+
+

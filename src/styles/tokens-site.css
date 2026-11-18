@@ -1,0 +1,81 @@
+/* Remaining global design tokens. */
+/* =====================================================================
+   HAD IT GONE — SINGLE SOURCE OF TRUTH
+   Adjust the variables below to change the shared visual language.
+   ===================================================================== */
+:root {
+  /* Global canvas */
+  --hig-site-background: #06101b;
+  --hig-site-background-image: url('/images/platform-hero-background.png');
+  --hig-site-background-overlay: linear-gradient(180deg, rgba(3,14,24,.18) 0%, rgba(3,14,24,.40) 55%, rgba(3,12,21,.72) 100%);
+
+  /* Header and footer */
+  --hig-header-background: transparent;
+  --hig-header-border: transparent;
+  --hig-header-min-height: 78px;
+  --hig-footer-background: transparent;
+  --hig-footer-border: transparent;
+  --hig-footer-padding-block: 20px 16px;
+  --hig-header-logo-width: 220px;
+  --hig-header-nav-size: 17px;
+  --hig-header-search-size: 22px;
+  --hig-footer-link-size: 15px;
+  --hig-footer-copy-size: 14px;
+  --hig-chrome-text: #edf2f7;
+  --hig-chrome-muted: #b8c7d5;
+  --hig-chrome-accent: #e9b65a;
+  --hig-control-surface: rgba(12, 31, 48, .82);
+  --hig-control-border: rgba(145, 178, 201, .58);
+  --hig-control-focus: rgba(233, 182, 90, .72);
+
+  /* Page headings — same level as Homepage */
+  --hig-page-title-font: Georgia, 'Times New Roman', serif;
+  --hig-page-title-size: clamp(2.8rem, 4.2vw, 4.4rem);
+  --hig-page-title-weight: 500;
+  --hig-page-title-style: italic;
+  --hig-page-title-line-height: 1.08;
+  --hig-page-title-letter-spacing: -.035em;
+  --hig-page-title-color: #e3b568;
+  --hig-page-title-accent: #e3b568;
+  --hig-page-title-top-gap: clamp(20px, 2.5vh, 36px);
+  --hig-page-title-bottom-gap: clamp(16px, 2vh, 28px);
+
+  /* Shared warm surface hierarchy — blue canvas remains unchanged. */
+  --hig-surface-primary: #493d35;
+  --hig-surface-secondary: #5d4b3f;
+  --hig-surface-inset: #78604b;
+  --hig-surface-soft: rgba(120, 96, 75, .24);
+  --hig-surface-border: rgba(224, 182, 110, .30);
+  --hig-text-primary: #f3eee6;
+  --hig-text-secondary: #d2c5b8;
+
+  /* Shared article and personal cards */
+  --hig-card-background: #493d35;
+  --hig-card-border-color: rgba(224, 182, 110, .30);
+  --hig-card-border-width: 1px;
+  --hig-card-radius: 16px;
+  --hig-card-shadow: 0 8px 24px rgba(0,0,0,.22);
+  --hig-card-shadow-hover: 0 14px 32px rgba(0,0,0,.38);
+  --hig-card-hover-border: #e9b65a;
+  --hig-card-hover-lift: -4px;
+  --hig-card-transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+  --hig-card-image-height: 190px;
+  --hig-card-body-padding: 20px 22px 22px;
+  --hig-card-title-color: #f3eee6;
+  --hig-card-title-hover-color: #e0b66e;
+  --hig-card-copy-color: #d2c5b8;
+  --hig-card-meta-color: #e9b65a;
+  --hig-card-grid-gap: 20px;
+
+  /* Shared page composition rhythm */
+  --hig-page-content-gap: 16px;
+  --hig-page-section-gap: 24px;
+
+  /* Shared section rhythm and search kicker */
+  --hig-block-gap: 34px;
+  --hig-kicker-color: var(--hig-gold);
+  --hig-kicker-size: .78rem;
+}
+
+
+

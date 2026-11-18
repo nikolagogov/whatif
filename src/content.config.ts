@@ -3,7 +3,8 @@ import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 const articleSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().regex(/^\d{9}$/, 'Article IDs must be 9-digit numeric strings.'),
+  contentEntities: z.array(z.string().regex(/^\d{10,}$/)).min(1),
   title: z.string(),
   description: z.string(),
   image: z.string(),
@@ -30,7 +31,7 @@ const articleSchema = z.object({
   }).optional(),
   
   timeline: z.array(z.object({
-    id: z.string().optional(),
+    id: z.string().min(1, 'Timeline events require a stable ID.'),
     headingId: z.string().optional(),
     date: z.string(),
     title: z.string(),
@@ -50,14 +51,18 @@ const articleSchema = z.object({
     label: z.string().optional(),
   })).optional().default([]),
 
-  worldStates: z.array(z.object({
-    date: z.string(),
-    label: z.string(),
-    items: z.array(z.object({
-      label: z.string(),
-      value: z.string(),
-    })),
-  })).optional().default([]),
+  // World State records live canonically in src/data/world-states/*.yaml.
+});
+
+
+const contentEntities = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content-entities' }),
+  schema: z.object({
+    id: z.string().regex(/^\d{10,}$/, 'Content Entity IDs must be numeric strings prefixed by their Article ID.'),
+    originArticleId: z.string().regex(/^\d{9}$/),
+    title: z.string(),
+    kind: z.enum(['intro', 'section']),
+  }),
 });
 
 const history = defineCollection({
@@ -81,6 +86,7 @@ const society = defineCollection({
 });
 
 export const collections = {
+  contentEntities,
   history,
   science,
   space,

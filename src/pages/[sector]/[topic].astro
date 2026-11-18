@@ -1,259 +1,45 @@
-
 ---
-import { getCollection } from 'astro:content';
+import { articleRoute, sectorRoute, ROUTES } from '../../lib/routes';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { sortPosts } from '../../lib/sorting';
+import PageHeader from '../../components/PageHeader.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getTopicPageData, getTopicStaticPaths } from '../../lib/article/repository';
 
 export async function getStaticPaths() {
-  const sectorInfo: Record<string, { exploreTiles: { slug: string }[] }> = {
-    history: {
-      exploreTiles: [
-        { slug: 'ancient-world' },
-        { slug: 'empires' },
-        { slug: 'wars' },
-      ],
-    },
-    science: {
-      exploreTiles: [
-        { slug: 'evolution' },
-        { slug: 'biology' },
-        { slug: 'discoveries' },
-        { slug: 'earth' },
-        { slug: 'human-body' },
-      ],
-    },
-    space: {
-      exploreTiles: [
-        { slug: 'mars-worlds' },
-        { slug: 'earth-moon' },
-        { slug: 'planets' },
-        { slug: 'cosmic-events' },
-        { slug: 'universe' },
-      ],
-    },
-    society: {
-      exploreTiles: [
-        { slug: 'technology' },
-        { slug: 'politics' },
-        { slug: 'culture' },
-        { slug: 'economics' },
-        { slug: 'civilization' },
-      ],
-    },
-  };
-
-  const paths: { params: { sector: string; topic: string } }[] = [];
-
-  for (const sector of Object.keys(sectorInfo)) {
-    for (const tile of sectorInfo[sector].exploreTiles) {
-      paths.push({
-        params: { sector, topic: tile.slug },
-      });
-    }
-  }
-
-  return paths;
+  return getTopicStaticPaths();
 }
 
 const { sector, topic } = Astro.params;
 
-// Конфигурация на секциите
-const sectorInfo: Record<string, any> = {
-  history: {
-    title: 'History',
-    emoji: '🏛️',
-    intro: 'Empires, wars, and decisions that could have gone another way.',
-    image: '/images/sectors/history.jpg',
-    exploreTiles: [
-      {
-        slug: 'ancient-world',
-        emoji: '🏛️',
-        title: 'Ancient World',
-        subtitle: 'Alexander, Alexandria, and the ancient Mediterranean.',
-      },
-      {
-        slug: 'empires',
-        emoji: '👑',
-        title: 'Empires',
-        subtitle: 'Rome, Persia, and empires that might have followed.',
-      },
-      {
-        slug: 'wars',
-        emoji: '⚔️',
-        title: 'Wars & Conflicts',
-        subtitle: 'Battles and crises that changed the course of history.',
-      },
-    ],
-  },
-  science: {
-    title: 'Science',
-    emoji: '🧪',
-    intro: 'Evolution, biology, and discoveries that could have changed the natural world.',
-    image: '/images/sectors/science.jpg',
-    exploreTiles: [
-      {
-        slug: 'evolution',
-        emoji: '🦕',
-        title: 'Evolution & Deep Time',
-        subtitle: 'Deep time and the paths life might have taken.',
-      },
-      {
-        slug: 'biology',
-        emoji: '🧬',
-        title: 'Biology & Life',
-        subtitle: 'Life, cells, and the rules of the natural world.',
-      },
-      {
-        slug: 'discoveries',
-        emoji: '🔬',
-        title: 'Discoveries & Inventions',
-        subtitle: 'Inventions and insights that arrived early — or never.',
-      },
-      {
-        slug: 'earth',
-        emoji: '🌍',
-        title: 'Earth & Environment',
-        subtitle: 'The planet as it was — and as it might have been.',
-      },
-      {
-        slug: 'human-body',
-        emoji: '🧠',
-        title: 'Human Body & Mind',
-        subtitle: 'The body and mind as they could have evolved.',
-      },
-    ],
-  },
-  space: {
-    title: 'Space',
-    emoji: '🌌',
-    intro: 'Altered worlds and different paths through the universe.',
-    image: '/images/sectors/space.jpg',
-    exploreTiles: [
-      {
-        slug: 'mars-worlds',
-        emoji: '🔴',
-        title: 'Mars & Its Lost Oceans',
-        subtitle: 'The Red Planet and the oceans it might have kept.',
-      },
-      {
-        slug: 'earth-moon',
-        emoji: '🌙',
-        title: 'Earth & Moon',
-        subtitle: 'Our own planet and the worlds closest to it.',
-      },
-      {
-        slug: 'planets',
-        emoji: '🪐',
-        title: 'Planets & Moons',
-        subtitle: 'Worlds that might have taken a different shape.',
-      },
-      {
-        slug: 'cosmic-events',
-        emoji: '☄️',
-        title: 'Cosmic Events',
-        subtitle: 'Impacts, collisions, and other turning points.',
-      },
-      {
-        slug: 'universe',
-        emoji: '✨',
-        title: 'Stars & Universe',
-        subtitle: 'The cosmos at scales we can barely imagine.',
-      },
-    ],
-  },
-  society: {
-    title: 'Society',
-    emoji: '🌍',
-    intro: 'Systems, technologies, and cultures that might have shaped a different world.',
-    image: '/images/sectors/society.jpg',
-    exploreTiles: [
-      {
-        slug: 'technology',
-        emoji: '💡',
-        title: 'Technology & Innovation',
-        subtitle: 'Inventions and systems that might have changed us.',
-      },
-      {
-        slug: 'politics',
-        emoji: '🏛️',
-        title: 'Politics & Power',
-        subtitle: 'Power, governance, and different social orders.',
-      },
-      {
-        slug: 'culture',
-        emoji: '🎭',
-        title: 'Culture & Ideas',
-        subtitle: 'Ideas, beliefs, and the paths they might have taken.',
-      },
-      {
-        slug: 'economics',
-        emoji: '💰',
-        title: 'Economics & Trade',
-        subtitle: 'Trade, wealth, and alternative economic worlds.',
-      },
-      {
-        slug: 'civilization',
-        emoji: '🏙️',
-        title: 'Civilization & Collapse',
-        subtitle: 'Rise, fall, and the roads not taken.',
-      },
-    ],
-  },
-};
-
-const info = sectorInfo[sector ?? ''];
-const tile = info?.exploreTiles.find(
-  (t: { slug: string }) => t.slug === topic
-);
-
-if (!info || !tile) {
-  throw new Error(`Topic "${topic}" not found in sector "${sector}"`);
+if (!sector || !topic) {
+  throw new Error('Topic route requires both sector and topic parameters.');
 }
 
-// Вземаме статиите от съответната секция
-const posts = await getCollection(
-  sector as 'history' | 'science' | 'space' | 'society'
-);
+const { sectorConfig: info, topicConfig: tile, posts: topicPosts } =
+  await getTopicPageData(sector, topic);
 
-// Теми, които използват различни slug-ове в навигацията и frontmatter
-const topicAliases: Record<string, string[]> = {
-  'mars-worlds': ['mars', 'planets'],
-};
-
-const acceptedTopics = topicAliases[topic ?? ''] ?? [topic ?? ''];
-
-const topicPosts = sortPosts(
-  posts.filter((post) => {
-    const topics = post.data.topics ?? [];
-
-    return topics.some((value) =>
-      acceptedTopics.includes(value.toLowerCase())
-    );
-  })
-);
 ---
 
 <BaseLayout
   title={`${tile.title} | ${info.title} | Had It Gone`}
   description={tile.subtitle}
   image={info.image}
-  url={`/${sector}/${topic}`}
+  url={articleRoute(sector, topic)}
   type="website"
 >
   <div class="section-container">
-    <!-- TOPIC HERO -->
-    <section class="topic-hero">
-      <a href={`/${sector}`} class="topic-back">
-        ← Back to {info.title}
-      </a>
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href={ROUTES.home}>Home</a>
+      <span aria-hidden="true">/</span>
+      <a href={ROUTES.content}>Discover</a>
+      <span aria-hidden="true">/</span>
+      <a href={sectorRoute(sector)}>{info.title}</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{tile.title}</span>
+    </nav>
 
-      <h1 class="topic-title">
-        <span class="topic-emoji">{tile.emoji}</span>
-        {tile.title}
-      </h1>
-
-      <p class="topic-subtitle">{tile.subtitle}</p>
-    </section>
+    <PageHeader title={tile.title} showBack={false} />
+    {tile.subtitle && <p class="detail-page-description">{tile.subtitle}</p>}
 
     <!-- ARTICLES -->
     {
@@ -262,39 +48,64 @@ const topicPosts = sortPosts(
           No articles in this topic yet.
         </div>
       ) : (
-        <section class="section-block">
-          <h2 class="section-heading">
-            {topicPosts.length}{' '}
-            {topicPosts.length === 1 ? 'scenario' : 'scenarios'}
-          </h2>
-
-          <div class="archive-grid">
+        <section class="topic-stories" aria-label={`Stories in ${tile.title}`}>
+          <div class="topic-story-grid">
             {topicPosts.map((post) => (
-              <a
-                href={`/${sector}/${post.id}`}
-                class="archive-card"
-              >
-                <div
-                  class="archive-img"
-                  style={`background-image: url('${post.data.image}');`}
-                />
-
-                <div class="archive-body">
-                  <h4>{post.data.title}</h4>
-                  <p>{post.data.description}</p>
-                </div>
-              </a>
+              <ArticleCard
+                href={articleRoute(sector, post.id)}
+                image={post.data.image}
+                title={post.data.title}
+                description={post.data.description}
+              />
             ))}
           </div>
         </section>
       )
     }
-
-    <!-- BACK -->
-    <div class="archive-back">
-      <a href={`/${sector}`} class="back-link">
-        ← All {info.title}
-      </a>
-    </div>
   </div>
 </BaseLayout>
+
+<style>
+  .breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 28px;
+    color: var(--muted, #9ca3af);
+    font-size: .82rem;
+  }
+
+  .breadcrumbs a {
+    color: var(--muted, #aeb6c4);
+    text-decoration: none;
+    transition: color .2s ease;
+  }
+
+  .breadcrumbs a:hover { color: var(--accent, #e8bd72); }
+  .breadcrumbs [aria-current="page"] { color: var(--text, #e8e8e8); }
+
+  .detail-page-description {
+    max-width: 760px;
+    margin: -12px auto clamp(42px, 5vw, 64px);
+    color: var(--hig-copy, #e8edf5);
+    font-size: clamp(.98rem, 1.2vw, 1.12rem);
+    line-height: 1.65;
+    text-align: center;
+  }
+  .topic-stories { margin: 0 0 80px; }
+  .topic-story-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 20px;
+  }
+  @media (max-width: 900px) {
+    .topic-story-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 620px) {
+    .breadcrumbs { margin-bottom: 22px; }
+    .detail-page-description { margin: -8px auto 34px; }
+    .topic-story-grid { grid-template-columns: 1fr; gap: 14px; }
+  }
+</style>

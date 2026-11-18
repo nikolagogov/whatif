@@ -1,0 +1,18 @@
+---
+import type { ArticleEntitiesProps } from '../../types/article';
+type Props = ArticleEntitiesProps;
+const { entities = [] } = Astro.props;
+---
+{entities.length > 0 && (
+  <section class="world-entities-section">
+    <div class="section-header-line"><h2>Key Entities</h2></div>
+    <div class="entities-grid">
+      {entities.map((entity) => (
+        <div class="entity-card">
+          <h4>{entity.name}</h4>
+          {entity.type && <p>{entity.type}</p>}
+        </div>
+      ))}
+    </div>
+  </section>
+)}

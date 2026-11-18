@@ -1,0 +1,1988 @@
+﻿
+========== src/content.config.ts ==========
+
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
+import { glob } from 'astro/loaders';
+
+const articleSchema = z.object({
+  id: z.string().optional(),
+  title: z.string(),
+  description: z.string(),
+  image: z.string(),
+  order: z.number().optional(),
+  featured: z.boolean().optional().default(false),
+  tags: z.array(z.string()).optional().default([]),
+  topics: z.array(z.string()).optional().default([]),
+  related: z.array(z.string()).default([]),
+  coverTitleLines: z.array(z.string()).optional(),
+
+    world: z.object({
+    id: z.string().optional(),
+    name: z.string(),
+    referenceWorld: z.string().default('Our World'),
+  }).optional(),
+
+  divergence: z.object({
+    id: z.string().optional(),
+    type: z.string(),
+    title: z.string(),
+    date: z.string().optional(),
+    referenceOutcome: z.string(),
+    alternateOutcome: z.string(),
+  }).optional(),
+  
+  timeline: z.array(z.object({
+    id: z.string().optional(),
+    headingId: z.string().optional(),
+    date: z.string(),
+    title: z.string(),
+    description: z.string().optional(),
+  })).optional().default([]),
+
+  entities: z.array(z.object({
+    id: z.string().optional(),
+    type: z.string(),
+    name: z.string(),
+  })).optional().default([]),
+
+  relationships: z.array(z.object({
+    type: z.string(),
+    from: z.string(),
+    to: z.string(),
+    label: z.string().optional(),
+  })).optional().default([]),
+
+  worldStates: z.array(z.object({
+    date: z.string(),
+    label: z.string(),
+    items: z.array(z.object({
+      label: z.string(),
+      value: z.string(),
+    })),
+  })).optional().default([]),
+});
+
+const history = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/history' }),
+  schema: articleSchema,
+});
+
+const science = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/science' }),
+  schema: articleSchema,
+});
+
+const space = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/space' }),
+  schema: articleSchema,
+});
+
+const society = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/society' }),
+  schema: articleSchema,
+});
+
+export const collections = {
+  history,
+  science,
+  space,
+  society,
+};
+
+========== src/lib/related-articles.ts ==========
+
+
+import contentGraph from '../data/content-graph.json';
+
+export type RelatedPost = {
+  id: string;
+  sector: 'history' | 'science' | 'space' | 'society';
+  data: {
+    title?: string;
+    description?: string;
+    image?: string;
+    tags?: string[];
+    topics?: string[];
+    world?: { id?: string; name?: string };
+    [key: string]: unknown;
+  };
+};
+
+type GraphNode = {
+  id: string;
+  kind: string;
+};
+
+type GraphEdge = {
+  id?: string;
+  type: string;
+  from: string;
+  to: string;
+  article?: string;
+};
+
+const graph = contentGraph as {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+};
+
+const STOP_WORDS = new Set([
+  'what', 'will', 'would', 'have', 'been', 'were', 'this', 'that',
+  'with', 'from', 'into', 'they', 'their', 'there', 'than', 'then',
+  'history', 'world', 'scenario', 'alternate', 'after', 'before',
+  'when', 'while', 'where', 'which', 'about', 'also', 'more', 'most',
+  'could', 'should', 'might', 'many', 'much', 'some', 'such',
+  'them', 'these', 'those', 'what-if',
+]);
+
+function tokenize(text: string): string[] {
+  return text
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(word => word.length > 3 && !STOP_WORDS.has(word));
+}
+
+function articleNodeId(post: RelatedPost): string {
+  return `article:${post.sector}/${post.id}`;
+}
+
+function postKey(post: RelatedPost): string {
+  return `${post.sector}/${post.id}`;
+}
+
+function tagScore(sharedTags: number): number {
+  if (sharedTags === 0) return 0;
+  if (sharedTags === 1) return 8;
+  if (sharedTags === 2) return 25;
+  return sharedTags * 15;
+}
+
+// РРЅРґРµРєСЃРё РЅР° Content Graph вЂ” РёР·РіСЂР°Р¶РґР°С‚ СЃРµ РІРµРґРЅСЉР¶.
+const graphNodes = new Map(
+  graph.nodes.map(node => [node.id, node])
+);
+
+const graphNodesByArticle = new Map<string, Set<string>>();
+const relationshipKeysByArticle = new Map<string, Set<string>>();
+const explicitIdsByArticle = new Map<string, Set<string>>();
+
+for (const edge of graph.edges) {
+  if (edge.type === 'RELATED_ARTICLE') {
+    const target = graphNodes.get(edge.to);
+
+    if (target?.kind === 'article') {
+      let targets = explicitIdsByArticle.get(edge.from);
+
+      if (!targets) {
+        targets = new Set<string>();
+        explicitIdsByArticle.set(edge.from, targets);
+      }
+
+      targets.add(target.id);
+    }
+  }
+
+  const articleId = edge.article;
+  if (typeof articleId !== 'string') continue;
+
+  let articleNodes = graphNodesByArticle.get(articleId);
+
+  if (!articleNodes) {
+    articleNodes = new Set<string>();
+    graphNodesByArticle.set(articleId, articleNodes);
+  }
+
+  let relationships = relationshipKeysByArticle.get(articleId);
+
+  if (!relationships) {
+    relationships = new Set<string>();
+    relationshipKeysByArticle.set(articleId, relationships);
+  }
+
+  for (const nodeId of [edge.from, edge.to]) {
+    if (nodeId === articleId) continue;
+
+    const node = graphNodes.get(nodeId);
+
+    if (node && node.kind !== 'article') {
+      articleNodes.add(nodeId);
+    }
+  }
+
+  if (edge.id?.startsWith('relationship:')) {
+    relationships.add(`${edge.type}:${edge.from}->${edge.to}`);
+  }
+}
+
+// РљРµС€РёСЂР°РЅРё РґР°РЅРЅРё Р·Р° РІСЃСЏРєР° СЃС‚Р°С‚РёСЏ.
+type PostIndex = {
+  key: string;
+  nodeId: string;
+  sector: string;
+  worldId?: string;
+  tags: Set<string>;
+  topics: Set<string>;
+  words: Set<string>;
+  graphNodes: Set<string>;
+  relationships: Set<string>;
+};
+
+const postIndexes = new WeakMap<object, PostIndex>();
+
+function getPostIndex(post: RelatedPost): PostIndex {
+  const cached = postIndexes.get(post);
+  if (cached) return cached;
+
+  const index: PostIndex = {
+    key: postKey(post),
+    nodeId: articleNodeId(post),
+    sector: post.sector,
+    worldId: post.data.world?.id,
+    tags: new Set(post.data.tags ?? []),
+    topics: new Set(post.data.topics ?? []),
+    words: new Set(
+      tokenize(`${post.data.title ?? ''} ${post.data.description ?? ''}`)
+    ),
+    graphNodes: graphNodesByArticle.get(articleNodeId(post)) ?? new Set(),
+    relationships:
+      relationshipKeysByArticle.get(articleNodeId(post)) ?? new Set(),
+  };
+
+  postIndexes.set(post, index);
+  return index;
+}
+
+export function getRelatedArticles(
+  post: RelatedPost,
+  allPosts: RelatedPost[]
+): RelatedPost[] {
+  const current = getPostIndex(post);
+
+  // РР·РєР»СЋС‡РІР°РјРµ С‚РµРєСѓС‰Р°С‚Р° СЃС‚Р°С‚РёСЏ Рё СЃС‚Р°С‚РёРёС‚Рµ РѕС‚ СЃСЉС‰РёСЏ СЃРІСЏС‚.
+  const candidates = allPosts
+    .filter(candidate => {
+      const index = getPostIndex(candidate);
+
+      return (
+        index.key !== current.key &&
+        !(current.worldId && index.worldId === current.worldId)
+      );
+    })
+    .map(candidate => ({
+      post: candidate,
+      index: getPostIndex(candidate),
+    }));
+
+  const explicitIds =
+    explicitIdsByArticle.get(current.nodeId) ?? new Set<string>();
+
+  const explicitRelated = candidates
+    .filter(item => explicitIds.has(item.index.nodeId))
+    .map(item => item.post);
+
+  const graphRelated = candidates
+    .map(item => {
+      let score = 0;
+
+      for (const nodeId of current.graphNodes) {
+        if (!item.index.graphNodes.has(nodeId)) continue;
+
+        const kind = graphNodes.get(nodeId)?.kind;
+
+        if (kind === 'entity') score += 12;
+        else if (kind === 'world') score += 20;
+        else if (kind === 'timeline-event') score += 3;
+        else score += 5;
+      }
+
+      for (const key of current.relationships) {
+        if (item.index.relationships.has(key)) score += 25;
+      }
+
+      if (item.index.sector === current.sector) score += 2;
+
+      return { post: item.post, score };
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.post);
+
+  const metadataRelated = candidates
+    .map(item => {
+      let sharedTags = 0;
+      let sharedTopics = 0;
+
+      for (const tag of item.index.tags) {
+        if (current.tags.has(tag)) sharedTags++;
+      }
+
+      for (const topic of item.index.topics) {
+        if (current.topics.has(topic)) sharedTopics++;
+      }
+
+      return {
+        post: item.post,
+        score:
+          sharedTopics * 20 +
+          tagScore(sharedTags) +
+          (item.index.sector === current.sector ? 2 : 0),
+      };
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.post);
+
+  const legacyRelated = candidates
+    .map(item => {
+      let sharedWords = 0;
+      let sharedTags = 0;
+      let sharedTopics = 0;
+
+      for (const word of current.words) {
+        if (item.index.words.has(word)) sharedWords++;
+      }
+
+      for (const tag of item.index.tags) {
+        if (current.tags.has(tag)) sharedTags++;
+      }
+
+      for (const topic of item.index.topics) {
+        if (current.topics.has(topic)) sharedTopics++;
+      }
+
+      return {
+        post: item.post,
+        score:
+          sharedTopics * 20 +
+          tagScore(sharedTags) +
+          sharedWords +
+          (item.index.sector === current.sector ? 2 : 0),
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.post);
+
+  const result: RelatedPost[] = [];
+  const added = new Set<string>();
+
+  const addRelated = (items: RelatedPost[]) => {
+    for (const candidate of items) {
+      if (result.length >= 3) break;
+
+      const key = postKey(candidate);
+
+      if (!added.has(key)) {
+        added.add(key);
+        result.push(candidate);
+      }
+    }
+  };
+
+  addRelated(explicitRelated);
+  addRelated(graphRelated);
+  addRelated(metadataRelated);
+
+  if (result.length < 3) {
+    addRelated(legacyRelated);
+  }
+
+  return result;
+}
+
+========== src/lib/sorting.ts ==========
+
+
+import { execSync } from 'child_process';
+
+const REPO_ROOT = process.cwd();
+
+const firstCommitCache = new Map<string, number>();
+const lastCommitCache = new Map<string, number>();
+const sortKeyCache = new Map<string, number>();
+
+let gitIndexBuilt = false;
+
+function buildGitTimestampIndex(): void {
+  if (gitIndexBuilt) return;
+  gitIndexBuilt = true;
+
+  try {
+    const output = execSync(
+      'git log --reverse --format="COMMIT %ct" --name-only -- src/content',
+      {
+        cwd: REPO_ROOT,
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+        maxBuffer: 20 * 1024 * 1024,
+      }
+    );
+
+    let timestamp = 0;
+
+    for (const line of output.split(/\r?\n/)) {
+      if (line.startsWith('COMMIT ')) {
+        timestamp = Number(line.slice(7)) * 1000;
+        continue;
+      }
+
+      const path = line.trim().replace(/\\/g, '/');
+
+      if (
+        path.startsWith('src/content/') &&
+        path.endsWith('.md') &&
+        timestamp > 0 &&
+        !firstCommitCache.has(path)
+      ) {
+        firstCommitCache.set(path, timestamp);
+      }
+    }
+
+    const latestOutput = execSync(
+      'git log --format="COMMIT %ct" --name-only -- src/content',
+      {
+        cwd: REPO_ROOT,
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+        maxBuffer: 20 * 1024 * 1024,
+      }
+    );
+
+    timestamp = 0;
+
+    for (const line of latestOutput.split(/\r?\n/)) {
+      if (line.startsWith('COMMIT ')) {
+        timestamp = Number(line.slice(7)) * 1000;
+        continue;
+      }
+
+      const path = line.trim().replace(/\\/g, '/');
+
+      if (
+        path.startsWith('src/content/') &&
+        path.endsWith('.md') &&
+        timestamp > 0 &&
+        !lastCommitCache.has(path)
+      ) {
+        lastCommitCache.set(path, timestamp);
+      }
+    }
+  } catch (error) {
+    console.warn('[sorting] Git timestamp index unavailable:', error);
+  }
+}
+
+function getRelativePath(collection: string, id: string): string {
+  return `src/content/${collection}/${id}.md`;
+}
+
+export function getFirstCommitTimestamp(relativePath: string): number {
+  buildGitTimestampIndex();
+  return firstCommitCache.get(relativePath.replace(/\\/g, '/')) ?? 0;
+}
+
+export function getLastCommitTimestamp(relativePath: string): number {
+  buildGitTimestampIndex();
+  return lastCommitCache.get(relativePath.replace(/\\/g, '/')) ?? 0;
+}
+
+export function getGitTimestamp(collection: string, id: string): number {
+  buildGitTimestampIndex();
+  return firstCommitCache.get(getRelativePath(collection, id)) ?? 0;
+}
+
+export type SortablePost = {
+  id: string;
+  collection: string;
+  data: { order?: number };
+};
+
+export function getSortKey(post: SortablePost): number {
+  const cacheKey = `${post.collection}/${post.id}`;
+
+  if (sortKeyCache.has(cacheKey)) {
+    return sortKeyCache.get(cacheKey)!;
+  }
+
+  const key = getGitTimestamp(post.collection, post.id);
+
+  sortKeyCache.set(cacheKey, key);
+  return key;
+}
+
+export function sortPosts<T extends SortablePost>(posts: T[]): T[] {
+  const keyedPosts = posts.map((post) => ({
+    post,
+    key: getSortKey(post),
+  }));
+
+  keyedPosts.sort((a, b) => {
+    const orderA = a.post.data.order;
+    const orderB = b.post.data.order;
+
+    // Explicitly ordered posts come first.
+    if (orderA !== undefined && orderB === undefined) return -1;
+    if (orderA === undefined && orderB !== undefined) return 1;
+
+    // Explicit editorial order: ascending.
+    if (orderA !== undefined && orderB !== undefined) {
+      if (orderA !== orderB) return orderA - orderB;
+    }
+
+    // Automatic order: newest first.
+    if (a.key !== b.key) return b.key - a.key;
+
+    // Deterministic tie-breaker.
+    return a.post.id.localeCompare(b.post.id);
+  });
+
+  return keyedPosts.map((item) => item.post);
+}
+
+export function getPostDate(
+  collection: string,
+  id: string
+): Date | undefined {
+  const timestamp = getGitTimestamp(collection, id);
+  return timestamp > 0 ? new Date(timestamp) : undefined;
+}
+
+========== scripts/validate-world-states.mjs ==========
+
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import YAML from 'yaml';
+
+const ROOT = fileURLToPath(new URL('../', import.meta.url));
+const STATES_DIR = join(ROOT, 'src', 'data', 'world-states');
+const GRAPH_FILE = join(ROOT, 'src', 'data', 'content-graph.json');
+const DEFINITIONS_FILE = join(ROOT, 'src', 'data', 'world-variable-definitions.yaml');
+
+const ALLOWED_STATUSES = new Set([
+  'CANON',
+  'EDITORIAL',
+  'DERIVED',
+  'SIMULATED',
+  'GENERATED',
+  'USER',
+]);
+
+const errors = [];
+const warnings = [];
+
+function error(message) {
+  errors.push(message);
+}
+
+function warning(message) {
+  warnings.push(message);
+}
+
+function isObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function readYaml(file) {
+  try {
+    const source = readFileSync(file, 'utf8');
+    const document = YAML.parseDocument(source, { uniqueKeys: true });
+
+    if (document.errors.length > 0) {
+      for (const issue of document.errors) {
+        error(`${relative(ROOT, file)}: ${issue.message}`);
+      }
+      return null;
+    }
+
+    return document.toJS();
+  } catch (issue) {
+    error(`${relative(ROOT, file)}: ${issue.message}`);
+    return null;
+  }
+}
+
+function getGraphNodes(graph) {
+  if (Array.isArray(graph?.nodes)) return graph.nodes;
+  if (isObject(graph?.nodes)) return Object.values(graph.nodes);
+  return null;
+}
+
+function loadVariableDefinitions() {
+  const document = readYaml(DEFINITIONS_FILE);
+
+  if (!isObject(document)) {
+    error('Variable definitions must have a YAML object as their root.');
+    return new Map();
+  }
+
+  if (document.schemaVersion !== 1) {
+    error('Variable definitions: schemaVersion must be 1.');
+  }
+
+  if (!Array.isArray(document.variables)) {
+    error('Variable definitions: variables must be an array.');
+    return new Map();
+  }
+
+  const definitions = new Map();
+
+  for (const [index, definition] of document.variables.entries()) {
+    const label = `Variable definitions: variables[${index}]`;
+
+    if (!isObject(definition)) {
+      error(`${label} must be an object.`);
+      continue;
+    }
+
+    if (typeof definition.id !== 'string' || !definition.id.trim()) {
+      error(`${label}.id must be a non-empty string.`);
+      continue;
+    }
+
+    if (definitions.has(definition.id)) {
+      error(`Duplicate variable definition ID "${definition.id}".`);
+      continue;
+    }
+
+    if (typeof definition.label !== 'string' || !definition.label.trim()) {
+      error(`${label}.label must be a non-empty string.`);
+    }
+
+    if (typeof definition.domain !== 'string' || !definition.domain.trim()) {
+      error(`${label}.domain must be a non-empty string.`);
+    }
+
+    if (!['number', 'string', 'boolean', 'object', 'array'].includes(definition.valueType)) {
+      error(`${label}.valueType must be number, string, boolean, object, or array.`);
+    }
+
+    if (definition.valueType === 'number') {
+      if (definition.min !== undefined && typeof definition.min !== 'number') {
+        error(`${label}.min must be a number.`);
+      }
+
+      if (definition.max !== undefined && typeof definition.max !== 'number') {
+        error(`${label}.max must be a number.`);
+      }
+
+      if (
+        typeof definition.min === 'number' &&
+        typeof definition.max === 'number' &&
+        definition.min > definition.max
+      ) {
+        error(`${label}.min cannot be greater than max.`);
+      }
+    }
+
+    definitions.set(definition.id, definition);
+  }
+
+  return definitions;
+}
+
+function matchesValueType(value, valueType) {
+  switch (valueType) {
+    case 'number':
+      return typeof value === 'number' && Number.isFinite(value);
+    case 'string':
+      return typeof value === 'string';
+    case 'boolean':
+      return typeof value === 'boolean';
+    case 'object':
+      return isObject(value);
+    case 'array':
+      return Array.isArray(value);
+    default:
+      return false;
+  }
+}
+
+function validateVariables(variables, definitions, label) {
+  if (!Array.isArray(variables)) {
+    error(`${label}: variables must be an array.`);
+    return;
+  }
+
+  const seenKeys = new Set();
+
+  variables.forEach((variable, index) => {
+    const itemLabel = `${label}: variables[${index}]`;
+
+    if (!isObject(variable)) {
+      error(`${itemLabel} must be an object.`);
+      return;
+    }
+
+    if (typeof variable.key !== 'string' || !variable.key.trim()) {
+      error(`${itemLabel}.key must be a non-empty string.`);
+      return;
+    }
+
+    if (seenKeys.has(variable.key)) {
+      error(`${label}: duplicate variable key "${variable.key}".`);
+      return;
+    }
+
+    seenKeys.add(variable.key);
+
+    const definition = definitions.get(variable.key);
+
+    if (!definition) {
+      error(`${itemLabel}: unknown variable "${variable.key}". Add it to world-variable-definitions.yaml.`);
+      return;
+    }
+
+    if (!Object.hasOwn(variable, 'value')) {
+      error(`${itemLabel}: missing value.`);
+    } else if (!matchesValueType(variable.value, definition.valueType)) {
+      error(`${itemLabel}.value must have type "${definition.valueType}".`);
+    } else if (definition.valueType === 'number') {
+      if (typeof definition.min === 'number' && variable.value < definition.min) {
+        error(`${itemLabel}.value is below the minimum (${definition.min}).`);
+      }
+
+      if (typeof definition.max === 'number' && variable.value > definition.max) {
+        error(`${itemLabel}.value exceeds the maximum (${definition.max}).`);
+      }
+    }
+
+    if (!ALLOWED_STATUSES.has(variable.status)) {
+      error(`${itemLabel}: invalid or missing status. Allowed values: ${[...ALLOWED_STATUSES].join(', ')}.`);
+    }
+
+    if (
+      variable.confidence !== undefined &&
+      (
+        typeof variable.confidence !== 'number' ||
+        !Number.isFinite(variable.confidence) ||
+        variable.confidence < 0 ||
+        variable.confidence > 1
+      )
+    ) {
+      error(`${itemLabel}.confidence must be a number between 0 and 1.`);
+    }
+
+    if (variable.rationale !== undefined && typeof variable.rationale !== 'string') {
+      error(`${itemLabel}.rationale must be a string.`);
+    }
+
+    if (variable.evidence !== undefined && !Array.isArray(variable.evidence)) {
+      error(`${itemLabel}.evidence must be an array.`);
+    }
+  });
+}
+
+function validateState(file, graphNodeMap, definitions) {
+  const state = readYaml(file);
+  if (state === null) return;
+
+  const label = relative(ROOT, file);
+
+  if (!isObject(state)) {
+    error(`${label}: root must be a YAML object.`);
+    return;
+  }
+
+  for (const field of [
+    'schemaVersion',
+    'id',
+    'worldId',
+    'divergenceId',
+    'time',
+    'status',
+    'variables',
+    'causedBy',
+    'evidence',
+  ]) {
+    if (!(field in state)) {
+      error(`${label}: missing required field "${field}".`);
+    }
+  }
+
+  if (state.schemaVersion !== 1) {
+    error(`${label}: schemaVersion must be 1.`);
+  }
+
+  if (typeof state.id !== 'string' || !state.id.trim()) {
+    error(`${label}: id must be a non-empty string.`);
+  }
+
+  if (typeof state.worldId !== 'string' || !state.worldId.trim()) {
+    error(`${label}: worldId must be a non-empty string.`);
+  } else {
+    const world = graphNodeMap.get(state.worldId);
+
+    if (!world) {
+      error(`${label}: worldId "${state.worldId}" was not found in the Content Graph.`);
+    } else if (world.kind !== 'world') {
+      error(`${label}: "${state.worldId}" exists but is not a world node.`);
+    }
+  }
+
+  if (typeof state.divergenceId !== 'string' || !state.divergenceId.trim()) {
+    error(`${label}: divergenceId must be a non-empty string.`);
+  } else {
+    const divergence = graphNodeMap.get(state.divergenceId);
+
+    if (!divergence) {
+      error(`${label}: divergenceId "${state.divergenceId}" was not found in the Content Graph.`);
+    } else if (divergence.kind !== 'divergence') {
+      error(`${label}: "${state.divergenceId}" exists but is not a divergence node.`);
+    }
+  }
+
+  if (!ALLOWED_STATUSES.has(state.status)) {
+    error(`${label}: invalid status "${state.status}". Allowed values: ${[...ALLOWED_STATUSES].join(', ')}.`);
+  }
+
+  if (!isObject(state.time)) {
+    error(`${label}: time must be an object.`);
+  } else {
+    if (
+      state.time.year !== null &&
+      state.time.year !== undefined &&
+      !Number.isInteger(state.time.year)
+    ) {
+      error(`${label}: time.year must be an integer or null.`);
+    }
+
+    if (typeof state.time.label !== 'string') {
+      error(`${label}: time.label must be a string.`);
+    }
+
+    if (typeof state.time.precision !== 'string' || !state.time.precision.trim()) {
+      error(`${label}: time.precision must be a non-empty string.`);
+    }
+  }
+
+  if (state.description !== undefined && typeof state.description !== 'string') {
+    error(`${label}: description must be a string.`);
+  }
+
+  validateVariables(state.variables, definitions, label);
+
+  if (Array.isArray(state.causedBy)) {
+    state.causedBy.forEach((eventId, index) => {
+      if (typeof eventId !== 'string' || !eventId.trim()) {
+        error(`${label}: causedBy[${index}] must be a non-empty event ID string.`);
+      } else {
+        const event = graphNodeMap.get(eventId);
+
+        if (!event) {
+          error(`${label}: causedBy references unknown graph node "${eventId}".`);
+        } else if (event.kind !== 'timeline-event') {
+          error(`${label}: causedBy reference "${eventId}" is not a timeline-event node.`);
+        }
+      }
+    });
+  } else {
+    error(`${label}: causedBy must be an array.`);
+  }
+
+  if (Array.isArray(state.evidence)) {
+    state.evidence.forEach((item, index) => {
+      if (!isObject(item)) {
+        error(`${label}: evidence[${index}] must be an object.`);
+      }
+    });
+  } else {
+    error(`${label}: evidence must be an array.`);
+  }
+}
+
+function printResults() {
+  console.log(`Errors: ${errors.length}`);
+  console.log(`Warnings: ${warnings.length}`);
+
+  for (const message of errors) {
+    console.error(`ERROR: ${message}`);
+  }
+
+  for (const message of warnings) {
+    console.warn(`WARNING: ${message}`);
+  }
+
+  if (errors.length === 0) {
+    console.log('\nвњ“ World State validation passed.');
+  } else {
+    console.error('\nвњ— World State validation failed.');
+  }
+}
+
+function main() {
+  console.log('\nHAD IT GONE вЂ” World Model Validation\n');
+
+  for (const [file, description] of [
+    [STATES_DIR, 'World State directory'],
+    [GRAPH_FILE, 'Content Graph'],
+    [DEFINITIONS_FILE, 'Variable definitions'],
+  ]) {
+    if (!existsSync(file)) {
+      error(`${description} not found: ${relative(ROOT, file)}`);
+    }
+  }
+
+  if (errors.length > 0) {
+    printResults();
+    process.exitCode = 1;
+    return;
+  }
+
+  let graph;
+
+  try {
+    graph = JSON.parse(readFileSync(GRAPH_FILE, 'utf8'));
+  } catch (issue) {
+    error(`Could not parse Content Graph JSON: ${issue.message}`);
+    printResults();
+    process.exitCode = 1;
+    return;
+  }
+
+  const nodes = getGraphNodes(graph);
+
+  if (!nodes) {
+    error('Content Graph does not contain a valid nodes collection.');
+    printResults();
+    process.exitCode = 1;
+    return;
+  }
+
+  const graphNodeMap = new Map();
+
+  for (const node of nodes) {
+    if (node && typeof node.id === 'string') {
+      graphNodeMap.set(node.id, node);
+    }
+  }
+
+  const definitions = loadVariableDefinitions();
+
+  const files = readdirSync(STATES_DIR)
+    .filter((name) => /\.(yaml|yml)$/i.test(name))
+    .map((name) => join(STATES_DIR, name));
+
+  if (files.length === 0) {
+    warning('No YAML files found in src/data/world-states/.');
+  }
+
+  const stateIds = new Map();
+
+  for (const file of files) {
+    const state = readYaml(file);
+
+    if (isObject(state) && typeof state.id === 'string' && state.id.trim()) {
+      const previous = stateIds.get(state.id);
+
+      if (previous) {
+        error(
+          `Duplicate World State ID "${state.id}" in ` +
+          `${relative(ROOT, previous)} and ${relative(ROOT, file)}.`
+        );
+      } else {
+        stateIds.set(state.id, file);
+      }
+    }
+
+    validateState(file, graphNodeMap, definitions);
+  }
+
+  console.log(`World State files: ${files.length}`);
+  console.log(`Content Graph nodes: ${nodes.length}`);
+  console.log(`Variable definitions: ${definitions.size}`);
+
+  printResults();
+
+  if (errors.length > 0) {
+    process.exitCode = 1;
+  }
+}
+
+main();
+
+========== scripts/validate-world-transitions.mjs ==========
+
+import fs from "node:fs";
+import path from "node:path";
+import process from "node:process";
+import YAML from "yaml";
+
+const ROOT = process.cwd();
+
+const PATHS = {
+  states: path.join(ROOT, "src", "data", "world-states"),
+  variables: path.join(ROOT, "src", "data", "world-variable-definitions.yaml"),
+  transitions: path.join(ROOT, "src", "data", "world-transitions.yaml"),
+  graph: path.join(ROOT, "src", "data", "content-graph.json"),
+};
+
+let errors = 0;
+let warnings = 0;
+
+function error(message) {
+  errors += 1;
+  console.error(`ERROR: ${message}`);
+}
+
+function warn(message) {
+  warnings += 1;
+  console.warn(`WARNING: ${message}`);
+}
+
+function readYaml(filePath) {
+  return YAML.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function loadYamlFiles(directory) {
+  if (!fs.existsSync(directory)) {
+    throw new Error(`Directory not found: ${directory}`);
+  }
+
+  const files = [];
+
+  function walk(currentDirectory) {
+    for (const entry of fs.readdirSync(currentDirectory, {
+      withFileTypes: true,
+    })) {
+      const fullPath = path.join(currentDirectory, entry.name);
+
+      if (entry.isDirectory()) {
+        walk(fullPath);
+            } else if (/\.(yaml|yml)$/i.test(entry.name)) {
+        files.push(fullPath);
+      }
+    }
+  }
+
+  walk(directory);
+  return files;
+}
+
+function isNonEmptyString(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function valuesEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function validate() {
+  const transitionRegistry = readYaml(PATHS.transitions);
+  const variableRegistry = readYaml(PATHS.variables);
+  const graph = readJson(PATHS.graph);
+
+  if (!Array.isArray(transitionRegistry?.transitions)) {
+    throw new Error(
+      "world-transitions.yaml must contain a transitions array."
+    );
+  }
+
+  if (!Array.isArray(graph?.nodes)) {
+    throw new Error("Content Graph must contain a nodes array.");
+  }
+
+  if (!Array.isArray(graph?.edges)) {
+    throw new Error("Content Graph must contain an edges array.");
+  }
+
+  // Load World State files.
+  const statesById = new Map();
+
+  for (const filePath of loadYamlFiles(PATHS.states)) {
+    let state;
+
+    try {
+      state = readYaml(filePath);
+    } catch (cause) {
+      error(
+        `Cannot parse World State ${path.relative(ROOT, filePath)}: ${cause.message}`
+      );
+      continue;
+    }
+
+    if (!state || typeof state !== "object" || Array.isArray(state)) {
+      error(`Invalid World State document: ${path.relative(ROOT, filePath)}`);
+      continue;
+    }
+
+    if (!isNonEmptyString(state.id)) {
+      error(`World State has no valid id: ${path.relative(ROOT, filePath)}`);
+      continue;
+    }
+
+    if (statesById.has(state.id)) {
+      error(`Duplicate World State ID: "${state.id}".`);
+      continue;
+    }
+
+    statesById.set(state.id, {
+      ...state,
+      _file: path.relative(ROOT, filePath),
+    });
+  }
+
+  // Load variable definitions.
+  const definitions = Array.isArray(variableRegistry)
+    ? variableRegistry
+    : variableRegistry?.variables;
+
+  if (!Array.isArray(definitions)) {
+    throw new Error(
+      "world-variable-definitions.yaml must contain a variables array."
+    );
+  }
+
+  const variablesByKey = new Map();
+
+  for (const definition of definitions) {
+    if (!isNonEmptyString(definition?.id)) {
+      error("A variable definition has no valid id.");
+      continue;
+    }
+
+    if (variablesByKey.has(definition.id)) {
+      error(`Duplicate variable definition: "${definition.id}".`);
+      continue;
+    }
+
+    variablesByKey.set(definition.id, definition);
+  }
+
+  // Build lookup sets from Content Graph.
+  const graphNodeIds = new Set(
+    graph.nodes
+      .filter((node) => isNonEmptyString(node?.id))
+      .map((node) => node.id)
+  );
+
+  const timelineEventIds = new Set(
+    graph.nodes
+      .filter((node) => node?.kind === "timeline-event")
+      .map((node) => node.id)
+  );
+
+  const causalEdges = graph.edges.filter(
+    (edge) =>
+      edge?.type === "causes" ||
+      edge?.type === "results_in"
+  );
+
+  const causalPairs = new Set(
+    causalEdges.map((edge) => `${edge.from}->${edge.to}`)
+  );
+
+  const transitionIds = new Set();
+  const stateTransitions = new Map();
+
+  function validateVariableValue(key, value, context) {
+    const definition = variablesByKey.get(key);
+
+    if (!definition) {
+      error(`${context}: undefined variable "${key}".`);
+      return;
+    }
+
+    const type = definition.valueType;
+
+    if (type === "number" && typeof value !== "number") {
+      error(`${context}: "${key}" must have a numeric value.`);
+      return;
+    }
+
+    if (type === "string" && typeof value !== "string") {
+      error(`${context}: "${key}" must have a string value.`);
+      return;
+    }
+
+    if (type === "boolean" && typeof value !== "boolean") {
+      error(`${context}: "${key}" must have a boolean value.`);
+      return;
+    }
+
+    if (
+      type === "object" &&
+      (value === null || typeof value !== "object" || Array.isArray(value))
+    ) {
+      error(`${context}: "${key}" must have an object value.`);
+      return;
+    }
+
+    if (type === "array" && !Array.isArray(value)) {
+      error(`${context}: "${key}" must have an array value.`);
+      return;
+    }
+
+    if (typeof value === "number") {
+      const min = definition.min ?? definition.minimum;
+      const max = definition.max ?? definition.maximum;
+
+      if (typeof min === "number" && value < min) {
+        error(`${context}: "${key}" is below its minimum (${min}).`);
+      }
+
+      if (typeof max === "number" && value > max) {
+        error(`${context}: "${key}" exceeds its maximum (${max}).`);
+      }
+    }
+  }
+
+  function getStateVariables(state, context) {
+    const result = new Map();
+
+    if (!Array.isArray(state.variables)) {
+      error(`${context}: "variables" must be an array.`);
+      return result;
+    }
+
+    for (const variable of state.variables) {
+      if (!isNonEmptyString(variable?.key)) {
+        error(`${context}: a variable entry has no valid key.`);
+        continue;
+      }
+
+      if (result.has(variable.key)) {
+        error(`${context}: duplicate variable "${variable.key}".`);
+        continue;
+      }
+
+      if (!Object.hasOwn(variable, "value")) {
+        error(`${context}: "${variable.key}" has no value.`);
+        continue;
+      }
+
+      if (!isNonEmptyString(variable.status)) {
+        error(`${context}: "${variable.key}" has no status.`);
+      }
+
+      validateVariableValue(variable.key, variable.value, context);
+      result.set(variable.key, variable.value);
+    }
+
+    return result;
+  }
+
+  // Validate variable declarations in every state.
+  const stateVariablesById = new Map();
+
+  for (const [stateId, state] of statesById) {
+    stateVariablesById.set(
+      stateId,
+      getStateVariables(state, `World State "${stateId}"`)
+    );
+  }
+
+  // Validate transitions.
+  for (const transition of transitionRegistry.transitions) {
+    if (!transition || typeof transition !== "object") {
+      error("Invalid transition entry.");
+      continue;
+    }
+
+    const {
+      id,
+      worldId,
+      fromStateId,
+      toStateId,
+      eventId,
+      changes,
+    } = transition;
+
+    if (!isNonEmptyString(id)) {
+      error("A transition has no valid id.");
+      continue;
+    }
+
+    if (transitionIds.has(id)) {
+      error(`Duplicate transition ID: "${id}".`);
+      continue;
+    }
+
+    transitionIds.add(id);
+
+    const context = `Transition "${id}"`;
+
+    for (const [field, value] of Object.entries({
+      worldId,
+      fromStateId,
+      toStateId,
+      eventId,
+    })) {
+      if (!isNonEmptyString(value)) {
+        error(`${context}: "${field}" is required.`);
+      }
+    }
+
+    const fromState = statesById.get(fromStateId);
+    const toState = statesById.get(toStateId);
+
+    if (!fromState) {
+      error(`${context}: source state "${fromStateId}" does not exist.`);
+    }
+
+    // A target state may not exist yet: applying the transition creates it.
+    if (!toState) {
+      const targetFileYaml = path.join(
+        PATHS.states,
+        `${toStateId}.yaml`
+      );
+      const targetFileYml = path.join(
+        PATHS.states,
+        `${toStateId}.yml`
+      );
+
+      if (
+        fs.existsSync(targetFileYaml) ||
+        fs.existsSync(targetFileYml)
+      ) {
+        error(
+          `${context}: target state "${toStateId}" exists as a file but could not be loaded.`
+        );
+      }
+    }
+
+    if (fromState && toState) {
+      if (fromState.id === toState.id) {
+        error(`${context}: source and target states must differ.`);
+      }
+
+      if (
+        fromState.worldId !== worldId ||
+        toState.worldId !== worldId
+      ) {
+        error(
+          `${context}: both states must belong to world "${worldId}".`
+        );
+      }
+
+      if (fromState.worldId !== toState.worldId) {
+        error(`${context}: transition crosses between different worlds.`);
+      }
+
+      const key = `${fromStateId}->${toStateId}`;
+
+      if (!stateTransitions.has(key)) {
+        stateTransitions.set(key, []);
+      }
+
+      stateTransitions.get(key).push(id);
+    }
+
+    if (!graphNodeIds.has(eventId)) {
+      error(`${context}: event "${eventId}" is missing from the Content Graph.`);
+    } else if (!timelineEventIds.has(eventId)) {
+      error(`${context}: "${eventId}" is not a timeline-event node.`);
+    }
+
+    if (
+      fromState &&
+      isNonEmptyString(eventId) &&
+      timelineEventIds.has(eventId)
+    ) {
+      const hasCausalLink =
+        causalPairs.has(`${fromState.divergenceId}->${eventId}`) ||
+        causalEdges.some(
+          (edge) =>
+            edge.to === eventId &&
+            timelineEventIds.has(edge.from)
+        );
+
+      if (!hasCausalLink) {
+        warn(
+          `${context}: event "${eventId}" has no incoming causal link from its divergence or a preceding timeline event.`
+        );
+      }
+    }
+
+    if (!Array.isArray(changes)) {
+      error(`${context}: "changes" must be an array.`);
+      continue;
+    }
+
+    const changedKeys = new Set();
+    const sourceVariables = fromState
+      ? stateVariablesById.get(fromState.id)
+      : null;
+    const targetVariables = toState
+      ? stateVariablesById.get(toState.id)
+      : null;
+
+    for (const change of changes) {
+      if (!isNonEmptyString(change?.key)) {
+        error(`${context}: a change has no valid key.`);
+        continue;
+      }
+
+      if (changedKeys.has(change.key)) {
+        error(`${context}: duplicate change for "${change.key}".`);
+        continue;
+      }
+
+      changedKeys.add(change.key);
+
+      if (!variablesByKey.has(change.key)) {
+        error(
+          `${context}: change references undefined variable "${change.key}".`
+        );
+        continue;
+      }
+
+      if (!Object.hasOwn(change, "from")) {
+        error(`${context}: change "${change.key}" is missing "from".`);
+      } else {
+        validateVariableValue(
+          change.key,
+          change.from,
+          `${context}, change "${change.key}" (from)`
+        );
+      }
+
+      if (!Object.hasOwn(change, "to")) {
+        error(`${context}: change "${change.key}" is missing "to".`);
+      } else {
+        validateVariableValue(
+          change.key,
+          change.to,
+          `${context}, change "${change.key}" (to)`
+        );
+      }
+
+      if (!isNonEmptyString(change.status)) {
+        error(
+          `${context}: change "${change.key}" must specify a status.`
+        );
+      }
+
+      if (
+        fromState &&
+        sourceVariables &&
+        Object.hasOwn(change, "from")
+      ) {
+        if (!sourceVariables.has(change.key)) {
+          if (change.from !== null) {
+            error(
+              `${context}: "${change.key}" is absent from source state "${fromState.id}"; use from: null only when intentionally introducing the variable.`
+            );
+          }
+        } else if (
+          !valuesEqual(sourceVariables.get(change.key), change.from)
+        ) {
+          error(
+            `${context}: "${change.key}" from-value does not match source state "${fromState.id}".`
+          );
+        }
+      }
+
+      if (
+        toState &&
+        targetVariables &&
+        Object.hasOwn(change, "to") &&
+        targetVariables.has(change.key) &&
+        !valuesEqual(targetVariables.get(change.key), change.to)
+      ) {
+        error(
+          `${context}: "${change.key}" to-value does not match target state "${toState.id}".`
+        );
+      }
+
+      if (
+        Object.hasOwn(change, "from") &&
+        Object.hasOwn(change, "to") &&
+        valuesEqual(change.from, change.to)
+      ) {
+        warn(
+          `${context}: "${change.key}" has identical from/to values.`
+        );
+      }
+    }
+  }
+
+  // Report transitions that reuse the same state pair.
+  for (const [pair, ids] of stateTransitions) {
+    if (ids.length > 1) {
+      warn(
+        `Multiple transitions connect the same state pair "${pair}": ${ids.join(", ")}.`
+      );
+    }
+  }
+
+  console.log("");
+  console.log("HAD IT GONE вЂ” World Transition Validation");
+  console.log("-----------------------------------------");
+  console.log(`World States:       ${statesById.size}`);
+  console.log(`Variable types:     ${variablesByKey.size}`);
+  console.log(`Transitions:        ${transitionIds.size}`);
+  console.log(`Causal graph edges: ${causalEdges.length}`);
+  console.log(`Errors:             ${errors}`);
+  console.log(`Warnings:           ${warnings}`);
+
+  if (errors > 0) {
+    console.error("\nвњ— World Transition validation failed.");
+    process.exitCode = 1;
+  } else if (warnings > 0) {
+    console.warn("\nвљ  Validation passed with warnings.");
+  } else {
+    console.log("\nвњ“ World Transition validation passed.");
+  }
+}
+
+try {
+  for (const filePath of Object.values(PATHS)) {
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Required path not found: ${filePath}`);
+    }
+  }
+
+  validate();
+} catch (cause) {
+  console.error(`\nFATAL: ${cause.message}`);
+  process.exitCode = 1;
+}
+
+========== scripts/migration-inventory.mjs ==========
+
+/**
+ * Report-only migration inventory for HAD IT GONE.
+ *
+ * Does not modify content or generated data.
+ *
+ * Usage:
+ *   node scripts/migration-inventory.mjs
+ */
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+} from 'node:fs';
+import { join, relative, extname, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { parse as parseYaml } from 'yaml';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const ROOT = join(__dirname, '..');
+const CONTENT_ROOT = join(ROOT, 'src', 'content');
+const DATA_ROOT = join(ROOT, 'src', 'data');
+const STATE_ROOT = join(DATA_ROOT, 'world-states');
+
+const findings = [];
+const articles = [];
+const knownIds = new Set();
+const globalIds = new Map();
+
+function toRelative(file) {
+  return relative(ROOT, file).replaceAll('\\', '/');
+}
+
+function walk(dir, extension) {
+  if (!existsSync(dir)) return [];
+
+  const result = [];
+
+  for (const name of readdirSync(dir)) {
+    const fullPath = join(dir, name);
+    const stat = statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      result.push(...walk(fullPath, extension));
+    } else if (
+      extension === 'markdown'
+        ? extname(name).toLowerCase() === '.md'
+        : /\.(yaml|yml)$/i.test(name)
+    ) {
+      result.push(fullPath);
+    }
+  }
+
+  return result;
+}
+
+function add(level, file, message) {
+  findings.push({
+    level,
+    file: file ? toRelative(file) : '-',
+    message,
+  });
+}
+
+function parseFrontmatter(file) {
+  const text = readFileSync(file, 'utf8');
+  const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+
+  if (!match) {
+    add('ERROR', file, 'Missing YAML frontmatter');
+    return null;
+  }
+
+  try {
+    return parseYaml(match[1]) ?? {};
+  } catch (error) {
+    add('ERROR', file, `Invalid frontmatter YAML: ${error.message}`);
+    return null;
+  }
+}
+
+function registerId(id, kind, file) {
+  if (!id) return;
+
+  const key = String(id);
+  knownIds.add(key);
+
+  if (globalIds.has(key)) {
+    const previous = globalIds.get(key);
+
+    add(
+      'ERROR',
+      file,
+      `Duplicate ID "${key}" (${kind}); already used by ${previous.kind} in ${
+        previous.file ? toRelative(previous.file) : 'registry'
+      }`,
+    );
+  } else {
+    globalIds.set(key, { kind, file });
+  }
+}
+
+// 1. Inspect Markdown articles.
+if (!existsSync(CONTENT_ROOT)) {
+  console.error(`Content directory not found: ${CONTENT_ROOT}`);
+  process.exitCode = 1;
+} else {
+  for (const file of walk(CONTENT_ROOT, 'markdown')) {
+    const fm = parseFrontmatter(file);
+    if (!fm) continue;
+
+    articles.push({ file, fm });
+
+    for (const field of ['title', 'description', 'image']) {
+      if (!fm[field]) {
+        add('ERROR', file, `Missing required field "${field}"`);
+      }
+    }
+
+    const articleId =
+      fm.id ??
+      relative(CONTENT_ROOT, file)
+        .replace(/\\/g, '/')
+        .replace(/\.md$/i, '');
+
+    registerId(`article:${articleId}`, 'article', file);
+
+// Collect IDs for endpoint checks without treating cross-article
+// references to the same world, divergence or entity as duplicates.
+if (fm.world?.id) {
+  knownIds.add(String(fm.world.id));
+}
+
+if (fm.divergence?.id) {
+  knownIds.add(String(fm.divergence.id));
+}
+
+for (const event of fm.timeline ?? []) {
+  if (event?.id) {
+    knownIds.add(String(event.id));
+  }
+}
+
+for (const entity of fm.entities ?? []) {
+  if (entity?.id) {
+    knownIds.add(String(entity.id));
+  }
+}
+
+    if (Array.isArray(fm.worldStates) && fm.worldStates.length > 0) {
+      add(
+        'MIGRATION',
+        file,
+        `Legacy inline worldStates: ${fm.worldStates.length} state block(s); compare with src/data/world-states/*.yaml before migrating`,
+      );
+    }
+
+    if (!('relationships' in fm)) {
+      add(
+        'MIGRATION',
+        file,
+        'No relationships field; confirm whether relationships are intentionally absent',
+      );
+    }
+
+    if (!('order' in fm)) {
+      add(
+        'INFO',
+        file,
+        'No explicit order field; verify whether current ordering relies on fallback dates or filenames',
+      );
+    }
+  }
+}
+
+// 2. Load the global entity registry.
+const entityFile = join(DATA_ROOT, 'entities.yaml');
+const entityIds = new Set();
+
+if (existsSync(entityFile)) {
+  try {
+    const parsed = parseYaml(readFileSync(entityFile, 'utf8')) ?? {};
+
+    for (const entity of parsed.entities ?? []) {
+      if (!entity?.id) {
+        add('ERROR', entityFile, 'Registry entity without an id');
+        continue;
+      }
+
+      const id = String(entity.id);
+
+      if (entityIds.has(id)) {
+        add('ERROR', entityFile, `Duplicate entity registry ID "${id}"`);
+      }
+
+      entityIds.add(id);
+      knownIds.add(id);
+    }
+  } catch (error) {
+    add('ERROR', entityFile, `Cannot parse entity registry: ${error.message}`);
+  }
+} else {
+  add('WARNING', entityFile, 'Global entity registry not found at expected path');
+}
+
+// 3. Load allowed relationship types.
+const relationshipTypesFile = join(DATA_ROOT, 'relationship-types.yaml');
+const allowedRelationshipTypes = new Set();
+
+if (existsSync(relationshipTypesFile)) {
+  try {
+    const parsed = parseYaml(
+      readFileSync(relationshipTypesFile, 'utf8'),
+    ) ?? {};
+
+    for (const item of parsed.relationships ?? []) {
+      if (item?.id) {
+        allowedRelationshipTypes.add(String(item.id));
+      }
+    }
+  } catch (error) {
+    add(
+      'ERROR',
+      relationshipTypesFile,
+      `Cannot parse relationship type registry: ${error.message}`,
+    );
+  }
+} else {
+  add(
+    'WARNING',
+    relationshipTypesFile,
+    'Relationship type registry not found at expected path',
+  );
+}
+
+// 4. Inspect relationships and related-article references.
+for (const { file, fm } of articles) {
+  for (const rel of fm.relationships ?? []) {
+    if (
+      rel?.type &&
+      allowedRelationshipTypes.size > 0 &&
+      !allowedRelationshipTypes.has(String(rel.type))
+    ) {
+      add(
+        'WARNING',
+        file,
+        `Relationship type "${rel.type}" is not in relationship-types.yaml`,
+      );
+    }
+
+    for (const endpoint of ['from', 'to']) {
+      const id = rel?.[endpoint];
+
+      if (id && !knownIds.has(String(id))) {
+        add(
+          'WARNING',
+          file,
+          `Relationship ${endpoint} endpoint "${id}" was not found among collected article and entity IDs; verify whether it uses another registry`,
+        );
+      }
+    }
+  }
+
+  for (const related of fm.related ?? []) {
+    if (typeof related !== 'string') {
+      add('WARNING', file, 'related[] contains a non-string value');
+    }
+  }
+}
+
+// 5. Inspect World State YAML files.
+const stateFiles = walk(STATE_ROOT, 'yaml');
+const stateIds = new Set();
+const stateWorlds = new Map();
+
+for (const file of stateFiles) {
+  try {
+    const state = parseYaml(readFileSync(file, 'utf8')) ?? {};
+
+    if (!state.id) {
+      add('ERROR', file, 'World State has no id');
+    } else {
+      const id = String(state.id);
+
+      if (stateIds.has(id)) {
+        add('ERROR', file, `Duplicate World State id "${id}"`);
+      }
+
+      stateIds.add(id);
+    }
+
+    if (state.worldId) {
+      const worldId = String(state.worldId);
+
+      if (!stateWorlds.has(worldId)) {
+        stateWorlds.set(worldId, []);
+      }
+
+      stateWorlds.get(worldId).push(file);
+    }
+  } catch (error) {
+    add('ERROR', file, `Cannot parse World State YAML: ${error.message}`);
+  }
+}
+
+// 5a. Make World State IDs available for endpoint checks.
+for (const id of stateIds) {
+  knownIds.add(id);
+}
+
+// 5b. Collect World Transition IDs and event references.
+const transitionsFile = join(DATA_ROOT, 'world-transitions.yaml');
+
+if (existsSync(transitionsFile)) {
+  try {
+    const parsed = parseYaml(
+      readFileSync(transitionsFile, 'utf8'),
+    ) ?? {};
+
+    for (const transition of parsed.transitions ?? []) {
+      if (transition?.id) {
+        knownIds.add(String(transition.id));
+      }
+
+      if (transition?.fromStateId) {
+        knownIds.add(String(transition.fromStateId));
+      }
+
+      if (transition?.toStateId) {
+        knownIds.add(String(transition.toStateId));
+      }
+
+      if (transition?.eventId) {
+        knownIds.add(String(transition.eventId));
+      }
+    }
+  } catch (error) {
+    add(
+      'ERROR',
+      transitionsFile,
+      `Cannot parse World Transitions YAML: ${error.message}`,
+    );
+  }
+}
+
+// 6. Report worlds that have inline states and separate YAML states.
+for (const { file, fm } of articles) {
+  const worldId = fm.world?.id;
+
+  if (
+    worldId &&
+    Array.isArray(fm.worldStates) &&
+    fm.worldStates.length > 0 &&
+    stateWorlds.has(String(worldId))
+  ) {
+    add(
+      'MIGRATION',
+      file,
+      `Both inline worldStates and separate YAML states exist for "${worldId}"; compare records before deciding which data to retain`,
+    );
+  }
+}
+
+// 7. Print report.
+console.log('\nHAD IT GONE вЂ” MIGRATION INVENTORY (REPORT ONLY)');
+console.log('No project files were changed.\n');
+
+console.log(`Articles scanned: ${articles.length}`);
+console.log(`Global entity IDs: ${entityIds.size}`);
+console.log(`World State YAML files: ${stateFiles.length}`);
+console.log(`Relationship types registered: ${allowedRelationshipTypes.size}`);
+console.log(`Findings: ${findings.length}\n`);
+
+const rank = {
+  ERROR: 0,
+  MIGRATION: 1,
+  WARNING: 2,
+  INFO: 3,
+};
+
+findings.sort(
+  (a, b) =>
+    rank[a.level] - rank[b.level] ||
+    a.file.localeCompare(b.file) ||
+    a.message.localeCompare(b.message),
+);
+
+for (const item of findings) {
+  console.log(`[${item.level}] ${item.file}: ${item.message}`);
+}
+
+const summary = ['ERROR', 'MIGRATION', 'WARNING', 'INFO']
+  .map(
+    (level) =>
+      `${level}: ${findings.filter((item) => item.level === level).length}`,
+  )
+  .join(' | ');
+
+console.log(`\nSummary: ${summary}`);
+console.log(
+  'Interpretation: ERROR = inspect before migration; MIGRATION = candidate for planned migration; WARNING = verify manually; INFO = non-blocking inventory note.',
+);
+
+========== astro.config.mjs ==========
+
+// @ts-check
+import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
+
+export default defineConfig({
+  site: 'https://whatif-portal.netlify.app',
+  integrations: [sitemap()],
+});
+
+========== AGENTS.md ==========
+
+## Development
+
+When starting the dev server, use background mode:
+
+```
+astro dev --background
+```
+
+Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+
+## Documentation
+
+Full documentation: https://docs.astro.build
+
+Consult these guides before working on related tasks:
+
+- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
+- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
+- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
+- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
+- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
+- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+

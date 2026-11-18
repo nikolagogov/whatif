@@ -1,0 +1,35 @@
+{
+  "type": "article",
+  "key": "article-000000014-1794650474569",
+  "sector": "history",
+  "slug": "what-if-the-library-of-alexandria-had-survived",
+  "articleId": "000000014",
+  "archivedAt": "2026-11-14T10:01:14.782Z",
+  "articleFile": "article.md",
+  "entities": [
+    {
+      "id": "0000000141",
+      "file": "0000000141.md"
+    },
+    {
+      "id": "0000000142",
+      "file": "0000000142.md"
+    },
+    {
+      "id": "0000000143",
+      "file": "0000000143.md"
+    },
+    {
+      "id": "0000000144",
+      "file": "0000000144.md"
+    },
+    {
+      "id": "0000000145",
+      "file": "0000000145.md"
+    },
+    {
+      "id": "0000000146",
+      "file": "0000000146.md"
+    }
+  ]
+}

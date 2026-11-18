@@ -1,37 +1,14 @@
 
-import contentGraph from '../data/content-graph.json';
+import {
+  getAllRelationshipEdges,
+  getGraphNode,
+  getGraphNodes,
+} from './relationships/repository';
+import type { SectorArticle } from '../types/article';
 
-export type RelatedPost = {
-  id: string;
-  sector: 'history' | 'science' | 'space' | 'society';
-  data: {
-    title?: string;
-    description?: string;
-    image?: string;
-    tags?: string[];
-    topics?: string[];
-    world?: { id?: string; name?: string };
-    [key: string]: unknown;
-  };
-};
+/** Compatibility name; related-article ranking uses canonical article records. */
+export type RelatedPost = SectorArticle;
 
-type GraphNode = {
-  id: string;
-  kind: string;
-};
-
-type GraphEdge = {
-  id?: string;
-  type: string;
-  from: string;
-  to: string;
-  article?: string;
-};
-
-const graph = contentGraph as {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
-};
 
 const STOP_WORDS = new Set([
   'what', 'will', 'would', 'have', 'been', 'were', 'this', 'that',
@@ -66,14 +43,14 @@ function tagScore(sharedTags: number): number {
 
 // Индекси на Content Graph — изграждат се веднъж.
 const graphNodes = new Map(
-  graph.nodes.map(node => [node.id, node])
+  getGraphNodes().map(node => [node.id, node])
 );
 
 const graphNodesByArticle = new Map<string, Set<string>>();
 const relationshipKeysByArticle = new Map<string, Set<string>>();
 const explicitIdsByArticle = new Map<string, Set<string>>();
 
-for (const edge of graph.edges) {
+for (const edge of getAllRelationshipEdges()) {
   if (edge.type === 'RELATED_ARTICLE') {
     const target = graphNodes.get(edge.to);
 
@@ -109,14 +86,14 @@ for (const edge of graph.edges) {
   for (const nodeId of [edge.from, edge.to]) {
     if (nodeId === articleId) continue;
 
-    const node = graphNodes.get(nodeId);
+    const node = getGraphNode(nodeId);
 
     if (node && node.kind !== 'article') {
       articleNodes.add(nodeId);
     }
   }
 
-  if (edge.id?.startsWith('relationship:')) {
+  if (edge.id?.startsWith('article-relationship:')) {
     relationships.add(`${edge.type}:${edge.from}->${edge.to}`);
   }
 }
@@ -194,7 +171,7 @@ export function getRelatedArticles(
       for (const nodeId of current.graphNodes) {
         if (!item.index.graphNodes.has(nodeId)) continue;
 
-        const kind = graphNodes.get(nodeId)?.kind;
+        const kind = getGraphNode(nodeId)?.kind;
 
         if (kind === 'entity') score += 12;
         else if (kind === 'world') score += 20;

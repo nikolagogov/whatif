@@ -1,0 +1,46 @@
+---
+import BackToHomepage from './BackToHomepage.astro';
+
+interface Props {
+  title: string;
+  highlight?: string;
+  eyebrow?: string;
+  description?: string;
+  variant?: 'default' | 'home';
+  showBack?: boolean;
+}
+
+const { title, highlight, eyebrow, description, variant = 'default', showBack = true } = Astro.props;
+const normalizedTitle = title.trim().toLowerCase();
+const isDiscover = normalizedTitle === 'discover';
+const isContinue = normalizedTitle === 'continue' || normalizedTitle === 'continue reading';
+const isHome = variant === 'home' || isDiscover;
+const showBackLink = showBack && variant !== 'home';
+
+// Keep the page label "Continue" white, while "Reading" follows the gold title style.
+const isContinueReading = normalizedTitle === 'continue reading';
+---
+
+<div class:list={["page-title-area", eyebrow && "page-title-area--with-eyebrow"]}>
+  {eyebrow && <p class="page-title-eyebrow">{eyebrow}</p>}
+  <header class:list={['page-title-header', showBackLink && 'page-title-header--navigation']}>
+    {showBackLink && <BackToHomepage />}
+    <h1 class="hig-page-title">
+      {isContinueReading ? (
+        <>
+          <span class="hig-page-title__white">Continue</span>{' '}
+          <span class="hig-page-title__accent">Reading</span>
+        </>
+      ) : (
+        <>
+          <span class:list={[
+            highlight ? 'hig-page-title__primary' : 'hig-page-title__single',
+            (isHome || isContinue) && 'hig-page-title__white'
+          ]}>{title}</span>{highlight && <> <span class="hig-page-title__accent">{highlight}</span></>}
+        </>
+      )}
+    </h1>
+    {showBackLink && <span class="page-title-header__balance" aria-hidden="true"></span>}
+  </header>
+  {description && <p class="page-title-description">{description}</p>}
+</div>

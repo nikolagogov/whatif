@@ -1,0 +1,679 @@
+﻿
+========== src/data/relationship-types.yaml ==========
+
+schemaVersion: 1
+
+relationships:
+  - id: HAS_WORLD
+    category: structural
+    description: Connects an article to its world.
+    from: [article]
+    to: [world]
+
+  - id: HAS_DIVERGENCE
+    category: structural
+    description: Connects an article to its point of divergence.
+    from: [article]
+    to: [divergence]
+
+  - id: HAS_TIMELINE_EVENT
+    category: structural
+    description: Connects an article to an event on its timeline.
+    from: [article]
+    to: [timeline-event]
+
+  - id: MENTIONS_ENTITY
+    category: structural
+    description: Connects an article to an entity it references.
+    from: [article]
+    to: [entity]
+
+  - id: RELATED_ARTICLE
+    category: editorial
+    description: Connects related articles.
+    from: [article]
+    to: [article]
+
+  - id: ALLIANCE
+    category: political
+    description: Alliance or formal cooperation between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: CONFLICT
+    category: political
+    description: Conflict between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: RIVALRY
+    category: political
+    description: Competition or rivalry between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: diplomatic-contact
+    category: diplomatic
+    description: Diplomatic contact between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: located-in
+    category: spatial
+    description: Spatial or administrative location relationship.
+    from: [entity]
+    to: [entity]
+
+  - id: POLITICAL_CONTINUITY
+    category: political
+    description: Continuity of political institutions or authority.
+    from: [entity]
+    to: [entity]
+
+  - id: POLITICAL_INFLUENCE
+    category: political
+    description: Political influence between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: SHIFT_OF_POWER
+    category: political
+    description: Change in relative power between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: INSTITUTIONAL_INFLUENCE
+    category: institutional
+    description: Influence between institutions or entities.
+    from: [entity]
+    to: [entity]
+
+  - id: STRATEGIC_PRESSURE
+    category: strategic
+    description: Strategic pressure exerted between entities.
+    from: [entity]
+    to: [entity]
+
+  - id: KNOWLEDGE_EXCHANGE
+    category: knowledge
+    description: Exchange or transmission of knowledge.
+    from: [entity]
+    to: [entity]
+
+  - id: SCIENTIFIC_DISCOVERY
+    category: scientific
+    description: Relationship describing a scientific discovery.
+    from: [entity]
+    to: [entity]
+
+  - id: ECOLOGICAL_PRESSURE
+    category: ecological
+    description: Ecological pressure affecting an entity.
+    from: [entity]
+    to: [entity]
+
+  - id: EVOLUTIONARY_CHANGE
+    category: evolutionary
+    description: Evolutionary change associated with an entity.
+    from: [entity]
+    to: [entity]
+
+  - id: PLANETARY_CHANGE
+    category: planetary
+    description: Planetary change associated with an entity.
+    from: [entity]
+    to: [entity]
+
+  - id: causes
+    category: causal
+    description: Connects a divergence to an event it causes.
+    from: [divergence]
+    to: [timeline-event]
+
+  - id: results_in
+    category: causal
+    description: Connects an event to a resulting event.
+    from: [timeline-event]
+    to: [timeline-event]
+
+  - id: involves
+    category: participation
+    description: Connects an event to an involved entity.
+    from: [timeline-event]
+    to: [entity]
+
+  - id: STATE_OF_WORLD
+    category: structural
+    description: Connects a world state to its world.
+    from: [world-state]
+    to: [world]
+
+  - id: STATE_OF_DIVERGENCE
+    category: structural
+    description: Connects a world state to its point of divergence.
+    from: [world-state]
+    to: [divergence]
+    
+  - id: STATE_CAUSED_BY
+    category: causal
+    description: Connects a world state to a timeline event explicitly identified as its cause.
+    from: [world-state]
+    to: [timeline-event]
+
+  - id: TRANSITION_FROM_STATE
+    category: structural
+    description: Connects a world transition to its source state.
+    from: [world-transition]
+    to: [world-state]
+
+  - id: TRANSITION_TO_STATE
+    category: structural
+    description: Connects a world transition to its resulting state.
+    from: [world-transition]
+    to: [world-state]
+
+  - id: TRANSITION_TRIGGERED_BY
+    category: structural
+    description: Connects a world transition to its triggering timeline event.
+    from: [world-transition]
+    to: [timeline-event]
+
+  - id: CO_MENTIONED_IN_ARTICLE
+    category: contextual
+    description: Entities co-mentioned in the same article; this indicates shared context, not a direct factual relationship.
+    from: [entity]
+    to: [entity]
+
+========== src/data/world-variable-definitions.yaml ==========
+
+schemaVersion: 1
+
+variables:
+  - id: political_stability
+    label: Political Stability
+    domain: politics
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of political stability within a world."
+
+  - id: territorial_control
+    label: Territorial Control
+    domain: politics
+    valueType: object
+    description: "Describes control over a defined territory by an entity."
+
+  - id: military_capacity
+    label: Military Capacity
+    domain: military
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of military capacity within a defined comparison context."
+
+  - id: economic_capacity
+    label: Economic Capacity
+    domain: economy
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of economic capacity within a defined comparison context."
+
+  - id: population
+    label: Population
+    domain: society
+    valueType: number
+    unit: persons
+    min: 0
+    description: "Estimated population at the time represented by the world state."
+
+  - id: technology_level
+    label: Technology Level
+    domain: technology
+    valueType: object
+    description: "Technology maturity across explicitly defined technological fields."
+
+  - id: diplomatic_influence
+    label: Diplomatic Influence
+    domain: diplomacy
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of diplomatic influence within a defined comparison context."
+
+  - id: institutional_continuity
+    label: Institutional Continuity
+    domain: institutions
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of continuity in political and administrative institutions."
+
+  - id: urbanization
+    label: Urbanization
+    domain: society
+    valueType: number
+    unit: percentage
+    min: 0
+    max: 100
+    description: "Share of the population living in urban settlements, where evidence permits estimation."
+
+  - id: trade_connectivity
+    label: Trade Connectivity
+    domain: economy
+    valueType: number
+    unit: index_0_100
+    min: 0
+    max: 100
+    description: "Relative measure of a world's trade-network connectivity."
+
+========== src/data/world-transitions.yaml ==========
+
+schemaVersion: 1
+
+transitions:
+  - id: transition-arabian-campaign-322-bc
+    label: "Alexander's Arabian Campaign"
+    worldId: world-alexander-west
+    fromStateId: world-state-alexander-west-initial
+    toStateId: world-state-alexander-west-after-arabian-campaign
+    eventId: arabian-campaign-322-bc
+
+    changes:
+      - key: territorial_control
+        from:
+          macedonian_empire: "Survives under Alexander"
+          western_mediterranean: "Emerging strategic frontier"
+        to:
+          macedonian_empire: "Survives under Alexander"
+          arabian_coast: "Arabian expedition underway"
+          western_mediterranean: "Future campaign objective"
+        status: SIMULATED
+
+    time:
+      label: "322 BC"
+      year: -322
+      precision: year
+
+========== src/data/world-states/alexander-west.yaml ==========
+
+
+schemaVersion: 1
+
+id: world-state-alexander-west-initial
+name: Alexander Secures His Empire
+
+worldId: world-alexander-west
+divergenceId: divergence-alexander-survives
+
+time:
+  label: "323 BC"
+  year: -323
+  precision: year
+
+status: SIMULATED
+
+description: >-
+  Alexander survives his illness in Babylon, secures his existing empire,
+  and prepares to consolidate his position before pursuing campaigns
+  in the western Mediterranean.
+
+variables:
+  - key: territorial_control
+    value:
+      macedonian_empire: "Survives under Alexander"
+      western_mediterranean: "Emerging strategic frontier"
+    status: SIMULATED
+
+causedBy: []
+
+evidence:
+  - article: "history/alexander-west"
+    claim: "Alexander recovers from his illness and secures his existing empire."
+
+========== src/data/world-states/world-state-alexander-west-after-arabian-campaign.yaml ==========
+
+schemaVersion: 1
+id: world-state-alexander-west-after-arabian-campaign
+name: Alexander Advances into Arabia
+worldId: world-alexander-west
+divergenceId: divergence-alexander-survives
+time:
+  label: 322 BC
+  year: -322
+  precision: year
+status: SIMULATED
+description: Alexander launches the Arabian expedition that had been prepared before his illness. Macedonian forces begin securing strategic coastal positions and maritime routes in the Persian Gulf.
+
+variables:
+  - key: territorial_control
+    value:
+      macedonian_empire: Survives under Alexander
+      arabian_coast: Arabian expedition underway
+      western_mediterranean: Future campaign objective
+    status: SIMULATED
+causedBy:
+  - arabian-campaign-322-bc
+evidence: []
+
+========== src/lib/world-states.ts ==========
+
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import YAML from 'yaml';
+
+const worldStatesDir = join(
+  process.cwd(),
+  'src',
+  'data',
+  'world-states'
+);
+
+type WorldState = {
+  id: string;
+  name: string;
+  worldId: string;
+  status?: string;
+  divergenceId?: string;
+  time: {
+    year: number;
+    label: string;
+  };
+  description?: string;
+  variables: Array<{
+    key: string;
+    value: unknown;
+  }>;
+};
+
+let cachedWorldStates: WorldState[] | undefined;
+
+export function getWorldStates(): WorldState[] {
+  if (!cachedWorldStates) {
+    cachedWorldStates = readdirSync(worldStatesDir)
+      .filter((file) => file.endsWith('.yaml'))
+      .map(
+        (file) =>
+          YAML.parse(
+            readFileSync(join(worldStatesDir, file), 'utf8')
+          ) as WorldState
+      );
+  }
+
+  return cachedWorldStates;
+}
+
+========== src/lib/world-comparison.ts ==========
+
+
+import { getWorldStates } from "./world-states.ts";
+
+export type WorldVariable = {
+  key: string;
+  value: unknown;
+  status?: string;
+};
+
+export type WorldStateSnapshot = {
+  id: string;
+  worldId: string;
+  time?: {
+    label?: string;
+    year?: number | null;
+    precision?: string;
+  };
+  variables: WorldVariable[];
+};
+
+export type ComparisonStatus =
+  | "changed"
+  | "unchanged"
+  | "unknown";
+
+export type WorldComparisonItem = {
+  key: string;
+  status: ComparisonStatus;
+  referenceValue: unknown;
+  alternateValue: unknown;
+  changes: {
+    added: Array<{ key: string; value: unknown }>;
+    removed: Array<{ key: string; value: unknown }>;
+    modified: Array<{
+      key: string;
+      referenceValue: unknown;
+      alternateValue: unknown;
+    }>;
+  };
+};
+
+export type WorldComparisonResult = {
+  referenceStateId: string;
+  alternateStateId: string;
+  items: WorldComparisonItem[];
+  summary: {
+    changed: number;
+    unchanged: number;
+    unknown: number;
+  };
+};
+
+function valuesEqual(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true;
+
+  if (
+    a === null ||
+    b === null ||
+    typeof a !== "object" ||
+    typeof b !== "object"
+  ) {
+    return false;
+  }
+
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b)) {
+      return false;
+    }
+
+    return (
+      a.length === b.length &&
+      a.every((value, index) => valuesEqual(value, b[index]))
+    );
+  }
+
+  const aRecord = a as Record<string, unknown>;
+  const bRecord = b as Record<string, unknown>;
+
+  const aKeys = Object.keys(aRecord).sort();
+  const bKeys = Object.keys(bRecord).sort();
+
+  return (
+    aKeys.length === bKeys.length &&
+    aKeys.every(
+      (key, index) =>
+        key === bKeys[index] &&
+        valuesEqual(aRecord[key], bRecord[key])
+    )
+  );
+}
+
+type ValueChanges = WorldComparisonItem["changes"];
+
+function isRecord(
+  value: unknown
+): value is Record<string, unknown> {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
+function getValueChanges(
+  referenceValue: unknown,
+  alternateValue: unknown,
+  path = ""
+): ValueChanges {
+  const changes: ValueChanges = {
+    added: [],
+    removed: [],
+    modified: [],
+  };
+
+  if (isRecord(referenceValue) && isRecord(alternateValue)) {
+    const keys = [
+      ...new Set([
+        ...Object.keys(referenceValue),
+        ...Object.keys(alternateValue),
+      ]),
+    ].sort();
+
+    for (const key of keys) {
+      const childPath = path ? `${path}.${key}` : key;
+      const hasReference = Object.hasOwn(referenceValue, key);
+      const hasAlternate = Object.hasOwn(alternateValue, key);
+
+      if (!hasReference && hasAlternate) {
+        changes.added.push({
+          key: childPath,
+          value: alternateValue[key],
+        });
+      } else if (hasReference && !hasAlternate) {
+        changes.removed.push({
+          key: childPath,
+          value: referenceValue[key],
+        });
+      } else {
+        const nested = getValueChanges(
+          referenceValue[key],
+          alternateValue[key],
+          childPath
+        );
+
+        changes.added.push(...nested.added);
+        changes.removed.push(...nested.removed);
+        changes.modified.push(...nested.modified);
+      }
+    }
+
+    return changes;
+  }
+
+  if (!valuesEqual(referenceValue, alternateValue)) {
+    changes.modified.push({
+      key: path || "(value)",
+      referenceValue,
+      alternateValue,
+    });
+  }
+
+  return changes;
+}
+
+export function compareWorldStates(
+  reference: WorldStateSnapshot,
+  alternate: WorldStateSnapshot
+): WorldComparisonResult {
+  if (reference.worldId !== alternate.worldId) {
+    throw new Error(
+      `Cannot compare World States from different worlds: ${reference.worldId} and ${alternate.worldId}`
+    );
+  }
+
+  const referenceVariables = new Map(
+    reference.variables.map((variable) => [
+      variable.key,
+      variable.value,
+    ])
+  );
+
+  const alternateVariables = new Map(
+    alternate.variables.map((variable) => [
+      variable.key,
+      variable.value,
+    ])
+  );
+
+  const keys = [
+    ...new Set([
+      ...referenceVariables.keys(),
+      ...alternateVariables.keys(),
+    ]),
+  ].sort();
+
+  const items: WorldComparisonItem[] = keys.map((key) => {
+    const hasReference = referenceVariables.has(key);
+    const hasAlternate = alternateVariables.has(key);
+
+    const referenceValue = referenceVariables.get(key);
+    const alternateValue = alternateVariables.get(key);
+
+    if (!hasReference || !hasAlternate) {
+      return {
+        key,
+        status: "unknown",
+        referenceValue: hasReference ? referenceValue : null,
+        alternateValue: hasAlternate ? alternateValue : null,
+        changes: {
+          added: [],
+          removed: [],
+          modified: [],
+        },
+      };
+    }
+
+    return {
+      key,
+      status: valuesEqual(referenceValue, alternateValue)
+        ? "unchanged"
+        : "changed",
+      referenceValue,
+      alternateValue,
+      changes: getValueChanges(referenceValue, alternateValue),
+    };
+  });
+
+  return {
+    referenceStateId: reference.id,
+    alternateStateId: alternate.id,
+    items,
+    summary: {
+      changed: items.filter((item) => item.status === "changed").length,
+      unchanged: items.filter((item) => item.status === "unchanged").length,
+      unknown: items.filter((item) => item.status === "unknown").length,
+    },
+  };
+}
+
+export function compareStoredWorldStates(
+  referenceStateId: string,
+  alternateStateId: string
+): WorldComparisonResult {
+  const states = getWorldStates();
+
+  const reference = states.find(
+    (state) => state.id === referenceStateId
+  );
+
+  const alternate = states.find(
+    (state) => state.id === alternateStateId
+  );
+
+  if (!reference) {
+    throw new Error(
+      `Reference World State not found: ${referenceStateId}`
+    );
+  }
+
+  if (!alternate) {
+    throw new Error(
+      `Alternate World State not found: ${alternateStateId}`
+    );
+  }
+
+  return compareWorldStates(reference, alternate);
+}

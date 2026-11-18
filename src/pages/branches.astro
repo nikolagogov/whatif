@@ -1,0 +1,411 @@
+
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import YAML from 'yaml';
+
+const statesDir = join(process.cwd(), 'src', 'data', 'world-states');
+
+const states = readdirSync(statesDir)
+  .filter((file) => file.endsWith('.yaml'))
+  .map((file) => {
+    const state = YAML.parse(
+      readFileSync(join(statesDir, file), 'utf8'),
+    );
+
+    return {
+      id: state.id,
+      worldId: state.worldId,
+      divergenceId: state.divergenceId,
+      label: `${state.time?.label ?? state.id} — ${state.description ?? state.id}`,
+    };
+  })
+  .filter((state) => state.id && state.worldId && state.divergenceId);
+
+---
+
+<BaseLayout
+  title="Scenario Branches | Had It Gone"
+  description="Create and explore your own alternate-history branches."
+>
+  <section class="branches-page">
+    <PageHeader title="Scenario Branches" eyebrow="SCENARIO ENGINE / WORKSPACE" />
+    <header class="branches-header">
+      <p class="intro">
+        Explore alternative paths from an existing world state.
+        Every branch begins with an explicit assumption.
+      </p>
+    </header>
+
+    <section class="branch-panel">
+      <h2>Create a branch</h2>
+      <p class="panel-description">
+        Choose a starting state and define the change you want to explore.
+      </p>
+
+      <form id="branchForm">
+        <label for="branchName">Branch name</label>
+        <input
+          id="branchName"
+          name="branchName"
+          maxlength="100"
+          placeholder="e.g. Alexander turns west in 322 BC"
+          required
+        />
+
+        <label for="parentState">Starting world state</label>
+        <select id="parentState" name="parentState" required>
+          <option value="">Choose a starting state</option>
+          {states.map((state) => (
+            <option
+              value={state.id}
+              data-world={state.worldId}
+              data-divergence={state.divergenceId}
+            >
+              {state.label}
+            </option>
+          ))}
+        </select>
+
+        <label for="assumption">What changes?</label>
+        <textarea
+          id="assumption"
+          name="assumption"
+          rows="5"
+          maxlength="2000"
+          placeholder="Describe one specific change to the starting scenario..."
+          required
+        />
+
+        <p class="form-note">
+          This records your assumption. It does not yet calculate historical
+          consequences or claim that the outcome is proven.
+        </p>
+
+        <button class="create-button" type="submit">
+          Create branch
+        </button>
+        <p id="formStatus" class="form-status" role="status"></p>
+      </form>
+    </section>
+
+    <section class="saved-section">
+      <div class="saved-heading">
+        <div>
+          <p class="eyebrow">YOUR WORKSPACE</p>
+          <h2>Your branches</h2>
+        </div>
+        <span id="branchCount" class="branch-count">0 branches</span>
+      </div>
+
+      <div id="branchList" class="branch-list">
+        <p class="empty-state">Loading your saved branches…</p>
+      </div>
+    </section>
+  </section>
+
+  <script>
+    type Branch = {
+      id: string;
+      name: string;
+      parentStateId: string;
+      worldId: string;
+      divergenceId: string;
+      assumption: string;
+      createdAt: string;
+    };
+
+    const STORAGE_KEY = 'haditgone-scenario-branches-v1';
+    const form = document.querySelector<HTMLFormElement>('#branchForm')!;
+    const nameInput = document.querySelector<HTMLInputElement>('#branchName')!;
+    const stateSelect = document.querySelector<HTMLSelectElement>('#parentState')!;
+    const assumptionInput = document.querySelector<HTMLTextAreaElement>('#assumption')!;
+    const status = document.querySelector<HTMLParagraphElement>('#formStatus')!;
+    const list = document.querySelector<HTMLDivElement>('#branchList')!;
+    const count = document.querySelector<HTMLSpanElement>('#branchCount')!;
+
+    function loadBranches(): Branch[] {
+      try {
+        const value = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
+        return Array.isArray(value) ? value : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveBranches(branches: Branch[]) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(branches));
+    }
+
+    function renderBranches() {
+      const branches = loadBranches();
+      count.textContent = `${branches.length} ${branches.length === 1 ? 'branch' : 'branches'}`;
+      list.replaceChildren();
+
+      if (branches.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'empty-state';
+        empty.textContent = 'No branches yet. Create your first alternative path above.';
+        list.append(empty);
+        return;
+      }
+
+      for (const branch of [...branches].reverse()) {
+        const card = document.createElement('article');
+        card.className = 'branch-card';
+
+        const heading = document.createElement('h3');
+        heading.textContent = branch.name;
+
+        const meta = document.createElement('p');
+        meta.className = 'branch-meta';
+        meta.textContent = `Starting state: ${branch.parentStateId}`;
+
+        const assumptionTitle = document.createElement('p');
+        assumptionTitle.className = 'assumption-label';
+        assumptionTitle.textContent = 'ASSUMPTION';
+
+        const assumption = document.createElement('p');
+        assumption.className = 'branch-assumption';
+        assumption.textContent = branch.assumption;
+
+        const footer = document.createElement('div');
+        footer.className = 'branch-card-footer';
+
+        const date = document.createElement('time');
+        date.dateTime = branch.createdAt;
+        date.textContent = new Date(branch.createdAt).toLocaleDateString();
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'delete-button';
+        remove.textContent = 'Delete';
+        remove.setAttribute('aria-label', `Delete branch ${branch.name}`);
+
+        remove.addEventListener('click', () => {
+          if (!confirm(`Delete "${branch.name}" from this browser?`)) return;
+          saveBranches(loadBranches().filter((item) => item.id !== branch.id));
+          renderBranches();
+        });
+
+        footer.append(date, remove);
+        card.append(heading, meta, assumptionTitle, assumption, footer);
+        list.append(card);
+      }
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const name = nameInput.value.trim();
+      const assumption = assumptionInput.value.trim();
+      const option = stateSelect.selectedOptions[0];
+
+      if (!name || !assumption || !option?.value) {
+        status.textContent = 'Complete all fields before creating a branch.';
+        return;
+      }
+
+      const branch: Branch = {
+        id: crypto.randomUUID(),
+        name,
+        parentStateId: option.value,
+        worldId: option.dataset.world ?? '',
+        divergenceId: option.dataset.divergence ?? '',
+        assumption,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        const branches = loadBranches();
+        branches.push(branch);
+        saveBranches(branches);
+        form.reset();
+        status.textContent = 'Branch saved in this browser.';
+        renderBranches();
+      } catch {
+        status.textContent = 'Could not save the branch. Check browser storage settings.';
+      }
+    });
+
+    renderBranches();
+  </script>
+
+  <style>
+    .branches-page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 56px 24px 96px;
+    }
+
+    .branches-header {
+      max-width: 760px;
+      margin-bottom: 40px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent, #b58a52);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+
+    .branches-header h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      line-height: 1.05;
+    }
+
+    .intro,
+    .panel-description {
+      color: var(--muted, #777);
+      line-height: 1.75;
+    }
+
+    .branch-panel {
+      padding: clamp(22px, 4vw, 38px);
+      border: 1px solid var(--border, #ddd);
+      border-radius: 16px;
+      background: var(--surface, transparent);
+    }
+
+    .branch-panel h2,
+    .saved-heading h2 {
+      margin-top: 0;
+    }
+
+    #branchForm {
+      display: grid;
+      gap: 12px;
+    }
+
+    #branchForm label {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    #branchForm input,
+    #branchForm select,
+    #branchForm textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px 14px;
+      border: 1px solid var(--border, #ccc);
+      border-radius: 8px;
+      color: inherit;
+      background: var(--background, transparent);
+      font: inherit;
+    }
+
+    #branchForm textarea {
+      resize: vertical;
+    }
+
+    .form-note,
+    .form-status {
+      color: var(--muted, #777);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .create-button {
+      justify-self: start;
+      padding: 12px 22px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent, #b58a52);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .saved-section {
+      margin-top: 56px;
+    }
+
+    .saved-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .branch-count,
+    .branch-meta,
+    .branch-card time {
+      color: var(--muted, #777);
+      font-size: 0.85rem;
+    }
+
+    .branch-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .branch-card {
+      padding: 24px;
+      border: 1px solid var(--border, #ddd);
+      border-radius: 12px;
+    }
+
+    .branch-card h3 {
+      margin: 0 0 8px;
+    }
+
+    .assumption-label {
+      margin-bottom: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--accent, #b58a52);
+    }
+
+    .branch-assumption {
+      line-height: 1.7;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .branch-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .delete-button {
+      padding: 7px 12px;
+      border: 1px solid var(--border, #ccc);
+      border-radius: 7px;
+      color: inherit;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      padding: 28px;
+      border: 1px dashed var(--border, #ccc);
+      border-radius: 12px;
+      color: var(--muted, #777);
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .branches-page {
+        padding: 36px 16px 64px;
+      }
+
+      .saved-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</BaseLayout>

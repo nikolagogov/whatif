@@ -1,0 +1,9 @@
+/* HAD IT GONE — single stylesheet entry point.
+   Order is intentional: global foundations, design system, then site chrome behavior. */
+@import "./global.css";
+@import "./design-system.css";
+@import "./components/hig-card.css";
+@import "./components/search.css";
+
+/* One canonical source for the global Header and Footer. */
+@import "./components/site-chrome.css";

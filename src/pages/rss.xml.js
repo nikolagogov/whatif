@@ -1,3 +1,4 @@
+import { articleRoute } from '../lib/routes.js';
 
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
@@ -27,7 +28,7 @@ export async function GET(context) {
         title: post.data.title,
         description: post.data.description,
         ...(pubDate ? { pubDate } : {}),
-        link: `/${post.collection}/${post.id}/`,
+        link: articleRoute(post.collection, post.id),
       };
     }),
     customData: `<language>en-us</language>`,

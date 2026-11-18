@@ -1,0 +1,1522 @@
+---
+import { articleRoute, ROUTES } from '../../lib/routes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectorCard from '../../components/SectorCard.astro';
+
+import { getCollection } from 'astro:content';
+
+import spotlight from '../../data/spotlight.json';
+
+import { sortPosts } from '../../lib/sorting';
+
+const historyArticles = await getCollection('history');
+
+const scienceArticles = await getCollection('science');
+
+const spaceArticles = await getCollection('space');
+
+const societyArticles = await getCollection('society');
+
+type SectorKey = 'history' | 'science' | 'space' | 'society';
+
+const all = [
+
+  ...historyArticles.map(a => ({
+
+    ...a,
+
+    sector: 'history' as const,
+
+    sectorLabel: 'History',
+
+    emoji: '🏛️',
+
+  })),
+
+  ...scienceArticles.map(a => ({
+
+    ...a,
+
+    sector: 'science' as const,
+
+    sectorLabel: 'Science',
+
+    emoji: '🔬',
+
+  })),
+
+  ...spaceArticles.map(a => ({
+
+    ...a,
+
+    sector: 'space' as const,
+
+    sectorLabel: 'Space',
+
+    emoji: '🚀',
+
+  })),
+
+  ...societyArticles.map(a => ({
+
+    ...a,
+
+    sector: 'society' as const,
+
+    sectorLabel: 'Society',
+
+    emoji: '🌍',
+
+  })),
+
+];
+
+const sorted = sortPosts(all);
+
+const homeKey = typeof spotlight.home === 'string'
+
+  ? spotlight.home
+
+  : '';
+
+const homeSpotlight =
+
+  sorted.find(a => a.id === homeKey) ||
+
+  sorted.find(a => a.data.title === homeKey) ||
+
+  sorted[0];
+
+const latest3 = sorted
+
+  .filter(a => a.id !== homeSpotlight?.id)
+
+  .slice(0, 3);
+
+const allArticles = sorted.map(a => ({
+
+  url: articleRoute(a.sector, a.id),
+
+  title: a.data.title,
+
+}));
+
+const exploreSectors: {
+
+  key: SectorKey;
+
+  label: string;
+
+  emoji: string;
+
+  accent: string;
+
+  img: string;
+
+}[] = [
+
+  {
+
+    key: 'history',
+
+    label: 'History',
+
+    emoji: '🏛️',
+
+    accent: 'The world that was',
+
+    img: '/images/sectors/history.jpg',
+
+  },
+
+  {
+
+    key: 'science',
+
+    label: 'Science',
+
+    emoji: '🔬',
+
+    accent: 'The world that could be',
+
+    img: '/images/sectors/science.jpg',
+
+  },
+
+  {
+
+    key: 'space',
+
+    label: 'Space',
+
+    emoji: '🚀',
+
+    accent: 'The world beyond',
+
+    img: '/images/sectors/space.jpg',
+
+  },
+
+  {
+
+    key: 'society',
+
+    label: 'Society',
+
+    emoji: '🌍',
+
+    accent: 'The world we build',
+
+    img: '/images/sectors/society.jpg',
+
+  },
+
+];
+
+const counts: Record<SectorKey, number> = {
+
+  history: historyArticles.length,
+
+  science: scienceArticles.length,
+
+  space: spaceArticles.length,
+
+  society: societyArticles.length,
+
+};
+
+const coverTitle = homeSpotlight?.data.title
+
+  ?.replace(/^What If\s+/i, '') ?? 'Explore an alternative world';
+
+const totalArticles = sorted.length;
+
+---
+
+<BaseLayout title="Discover Alternative Paths | HAD IT GONE">
+  <main class="archive-page">
+    <PageHeader title="Discover" highlight="Alternative Paths" variant="home" />
+
+    <section class="archive-hub-grid" aria-label="Explore HAD IT GONE">
+      <a class="archive-hub-card archive-hub-card--primary" href={ROUTES.latest}>
+
+        <span class="archive-hub-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <h2>Latest</h2>
+        <p>Read the newest scenarios and alternative histories</p>
+      </a>
+
+      <button class="archive-hub-card archive-hub-card--primary" type="button" id="random-btn">
+
+        <span class="archive-hub-icon" aria-hidden="true">✳</span>
+        <h2>Surprise Me</h2>
+        <p>Discover a scenario you might never have searched for</p>
+      </button>
+
+      <a class="archive-hub-card archive-hub-card--primary" href={ROUTES.continueReading}>
+
+        <span class="archive-hub-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 3.5h14v17l-7-4-7 4v-17Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 8.5h6M9 11.5h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <h2>Continue Reading</h2>
+        <p>Pick up where you left off</p>
+      </a>
+
+      <a class="archive-hub-card archive-hub-card--primary" href={ROUTES.bookmarks}>
+
+        <span class="archive-hub-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <h2>Bookmarks</h2>
+        <p>Return to the scenarios you have bookmarked</p>
+      </a>
+
+      <SectorCard
+        href={ROUTES.history}
+        sector="history"
+        title="History"
+        description="Turning points in the world that was"
+      />
+      <SectorCard
+        href={ROUTES.science}
+        sector="science"
+        title="Science"
+        description="Discoveries that could reshape our reality"
+      />
+      <SectorCard
+        href={ROUTES.space}
+        sector="space"
+        title="Space"
+        description="Worlds beyond the limits of our imagination"
+      />
+      <SectorCard
+        href={ROUTES.society}
+        sector="society"
+        title="Society"
+        description="Ideas, systems and the worlds we build"
+      />
+    </section>
+
+  </main>
+
+  <script define:vars={{ allArticles }}>
+
+    // Surprise Me: избира случайна статия от целия архив.
+
+    const randBtn = document.getElementById('random-btn');
+
+    randBtn?.addEventListener('click', () => {
+
+      if (!allArticles || allArticles.length === 0) return;
+
+      const pick = allArticles[
+
+        Math.floor(Math.random() * allArticles.length)
+
+      ];
+
+      if (pick?.url) {
+
+        window.location.href = pick.url;
+
+      }
+
+    });
+
+    // Continue Reading + Bookmarks.
+
+    const continueList = document.getElementById('continue-list');
+
+    const bookmarksList = document.getElementById('bookmarks-list');
+
+    const personalRow = document.getElementById('personal-row');
+
+    const continuePanel = document.getElementById('continue-panel');
+
+    const bookmarksPanel = document.getElementById('bookmarks-panel');
+
+    function escapeHtml(value) {
+
+      return String(value ?? '').replace(/[&<>"']/g, char => ({
+
+        '&': '&amp;',
+
+        '<': '&lt;',
+
+        '>': '&gt;',
+
+        '"': '&quot;',
+
+        "'": '&#39;',
+
+      })[char]);
+
+    }
+
+    function safeInternalUrl(value, fallback) {
+
+      const url = String(value || fallback || '/');
+
+      // Не допускаме външни адреси в генерираните карти.
+
+      return url.startsWith('/') && !url.startsWith('//')
+
+        ? url
+
+        : '/';
+
+    }
+
+    function renderPersonal() {
+
+      if (
+
+        !continueList ||
+
+        !bookmarksList ||
+
+        !personalRow ||
+
+        !continuePanel ||
+
+        !bookmarksPanel
+
+      ) return;
+
+      let continueData = [];
+
+      let bookmarksData = [];
+
+      try {
+
+        const parsed = JSON.parse(
+
+          localStorage.getItem('hig_continue') || '[]'
+
+        );
+
+        continueData = Array.isArray(parsed) ? parsed : [];
+
+      } catch {
+
+        continueData = [];
+
+      }
+
+      try {
+
+        const parsed = JSON.parse(
+
+          localStorage.getItem('hig_bookmarks') || '[]'
+
+        );
+
+        bookmarksData = Array.isArray(parsed) ? parsed : [];
+
+      } catch {
+
+        bookmarksData = [];
+
+      }
+
+      // Продължаване: без дублиране и завършени статии.
+
+      const uniqueContinue = new Map();
+
+      continueData
+
+        .filter(c =>
+
+          Number(c.progress) > 0 &&
+
+          Number(c.progress) < 90 &&
+
+          c.id &&
+
+          c.sector
+
+        )
+
+        .sort((a, b) => Number(b.ts || 0) - Number(a.ts || 0))
+
+        .forEach(c => {
+
+          const key = `${c.sector}/${c.id}`;
+
+          if (!uniqueContinue.has(key)) {
+
+            uniqueContinue.set(key, c);
+
+          }
+
+        });
+
+      continueData = [...uniqueContinue.values()].slice(0, 3);
+
+      // Последно запазени отметки.
+
+      bookmarksData = bookmarksData
+
+        .filter(b => b && (typeof b === 'string' || b.id))
+
+        .sort((a, b) => Number(b.ts || 0) - Number(a.ts || 0))
+
+        .slice(0, 3);
+
+      const hasContinue = continueData.length > 0;
+
+      const hasBookmarks = bookmarksData.length > 0;
+
+      continuePanel.style.display = hasContinue ? '' : 'none';
+
+      bookmarksPanel.style.display = hasBookmarks ? '' : 'none';
+
+      personalRow.style.display =
+
+        hasContinue || hasBookmarks ? 'grid' : 'none';
+
+      // Continue Reading.
+
+      continueList.innerHTML = continueData.length
+
+        ? continueData.map(c => {
+
+            const id = escapeHtml(c.id);
+
+            const sector = escapeHtml(c.sector || 'Scenario');
+
+            const title = escapeHtml(c.title || c.id);
+
+            const progress = Math.min(
+
+              100,
+
+              Math.max(0, Number(c.progress) || 0)
+
+            );
+
+            const scrollY = Math.max(0, Number(c.scrollY) || 0);
+
+            const url = safeInternalUrl(
+
+              c.url,
+
+              articleRoute(c.sector, c.id)
+
+            );
+
+            return `
+
+              <div class="archive-personal-card-wrap">
+
+                <a
+
+                  href="${url}?from=continue&scrollY=${scrollY}"
+
+                  class="archive-personal-card"
+
+                >
+
+                  <span class="archive-personal-sector">${sector}</span>
+
+                  <h3>${title}</h3>
+
+                  <div class="archive-progress">
+
+                    <span style="width:${progress}%"></span>
+
+                  </div>
+
+                  <span class="archive-progress-text">
+
+                    ${Math.round(progress)}% read
+
+                  </span>
+
+                </a>
+
+                <button
+
+                  type="button"
+
+                  class="archive-remove-button"
+
+                  data-remove-continue="${id}"
+
+                  data-remove-sector="${sector}"
+
+                >Remove</button>
+
+              </div>
+
+            `;
+
+          }).join('')
+
+        : '';
+
+      // Bookmarks.
+
+      bookmarksList.innerHTML = bookmarksData.length
+
+        ? bookmarksData.map(b => {
+
+            const item = typeof b === 'string'
+
+              ? { id: b, url: '', sector: 'Scenario', title: b }
+
+              : b;
+
+            const id = escapeHtml(item.id);
+
+            const sector = escapeHtml(item.sector || 'Scenario');
+
+            const title = escapeHtml(item.title || item.id);
+
+            const description = escapeHtml(item.description || '');
+
+            const fallback = articleRoute(item.sector || 'history', item.id);
+
+            const url = safeInternalUrl(item.url, fallback);
+
+            return `
+
+              <div class="archive-personal-card-wrap">
+
+                <a href="${url}" class="archive-personal-card">
+
+                  <span class="archive-personal-sector">${sector}</span>
+
+                  <h3>${title}</h3>
+
+                  <p>${description}</p>
+
+                </a>
+
+                <button
+
+                  type="button"
+
+                  class="archive-remove-button"
+
+                  data-remove-bookmark="${id}"
+
+                  data-remove-sector="${sector}"
+
+                >Remove</button>
+
+              </div>
+
+            `;
+
+          }).join('')
+
+        : '';
+
+      // Премахване от Continue Reading.
+
+      continueList.querySelectorAll('[data-remove-continue]').forEach(btn => {
+
+        btn.addEventListener('click', event => {
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+          const id = btn.dataset.removeContinue;
+
+          const sector = btn.dataset.removeSector;
+
+          try {
+
+            const items = JSON.parse(
+
+              localStorage.getItem('hig_continue') || '[]'
+
+            );
+
+            const filtered = (Array.isArray(items) ? items : []).filter(
+
+              item => !(item.id === id && item.sector === sector)
+
+            );
+
+            localStorage.setItem(
+
+              'hig_continue',
+
+              JSON.stringify(filtered)
+
+            );
+
+            renderPersonal();
+
+          } catch (error) {
+
+            console.error(
+
+              'Could not remove Continue Reading item.',
+
+              error
+
+            );
+
+          }
+
+        });
+
+      });
+
+      // Премахване от Bookmarks.
+
+      bookmarksList.querySelectorAll('[data-remove-bookmark]').forEach(btn => {
+
+        btn.addEventListener('click', event => {
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+          const id = btn.dataset.removeBookmark;
+
+          const sector = btn.dataset.removeSector;
+
+          try {
+
+            const items = JSON.parse(
+
+              localStorage.getItem('hig_bookmarks') || '[]'
+
+            );
+
+            const filtered = (Array.isArray(items) ? items : []).filter(
+
+              item => {
+
+                if (typeof item === 'string') return item !== id;
+
+                return !(
+
+                  String(item.id) === id &&
+
+                  String(item.sector || 'Scenario') === sector
+
+                );
+
+              }
+
+            );
+
+            localStorage.setItem(
+
+              'hig_bookmarks',
+
+              JSON.stringify(filtered)
+
+            );
+
+            renderPersonal();
+
+          } catch (error) {
+
+            console.error('Could not remove bookmark.', error);
+
+          }
+
+        });
+
+      });
+
+    }
+
+    renderPersonal();
+
+    window.addEventListener('pageshow', renderPersonal);
+
+    window.addEventListener('storage', event => {
+
+      if (
+
+        event.key === 'hig_continue' ||
+
+        event.key === 'hig_bookmarks' ||
+
+        event.key === null
+
+      ) {
+
+        renderPersonal();
+
+      }
+
+    });
+
+  </script>
+
+  <style>
+
+    .archive-page {
+      position: relative;
+      isolation: isolate;
+      background: transparent !important;
+    }
+
+   .archive-page {
+      --archive-line: rgba(180,195,215,.17);
+      --archive-muted: #a6b3c2;
+      --archive-accent: #e3b568;
+      padding: 0 0 12px;
+      color: #f1eee8;
+    }
+
+    .archive-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(4,minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .archive-hub-card {
+      position: relative;
+      display: flex;
+      min-height: 220px;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 22px;
+      overflow: hidden;
+      text-align: left;
+      color: inherit;
+      text-decoration: none;
+      border: 1px solid var(--archive-line);
+      border-radius: 12px;
+      background: linear-gradient(145deg,rgba(22,34,49,.92),rgba(9,15,24,.94));
+      transition: transform .22s ease,border-color .22s ease,background .22s ease;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .archive-hub-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(227,181,104,.55);
+      background: linear-gradient(145deg,rgba(34,48,65,.96),rgba(12,19,29,.98));
+    }
+
+    .archive-hub-card:focus-visible {
+      outline: 2px solid var(--archive-accent);
+      outline-offset: 3px;
+    }
+
+    .archive-hub-number {
+      position: absolute;
+      top: 20px;
+      right: 22px;
+      color: rgba(226,233,242,.38);
+      font-size: .72rem;
+      letter-spacing: .12em;
+    }
+
+    .archive-hub-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(227,181,104,.28);
+      border-radius: 10px;
+      color: var(--archive-accent);
+      font-size: 1.35rem;
+    }
+
+    .archive-hub-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+      letter-spacing: -.025em;
+    }
+
+    .archive-hub-card p {
+      margin: 0;
+      max-width: 30ch;
+      color: var(--archive-muted);
+      font-size: .88rem;
+      line-height: 1.65;
+    }
+
+    .archive-hub-cta {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 18px;
+      color: var(--archive-accent);
+      font-size: .78rem;
+      font-weight: 650;
+    }
+
+    .archive-hub-card--subject {
+      min-height: 200px;
+      background: linear-gradient(145deg,rgba(18,29,42,.86),rgba(10,16,25,.95));
+    }
+
+    .archive-hub-card--subject .archive-hub-icon {
+      width: 34px;
+      height: 34px;
+      margin-bottom: 18px;
+      font-size: 1.1rem;
+    }
+
+    .archive-personal {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 22px;
+      margin-top: 46px;
+    }
+
+    .archive-personal-panel {
+      min-width: 0;
+    }
+
+    .archive-section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .archive-section-heading h2 {
+      margin: 5px 0 0;
+      font-size: 1.35rem;
+    }
+
+    .archive-kicker {
+      color: var(--archive-accent);
+      font-size: .68rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .archive-text-link {
+      color: var(--archive-accent);
+      font-size: .8rem;
+      text-decoration: none;
+    }
+
+    .archive-personal-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .archive-personal-card-wrap {
+      padding: 16px;
+      border: 1px solid var(--archive-line);
+      border-radius: 9px;
+      background: rgba(16,25,37,.84);
+    }
+
+    .archive-personal-card {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .archive-personal-sector {
+      color: var(--archive-accent);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .archive-personal-card h3 {
+      margin: 8px 0;
+      font-size: 1rem;
+    }
+
+    .archive-personal-card p,
+    .archive-progress-text {
+      color: var(--archive-muted);
+      font-size: .78rem;
+    }
+
+    .archive-progress {
+      height: 3px;
+      margin-top: 12px;
+      background: var(--archive-line);
+    }
+
+    .archive-progress span {
+      display: block;
+      height: 100%;
+      background: var(--archive-accent);
+    }
+
+    .archive-remove-button {
+      margin-top: 8px;
+      border: 0;
+      background: none;
+      color: var(--archive-muted);
+      cursor: pointer;
+    }
+
+    @media(max-width:1000px) {
+      .archive-hub-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media(max-width:620px) {
+      .archive-page {
+        padding-top: 0;
+      }
+
+      .archive-hub-grid {
+        gap: 12px;
+      }
+
+      .archive-hub-card {
+        min-height: 205px;
+        padding: 18px;
+      }
+
+      .archive-hub-card h2 {
+        font-size: 1.1rem;
+      }
+
+      .archive-hub-card p {
+        font-size: .78rem;
+      }
+
+      .archive-hub-number {
+        top: 14px;
+        right: 14px;
+      }
+
+      .archive-personal {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (min-width: 1001px) {
+.archive-hub-grid {
+        gap: clamp(10px, 1vw, 14px);
+      }
+
+      .archive-hub-card,
+      .archive-hub-card--subject {
+        border: 1px solid rgba(205, 218, 232, 0.55) !important;
+
+        box-shadow:
+          0 12px 30px rgba(0, 0, 0, 0.52),
+          inset 0 0 0 1px rgba(5, 12, 20, 0.35) !important;
+      }
+
+      .archive-hub-icon {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 9px;
+      }
+
+      .archive-hub-card h2 {
+        font-size: 1rem;
+      }
+
+      .archive-hub-card p {
+        font-size: .78rem;
+        line-height: 1.4;
+      }
+
+      .archive-hub-cta {
+        padding-top: 8px;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .archive-page::before {
+        position: absolute;
+        background-attachment: scroll;
+      }
+    }
+
+    .archive-hub-card {
+      min-height: clamp(190px, 22vh, 230px) !important;
+      padding: clamp(18px, 1.6vw, 24px) !important;
+    }
+
+    .archive-hub-card--primary {
+      background:
+        linear-gradient(180deg, rgba(7,15,25,.55) 0%, rgba(7,15,25,.9) 100%),
+        url('/images/sectors/history.jpg') center / cover no-repeat;
+    }
+
+    .archive-hub-card--primary:nth-child(2) {
+      background-image:
+        linear-gradient(180deg, rgba(7,15,25,.55), rgba(7,15,25,.9)),
+        url('/images/sectors/science.jpg');
+    }
+
+    .archive-hub-card--primary:nth-child(3) {
+      background-image:
+        linear-gradient(180deg, rgba(7,15,25,.55), rgba(7,15,25,.9)),
+        url('/images/sectors/space.jpg');
+    }
+
+    .archive-hub-card--primary:nth-child(4) {
+      background-image:
+        linear-gradient(180deg, rgba(7,15,25,.55), rgba(7,15,25,.9)),
+        url('/images/sectors/society.jpg');
+    }
+
+    .archive-hub-card--subject {
+      background-size: cover !important;
+    }
+
+    .archive-hub-card--subject:nth-child(5) {
+      background-image:
+        linear-gradient(180deg, rgba(7,15,25,.48), rgba(7,15,25,.9)),
+        url('/images/sectors/history.jpg') !important;
+    }
+
+    .archive-hub-card--subject:nth-child(6) {
+      background-image:
+        linear-gradient(180deg, rgba(7,15,25,.48), rgba(7,15,25,.9)),
+        url('/images/sectors/science.jpg') !important;
+    }
+
+    .archive-hub-card--subject:nth-child(7) {
+      background-image:
+        linear-gradient(180deg, rgba(7,15,25,.48), rgba(7,15,25,.9)),
+        url('/images/sectors/space.jpg') !important;
+    }
+
+    .archive-hub-card--subject:nth-child(8) {
+      background-image:
+        linear-gradient(180deg, rgba(7,15,25,.48), rgba(7,15,25,.9)),
+        url('/images/sectors/society.jpg') !important;
+    }
+
+    /* Homepage composition */
+.archive-page {
+  position: relative;
+  isolation: isolate;
+  min-height: 0;
+  height: auto;
+  padding: 0 0 clamp(36px, 5vh, 64px);
+  color: #f1eee8;
+  background: transparent;
+}
+
+.archive-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.4vw, 22px);
+}
+
+.archive-hub-card,
+.archive-hub-card--subject {
+  position: relative;
+  display: flex;
+  min-height: clamp(230px, 25vh, 300px);
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(20px, 1.8vw, 28px);
+  overflow: hidden;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid rgba(180,195,215,.2);
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition:
+    transform .22s ease,
+    border-color .22s ease,
+    background .22s ease;
+  font: inherit;
+  cursor: pointer;
+}
+
+.archive-hub-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(227,181,104,.6);
+}
+
+.archive-hub-card:focus-visible {
+  outline: 2px solid var(--archive-accent);
+  outline-offset: 3px;
+}
+
+/* Keep imagery, remove the card-number treatment */
+.archive-hub-number {
+  display: none;
+}
+
+.archive-hub-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(227,181,104,.28);
+  border-radius: 10px;
+  color: var(--archive-accent);
+  font-size: 1.35rem;
+}
+
+.archive-hub-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+  letter-spacing: -.025em;
+}
+
+.archive-hub-card p {
+  margin: 0;
+  max-width: 30ch;
+  color: #c0c9d4;
+  font-size: .9rem;
+  line-height: 1.55;
+}
+
+.archive-hub-cta {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--archive-accent);
+  font-size: .8rem;
+  font-weight: 650;
+}
+
+/* Card backgrounds: four utility cards and four subject cards */
+.archive-hub-card--primary {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/history.jpg');
+}
+
+.archive-hub-card--primary:nth-child(2) {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/science.jpg');
+}
+
+.archive-hub-card--primary:nth-child(3) {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/space.jpg');
+}
+
+.archive-hub-card--primary:nth-child(4) {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/society.jpg');
+}
+
+.archive-hub-card--subject:nth-child(5) {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/history.jpg');
+}
+
+.archive-hub-card--subject:nth-child(6) {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/science.jpg');
+}
+
+.archive-hub-card--subject:nth-child(7) {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/space.jpg');
+}
+
+.archive-hub-card--subject:nth-child(8) {
+  background-image:
+    linear-gradient(180deg, rgba(7,15,25,.35), rgba(7,15,25,.92)),
+    url('/images/sectors/society.jpg');
+}
+
+/* Personal reading and saved cards */
+.archive-personal {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 46px;
+}
+
+.archive-personal-panel {
+  min-width: 0;
+}
+
+.archive-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.archive-section-heading h2 {
+  margin: 5px 0 0;
+  font-size: 1.35rem;
+}
+
+.archive-kicker {
+  color: var(--archive-accent);
+  font-size: .68rem;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.archive-text-link {
+  color: var(--archive-accent);
+  font-size: .8rem;
+  text-decoration: none;
+}
+
+.archive-personal-list {
+  display: grid;
+  gap: 12px;
+}
+
+.archive-personal-card-wrap {
+  padding: 16px;
+  border: 1px solid var(--archive-line);
+  border-radius: 9px;
+  background: rgba(16,25,37,.84);
+}
+
+.archive-personal-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+.archive-personal-sector {
+  color: var(--archive-accent);
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.archive-personal-card h3 {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.archive-personal-card p,
+.archive-progress-text {
+  color: var(--archive-muted);
+  font-size: .78rem;
+}
+
+.archive-progress {
+  height: 3px;
+  margin-top: 12px;
+  background: var(--archive-line);
+}
+
+.archive-progress span {
+  display: block;
+  height: 100%;
+  background: var(--archive-accent);
+}
+
+.archive-remove-button {
+  margin-top: 8px;
+  border: 0;
+  background: none;
+  color: var(--archive-muted);
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .archive-page {
+    width: calc(100% - 40px);
+  }
+
+  .archive-hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 620px) {
+  .archive-page {
+    padding-top: 0;
+  }
+
+  .archive-hub-grid {
+    gap: 12px;
+  }
+
+  .archive-hub-card,
+  .archive-hub-card--subject {
+    min-height: 220px;
+    padding: 18px;
+  }
+
+  .archive-hub-card h2 {
+    font-size: 1.1rem;
+  }
+
+  .archive-hub-card p {
+    font-size: .8rem;
+  }
+
+  .archive-personal {
+    grid-template-columns: 1fr;
+  }
+}
+  
+/* HOMEPAGE VISUAL TUNING — restore the darker cinematic look and image motion */
+.archive-hub-card,
+.archive-hub-card--subject {
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden;
+  background-image: none !important;
+  background-color: rgba(5, 12, 20, .28) !important;
+  transition:
+    transform 420ms cubic-bezier(.2,.7,.25,1),
+    border-color 320ms ease,
+    box-shadow 420ms ease !important;
+}
+
+/* Image and overlay are separate from card content, so the image can animate smoothly. */
+.archive-hub-card::before,
+.archive-hub-card--subject::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: none;
+  transition: transform 900ms cubic-bezier(.2,.65,.3,1);
+  pointer-events: none;
+}
+
+/* Slightly darker, like the earlier version, while keeping the images visible. */
+.archive-hub-card--primary:nth-child(1)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/latest.jpg');
+}
+.archive-hub-card--primary:nth-child(2)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/surprise-me.jpg');
+}
+.archive-hub-card--primary:nth-child(3)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/continue-reading.jpg');
+}
+.archive-hub-card--primary:nth-child(4)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/saved.jpg');
+}
+.archive-hub-card--subject:nth-child(5)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/history.jpg');
+}
+.archive-hub-card--subject:nth-child(6)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/science.jpg');
+}
+.archive-hub-card--subject:nth-child(7)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/space.jpg');
+}
+.archive-hub-card--subject:nth-child(8)::before {
+  background-image:
+    linear-gradient(180deg, rgba(5,12,20,.24) 0%, rgba(5,12,20,.36) 55%, rgba(5,12,20,.72) 100%),
+    url('/images/home/society.jpg');
+}
+
+.archive-hub-card h2,
+.archive-hub-card p,
+.archive-hub-card .archive-hub-cta {
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.95),
+    0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.02) 0%,
+    rgba(0, 0, 0, 0.04) 35%,
+    rgba(0, 0, 0, 0.20) 65%,
+    rgba(0, 0, 0, 0.58) 100%
+  );
+}
+
+.archive-hub-card:hover,
+.archive-hub-card--subject:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(227,181,104,.62) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.24);
+}
+.archive-hub-card:hover::before,
+.archive-hub-card--subject:hover::before {
+  transform: none;
+}
+
+/* Keep headings, descriptions and links above the animated image layer. */
+.archive-hub-card > *,
+.archive-hub-card--subject > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove the small decorative icon tiles above card titles. */
+.archive-hub-icon {
+  display: none !important;
+}
+
+
+
+/* TEXT READABILITY PASS — keep the current imagery and hover animation */
+.archive-hub-card h2,
+.archive-hub-card--subject h2 {
+  color: var(--hig-gold, #e9b65a) !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.015em;
+  text-shadow:
+    0 2px 5px rgba(0, 0, 0, .95),
+    0 0 14px rgba(0, 0, 0, .7) !important;
+}
+
+.archive-hub-card p,
+.archive-hub-card--subject p {
+  color: rgba(255, 255, 255, .97) !important;
+  font-weight: 500 !important;
+  text-shadow:
+    0 1px 4px rgba(0, 0, 0, .98),
+    0 0 10px rgba(0, 0, 0, .85) !important;
+}
+
+.archive-hub-card a,
+.archive-hub-card--subject a,
+.archive-hub-card .archive-hub-link,
+.archive-hub-card--subject .archive-hub-link {
+  color: #f4bd68 !important;
+  font-weight: 750 !important;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 1),
+    0 0 9px rgba(0, 0, 0, .9) !important;
+}
+
+/* A focused dark veil behind copy: stronger at the bottom, lighter at the top.
+   The card's background image itself stays visible and keeps its hover zoom. */
+.archive-hub-card::before,
+.archive-hub-card--subject::before {
+  background-blend-mode: normal;
+}
+
+/* Improve contrast behind text without adding a separate visible box. */
+.archive-hub-card h2,
+.archive-hub-card--subject h2,
+.archive-hub-card p,
+.archive-hub-card--subject p,
+.archive-hub-card a,
+.archive-hub-card--subject a {
+  -webkit-text-stroke: .12px rgba(0, 0, 0, .3);
+}
+/* HOMEPAGE SPACING — desktop */
+@media (min-width: 900px) {
+  .archive-page {
+    padding-bottom: 0 !important;
+  }
+
+  /* Page title now uses the shared PageHeader; no homepage-only offset. */
+
+  /* Картите да не добавят празно пространство отдолу */
+  .archive-page .sector-page-heading--home {
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+  }
+
+  .archive-page .archive-hub-grid {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+}
+
+</style>
+</BaseLayout>

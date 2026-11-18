@@ -1,0 +1,26 @@
+---
+import type { ArticleIntroProps } from '../../types/article';
+type Props = ArticleIntroProps;
+const { divergence } = Astro.props;
+---
+<div class="article-intro-grid" data-article-intro>
+  <nav class="toc" id="toc" aria-label="Table of contents">
+    <div class="toc-title">Contents</div>
+    <ul class="toc-list" id="tocList"></ul>
+  </nav>
+  {divergence?.referenceOutcome && divergence?.alternateOutcome && (
+    <section class="world-compare-section">
+      <div class="toc-title world-compare-title">Our World / This World</div>
+      <div class="compare-matrix-grid">
+        <div class="matrix-box our-reality">
+          <div class="matrix-title">Our World</div>
+          <p>{divergence.referenceOutcome}</p>
+        </div>
+        <div class="matrix-box alt-reality">
+          <div class="matrix-title">This World</div>
+          <p>{divergence.alternateOutcome}</p>
+        </div>
+      </div>
+    </section>
+  )}
+</div>
